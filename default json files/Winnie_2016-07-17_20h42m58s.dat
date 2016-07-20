@@ -1,0 +1,664 @@
+{
+  "data": {
+    "sessions": [
+      {
+        "device_ID": "780995E1-AB04-4CA3-A0E5-378EEE929373",
+        "behaviors_JSON_file_ID": "v0.0",
+        "gps_on": 1,
+        "layout_info_JSON_file_ID": "v0.0",
+        "details": {
+          "Observer name": {
+            "Type": "Damien"
+          },
+          "Observer type": {
+            "Type": "Researcher"
+          }
+        },
+        "pin_name": "Winnie",
+        "focals": [
+          {
+            "scan_interval": 60,
+            "details": {
+              "Data usage": {
+                "Usage": "Training"
+              }
+            },
+            "start_time": "2016-07-17,20:34:40",
+            "behaviors": [
+              {
+                "subject": "ISA",
+                "selectionString": "Grooms/YES",
+                "lon": -83.33358,
+                "gpsPrecision": 65,
+                "timestamp": "2016-07-17,20:36:11",
+                "details": {
+                  "BEHAVIOR": "Grooms",
+                  "MUTUAL": "YES"
+                },
+                "lat": 33.90366,
+                "actor": "KBH",
+                "class": "Behavior",
+                "alt": 220.9759
+              },
+              {
+                "subject": "ITO",
+                "selectionString": "Aggresses/Moving/YES",
+                "lon": -83.33358,
+                "gpsPrecision": 65,
+                "timestamp": "2016-07-17,20:36:16",
+                "details": {
+                  "BEHAVIOR": "Aggresses",
+                  "CONTEXT": "Moving",
+                  "PHYSICAL_CONTACT": "YES"
+                },
+                "lat": 33.90366,
+                "actor": "IZI",
+                "class": "Behavior",
+                "alt": 220.9759
+              },
+              {
+                "subject": "ITO",
+                "selectionString": "Aggresses/Moving/NO",
+                "lon": -83.33358,
+                "gpsPrecision": 65,
+                "timestamp": "2016-07-17,20:36:22",
+                "details": {
+                  "BEHAVIOR": "Aggresses",
+                  "CONTEXT": "Moving",
+                  "PHYSICAL_CONTACT": "NO"
+                },
+                "comment": "My comment3",
+                "lat": 33.90366,
+                "actor": "ISR",
+                "class": "Behavior",
+                "alt": 220.9759
+              },
+              {
+                "subject": "IZI",
+                "selectionString": "Aggresses/Feeding/Carduus;Celery/Leaves/YES",
+                "lon": -83.33358,
+                "gpsPrecision": 65,
+                "timestamp": "2016-07-17,20:36:27",
+                "details": {
+                  "CONTEXT": "Feeding",
+                  "BEHAVIOR": "Aggresses",
+                  "PART_EATEN": "Leaves",
+                  "PHYSICAL_CONTACT": "YES",
+                  "FOOD_ITEM": "Carduus;Celery"
+                },
+                "lat": 33.90366,
+                "actor": "ISA",
+                "class": "Behavior",
+                "alt": 220.9759
+              },
+              {
+                "subject": "ITO",
+                "selectionString": "Grooms/YES",
+                "lon": -83.33358,
+                "gpsPrecision": 65,
+                "timestamp": "2016-07-17,20:37:40",
+                "details": {
+                  "BEHAVIOR": "Grooms",
+                  "MUTUAL": "YES"
+                },
+                "lat": 33.90366,
+                "actor": "ISR",
+                "class": "Behavior",
+                "alt": 220.9759
+              },
+              {
+                "subject": "IZI",
+                "selectionString": "Supplants/Moving",
+                "lon": -83.33358,
+                "gpsPrecision": 65,
+                "timestamp": "2016-07-17,20:37:40",
+                "details": {
+                  "BEHAVIOR": "Supplants",
+                  "CONTEXT": "Moving"
+                },
+                "lat": 33.90366,
+                "actor": "ITO",
+                "class": "Behavior",
+                "alt": 220.9759
+              }
+            ],
+            "scans": [
+              {
+                "details": {
+                  "Weather": {
+                    "Category": "Cloudy"
+                  },
+                  "Group activity": {
+                    "Category": "Resting"
+                  },
+                  "Vegetation": {
+                    "Type": "Forest",
+                    "Level of disturbance": "Secondary"
+                  }
+                },
+                "observations": [
+                  {
+                    "actor": "KBH",
+                    "details": {
+                      "ACTIVITY": "Moving",
+                      "HEIGHT": "0m"
+                    },
+                    "class": "Observation",
+                    "x_delta": -10.40417,
+                    "y_delta": 1.11082
+                  },
+                  {
+                    "actor": "ISA",
+                    "details": {
+                      "ACTIVITY": "Moving",
+                      "HEIGHT": "0m"
+                    },
+                    "class": "Observation",
+                    "x_delta": -5.319425,
+                    "y_delta": 9.754888
+                  },
+                  {
+                    "actor": "ISR",
+                    "details": {
+                      "ACTIVITY": "Feeding",
+                      "PART_EATEN": "Stem",
+                      "HEIGHT": "2-5m",
+                      "FOOD_ITEM": "Celery;Galium"
+                    },
+                    "class": "Observation",
+                    "x_delta": 0,
+                    "y_delta": 0
+                  },
+                  {
+                    "actor": "ITO",
+                    "class": "Observation",
+                    "x_delta": 9.621904,
+                    "y_delta": 12.45371
+                  },
+                  {
+                    "actor": "IZI",
+                    "class": "Observation",
+                    "x_delta": -8.252933,
+                    "y_delta": -11.4837
+                  }
+                ],
+                "alt": 220.6723,
+                "compassBearing": 74.21383666992188,
+                "class": "Scan",
+                "gpsPrecision": 65,
+                "lon": -83.33358,
+                "lat": 33.90367,
+                "timestamp": "2016-07-17,20:34:40"
+              },
+              {
+                "details": {
+                  "Weather": {
+                    "Category": "Sunny"
+                  },
+                  "Group activity": {
+                    "Category": "Feeding"
+                  },
+                  "Vegetation": {
+                    "Type": "Meadows"
+                  }
+                },
+                "observations": [
+                  {
+                    "actor": "KBH",
+                    "details": {
+                      "ACTIVITY": "Playing",
+                      "HEIGHT": "2-5m"
+                    },
+                    "class": "Observation",
+                    "x_delta": -10.40417,
+                    "y_delta": 1.11082
+                  },
+                  {
+                    "actor": "ISA",
+                    "details": {
+                      "ACTIVITY": "Playing",
+                      "HEIGHT": "2-5m"
+                    },
+                    "class": "Observation",
+                    "x_delta": -5.319425,
+                    "y_delta": 9.754888
+                  },
+                  {
+                    "actor": "ITO",
+                    "details": {
+                      "ACTIVITY": "Resting",
+                      "HEIGHT": ">20m"
+                    },
+                    "class": "Observation",
+                    "x_delta": 9.621904,
+                    "y_delta": 12.45371
+                  },
+                  {
+                    "actor": "IZI",
+                    "details": {
+                      "ACTIVITY": "Playing",
+                      "HEIGHT": "5-10m"
+                    },
+                    "class": "Observation",
+                    "x_delta": -8.252933,
+                    "y_delta": -11.4837
+                  },
+                  {
+                    "actor": "ISR",
+                    "class": "Observation",
+                    "x_delta": 0,
+                    "y_delta": 0
+                  }
+                ],
+                "alt": 220.9759,
+                "compassBearing": 26.00650024414062,
+                "class": "Scan",
+                "gpsPrecision": 65,
+                "lon": -83.33358,
+                "lat": 33.90366,
+                "timestamp": "2016-07-17,20:35:40"
+              },
+              {
+                "details": {
+                  "Weather": {
+                    "Category": "Sunny"
+                  },
+                  "Group activity": {
+                    "Category": "Feeding"
+                  },
+                  "Vegetation": {
+                    "Type": "Meadows"
+                  }
+                },
+                "observations": [
+                  {
+                    "actor": "MSK",
+                    "details": {
+                      "ACTIVITY": "Playing",
+                      "HEIGHT": "5-10m"
+                    },
+                    "class": "Observation",
+                    "x_delta": 11.99609,
+                    "y_delta": 2.311602
+                  },
+                  {
+                    "actor": "ISR",
+                    "class": "Observation",
+                    "x_delta": 0,
+                    "y_delta": 0
+                  },
+                  {
+                    "actor": "ITO",
+                    "class": "Observation",
+                    "x_delta": -11.55019,
+                    "y_delta": 4.971315
+                  },
+                  {
+                    "actor": "IZI",
+                    "class": "Observation",
+                    "x_delta": -8.252933,
+                    "y_delta": -11.4837
+                  }
+                ],
+                "alt": 220.9759,
+                "compassBearing": 67.521728515625,
+                "class": "Scan",
+                "gpsPrecision": 65,
+                "lon": -83.33358,
+                "lat": 33.90366,
+                "timestamp": "2016-07-17,20:36:40"
+              },
+              {
+                "details": {
+                  "Weather": {
+                    "Category": "Hail"
+                  },
+                  "Group activity": {
+                    "Category": "Feeding"
+                  },
+                  "Vegetation": {
+                    "Type": "Meadows"
+                  }
+                },
+                "observations": [
+                  {
+                    "actor": "ISA",
+                    "details": {
+                      "ACTIVITY": "Resting",
+                      "HEIGHT": "2-5m"
+                    },
+                    "class": "Observation",
+                    "x_delta": 4.380705,
+                    "y_delta": 11.51499
+                  },
+                  {
+                    "actor": "ITO",
+                    "details": {
+                      "ACTIVITY": "Playing",
+                      "HEIGHT": "5-10m"
+                    },
+                    "class": "Observation",
+                    "x_delta": -11.55019,
+                    "y_delta": 4.971315
+                  },
+                  {
+                    "actor": "ISR",
+                    "details": {
+                      "ACTIVITY": "Playing",
+                      "HEIGHT": "5-10m"
+                    },
+                    "class": "Observation",
+                    "x_delta": 0,
+                    "y_delta": 0
+                  },
+                  {
+                    "actor": "PAS",
+                    "details": {
+                      "ACTIVITY": "Playing",
+                      "HEIGHT": "5-10m"
+                    },
+                    "class": "Observation",
+                    "x_delta": 8.565842,
+                    "y_delta": -14.06519
+                  },
+                  {
+                    "actor": "MSK",
+                    "details": {
+                      "ACTIVITY": "Feeding",
+                      "PART_EATEN": "Stem",
+                      "HEIGHT": "0m",
+                      "FOOD_ITEM": "Celery"
+                    },
+                    "class": "Observation",
+                    "x_delta": 11.99609,
+                    "y_delta": 2.311602
+                  },
+                  {
+                    "actor": "IZI",
+                    "class": "Observation",
+                    "x_delta": -8.252933,
+                    "y_delta": -11.4837
+                  }
+                ],
+                "alt": 220.9759,
+                "compassBearing": 111.7117729187012,
+                "class": "Scan",
+                "gpsPrecision": 65,
+                "lon": -83.33358,
+                "lat": 33.90366,
+                "timestamp": "2016-07-17,20:37:40"
+              }
+            ],
+            "animal_id": "ISR",
+            "text": [
+              {
+                "alt": 220.9759,
+                "gpsPrecision": 65,
+                "class": "MainComment",
+                "lon": -83.33358,
+                "text": "Ihbvvjlg tfr",
+                "lat": 33.90366,
+                "timestamp": "2016-07-17,20:37:24"
+              }
+            ],
+            "end_time": "2016-07-17,20:37:40",
+            "duration": 180,
+            "class": "Focal",
+            "continuous_focal_vars": {
+              "wound": {
+                "location": "leg",
+                "Which leg?": "right"
+              },
+              "skin lesion": {
+                "type": "ulcer"
+              }
+            }
+          },
+          {
+            "scan_interval": 60,
+            "details": {
+              "Data usage": {
+                "Usage": "Training"
+              }
+            },
+            "start_time": "2016-07-17,20:39:03",
+            "behaviors": [
+              {
+                "subject": "KEZ",
+                "selectionString": "Nurses",
+                "lon": -83.33343,
+                "gpsPrecision": 65,
+                "timestamp": "2016-07-17,20:39:31",
+                "details": {
+                  "BEHAVIOR": "Nurses"
+                },
+                "comment": "Comment1",
+                "lat": 33.9038,
+                "actor": "MUT",
+                "class": "Behavior",
+                "alt": 221.4269
+              },
+              {
+                "subject": "IKZ",
+                "selectionString": "Copulates with",
+                "lon": -83.33343,
+                "gpsPrecision": 65,
+                "timestamp": "2016-07-17,20:39:35",
+                "details": {
+                  "BEHAVIOR": "Copulates with"
+                },
+                "lat": 33.9038,
+                "actor": "ISA",
+                "class": "Behavior",
+                "alt": 221.4269
+              }
+            ],
+            "scans": [
+              {
+                "details": {
+                  "Weather": {
+                    "Category": "Cloudy"
+                  },
+                  "Group activity": {
+                    "Category": "Moving"
+                  },
+                  "Vegetation": {
+                    "Type": "Meadows"
+                  }
+                },
+                "observations": [
+                  {
+                    "actor": "ISA",
+                    "details": {
+                      "ACTIVITY": "Resting",
+                      "HEIGHT": "2-5m"
+                    },
+                    "class": "Observation",
+                    "x_delta": 1.408085,
+                    "y_delta": 8.777052
+                  },
+                  {
+                    "actor": "KEZ",
+                    "details": {
+                      "ACTIVITY": "Resting",
+                      "HEIGHT": "2-5m"
+                    },
+                    "class": "Observation",
+                    "x_delta": 13.65059,
+                    "y_delta": 7.251628
+                  },
+                  {
+                    "actor": "MUT",
+                    "class": "Observation",
+                    "x_delta": 0,
+                    "y_delta": 0
+                  },
+                  {
+                    "actor": "IKZ",
+                    "class": "Observation",
+                    "x_delta": 1.877446,
+                    "y_delta": -11.79661
+                  }
+                ],
+                "alt": 221.3236,
+                "compassBearing": 118.3208484649658,
+                "class": "Scan",
+                "gpsPrecision": 65,
+                "lon": -83.3335,
+                "lat": 33.90366,
+                "timestamp": "2016-07-17,20:39:03"
+              },
+              {
+                "details": {
+                  "Weather": {
+                    "Category": "Cloudy"
+                  },
+                  "Group activity": {
+                    "Category": "Moving"
+                  },
+                  "Vegetation": {
+                    "Type": "Meadows"
+                  }
+                },
+                "observations": [
+                  {
+                    "actor": "ITO",
+                    "details": {
+                      "ACTIVITY": "Playing",
+                      "HEIGHT": "2-5m"
+                    },
+                    "class": "Observation",
+                    "x_delta": -10.67797,
+                    "y_delta": 6.664927
+                  },
+                  {
+                    "actor": "MUT",
+                    "details": {
+                      "ACTIVITY": "Playing",
+                      "HEIGHT": "2-5m"
+                    },
+                    "class": "Observation",
+                    "x_delta": 0,
+                    "y_delta": 0
+                  },
+                  {
+                    "actor": "ISA",
+                    "details": {
+                      "ACTIVITY": "Playing",
+                      "HEIGHT": "2-5m"
+                    },
+                    "class": "Observation",
+                    "x_delta": 1.408085,
+                    "y_delta": 8.777052
+                  },
+                  {
+                    "actor": "IKZ",
+                    "class": "Observation",
+                    "x_delta": 1.877446,
+                    "y_delta": -11.79661
+                  },
+                  {
+                    "actor": "KEZ",
+                    "class": "Observation",
+                    "x_delta": 13.65059,
+                    "y_delta": 7.251628
+                  }
+                ],
+                "alt": 221.5843,
+                "compassBearing": 164.9343109130859,
+                "class": "Scan",
+                "gpsPrecision": 65,
+                "lon": -83.33356,
+                "lat": 33.90375,
+                "timestamp": "2016-07-17,20:40:03"
+              },
+              {
+                "details": {
+                  "Weather": {
+                    "Category": "Cloudy"
+                  },
+                  "Group activity": {
+                    "Category": "Moving"
+                  },
+                  "Vegetation": {
+                    "Type": "Meadows"
+                  }
+                },
+                "observations": [
+                  {
+                    "actor": "MUT",
+                    "class": "Observation",
+                    "x_delta": 0,
+                    "y_delta": 0
+                  },
+                  {
+                    "actor": "ISA",
+                    "class": "Observation",
+                    "x_delta": 1.408085,
+                    "y_delta": 8.777052
+                  },
+                  {
+                    "actor": "IKZ",
+                    "class": "Observation",
+                    "x_delta": 1.877446,
+                    "y_delta": -11.79661
+                  },
+                  {
+                    "actor": "KEZ",
+                    "class": "Observation",
+                    "x_delta": 13.65059,
+                    "y_delta": 7.251628
+                  },
+                  {
+                    "actor": "ITO",
+                    "class": "Observation",
+                    "x_delta": -10.67797,
+                    "y_delta": 6.664927
+                  }
+                ],
+                "alt": 221.5843,
+                "compassBearing": 56.12921142578125,
+                "class": "Scan",
+                "gpsPrecision": 65,
+                "lon": -83.33356,
+                "lat": 33.90375,
+                "timestamp": "2016-07-17,20:41:03"
+              }
+            ],
+            "animal_id": "MUT",
+            "text": [
+              {
+                "alt": 221.5843,
+                "gpsPrecision": 65,
+                "class": "MainComment",
+                "lon": -83.33356,
+                "text": "Gtre",
+                "lat": 33.90375,
+                "timestamp": "2016-07-17,20:40:50"
+              }
+            ],
+            "end_time": "2016-07-17,20:41:03",
+            "duration": 120,
+            "class": "Focal",
+            "continuous_focal_vars": {
+              "wound": {
+                "location": "leg",
+                "Which leg?": "right"
+              },
+              "fecal sample collection": {
+                "type": "ethanol",
+                "individual": "FAS;FAT;IKZ"
+              }
+            }
+          }
+        ],
+        "group_id": "ISA;MSK",
+        "map_mode_on": 0,
+        "arrival_time": "2016-07-17,20:34:18",
+        "departure_time": "2016-07-17,20:41:55",
+        "class": "Session",
+        "compass_on": 1
+      }
+    ]
+  }
+}

@@ -1,4 +1,8 @@
+library(rjson)
 
+dat <- fromJSON(file="~/Documents/GITHUB clones/AOToolBox/default json files/Winnie_2016-07-17_20h42m58s.dat")
+behav <- fromJSON(file="~/Documents/GITHUB clones/AOToolBox/default json files/behaviors.json")
+layout_info.json <- fromJSON(file="~/Documents/GITHUB clones/AOToolBox/default json files/layout_info.json")
 jsonOutputConversion <- function(json.output.file, behaviors.json, layout_info.json)
 {
 ####path to behaviors.json
@@ -22,6 +26,9 @@ behaviorHeaders <- getListHeaders(behav$dyadic)
 scanHeaders <- getListHeaders(behav$scan)
 #################get the self-directed behavior list here:
 selfHeaders <- getListHeaders(behav$solo)
+#################get the self-directed behavior list here:
+selfHeaders <- getListHeaders(behav$solo)
+
 
 #################get the layout variables
 scanVars <- unlist(lapply(layout$scan_variables, function(v) v$name))
