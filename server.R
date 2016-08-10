@@ -381,71 +381,127 @@ json.output.file.input <- reactive({
       return(NULL)
     readLines(input$json.output.file$datapath, warn=F)
   })
-  behaviors.json.input <- reactive({
+  
+behaviors.json.input <- reactive({
     if (is.null(input$behaviors.json))
       return(NULL)
     readLines(input$behaviors.json$datapath, warn=F)
   })
-  layout_info.json.input <- reactive({
+layout_info.json.input <- reactive({
     if (is.null(input$layout_info.json))
       return(NULL)
     readLines(input$layout_info.json$datapath, warn=F)
   })
 
-	dataOutput <- reactive({
+dataOutput <- reactive({
 		if(is.null(json.output.file.input()) | is.null(behaviors.json.input()) | is.null(layout_info.json.input())) {return(NULL)} else 
 		jsonOutputConversion(json.output.file.input(), behaviors.json.input(), layout_info.json.input())
 		})
 		
-	output$list_focals.csv <- renderText({
+	output$sessionsTable.csv <- renderText({
 	if(is.null(dataOutput())) return(NULL)
-		"list_focals.csv"
+		"sessionsTable.csv"
 		})
-    output$list_behaviors.csv <- renderText({
+	output$focalsTable.csv <- renderText({
+	if(is.null(dataOutput())) return(NULL)
+		"focalsTable.csv"
+		})
+	output$behaviorsTable.csv <- renderText({
+	if(is.null(dataOutput())) return(NULL)
+		"behaviorsTable.csv"
+		})
+	output$scansTable.csv <- renderText({
+	if(is.null(dataOutput())) return(NULL)
+		"scansTable.csv"
+		})
+	output$backgroundTapsTable.csv <- renderText({
+	if(is.null(dataOutput())) return(NULL)
+		"backgroundTapsTable.csv"
+		})
+	output$commentsTable.csv <- renderText({
+	if(is.null(dataOutput())) return(NULL)
+		"commentsTable.csv"
+		})
+    output$dayVarsTable.csv <- renderText({
     	if(is.null(dataOutput())) return(NULL)
-    "list_behaviors.csv"
+    		"dayVarsTable.csv"
+    		})
+    	output$focalVarsTable.csv <- renderText({
+    if(is.null(dataOutput())) return(NULL)
+   		"focalVarsTable.csv"
     	})
-    	output$list_scans.csv <- renderText({
-    	if(is.null(dataOutput())) return(NULL)
-    "list_scans.csv"
+    output$continuousVarsTable.csv <- renderText({
+   	if(is.null(dataOutput())) return(NULL)
+   		"continuousVarsTable.csv"
     	})
-    output$list_background_taps.csv <- renderText({
-    	if(is.null(dataOutput())) return(NULL)
-    "list_background_taps.csv"
-    	})
-    output$list_texts.csv <- renderText({
-    	if(is.null(dataOutput())) return(NULL)
-    "list_texts.csv"
-    	})	
+    output$scanVarsTable.csv <- renderText({
+   	if(is.null(dataOutput())) return(NULL)
+   		"scanVarsTable.csv"
+   		})
+    		
+
 		
 	output$table1 <- renderTable({
 		if(is.null(dataOutput())) return(NULL)
-		dataOutput()$focalsTable
+		dataOutput()$sessionsTable
 		}, include.rownames=F)
 	
 	output$table2 <- renderTable({
 		if(is.null(dataOutput())) return(NULL)
-		dataOutput()$behaviorsTable
+		dataOutput()$focalsTable
 		}, include.rownames=F)
 
 	output$table3 <- renderTable({
 		if(is.null(dataOutput())) return(NULL)
-		dataOutput()$scansTable
+		dataOutput()$behaviorsTable
 		}, include.rownames=F)
 
 	output$table4 <- renderTable({
 		if(is.null(dataOutput())) return(NULL)
-		dataOutput()$backgroundTapsTable
+		dataOutput()$scansTable
 		}, include.rownames=F)
 		
 	output$table5 <- renderTable({
 		if(is.null(dataOutput())) return(NULL)
+		dataOutput()$backgroundTapsTable
+		}, include.rownames=F)
+		
+	output$table6 <- renderTable({
+		if(is.null(dataOutput())) return(NULL)
 		dataOutput()$commentsTable
 		}, include.rownames=F)
-	
+		
+	output$table7 <- renderTable({
+		if(is.null(dataOutput())) return(NULL)
+		dataOutput()$dayVarsTable
+		}, include.rownames=F)
+		
+	output$table8 <- renderTable({
+		if(is.null(dataOutput())) return(NULL)
+		dataOutput()$focalVarsTable
+		}, include.rownames=F)
+		
+	output$table9 <- renderTable({
+		if(is.null(dataOutput())) return(NULL)
+		dataOutput()$continuousVarsTable
+		}, include.rownames=F)
+
+	output$table10 <- renderTable({
+		if(is.null(dataOutput())) return(NULL)
+		dataOutput()$scanVarsTable
+		}, include.rownames=F)
+
+	output$downloadSessionsTable <- downloadHandler(
+    filename = function() { 
+		 paste('sessionsTable.csv', sep='') 
+	 },
+    content = function(file) {
+     write.csv(dataOutput()$sessionsTable, file, row.names=F)
+    }
+  )
 	output$downloadFocalsTable <- downloadHandler(
     filename = function() { 
-		 paste('list_focals.csv', sep='') 
+		 paste('focalsTable.csv', sep='') 
 	 },
     content = function(file) {
      write.csv(dataOutput()$focalsTable, file, row.names=F)
@@ -453,7 +509,7 @@ json.output.file.input <- reactive({
   )
 	output$downloadBehaviorsTable <- downloadHandler(
     filename = function() { 
-		 paste('list_behaviors.csv', sep='') 
+		 paste('behaviorsTable.csv', sep='') 
 	 },
     content = function(file) {
      write.csv(dataOutput()$behaviorsTable, file, row.names=F)
@@ -461,7 +517,7 @@ json.output.file.input <- reactive({
   )
 	output$downloadScansTable <- downloadHandler(
     filename = function() { 
-		 paste('list_scans.csv', sep='') 
+		 paste('scansTable.csv', sep='') 
 	 },
     content = function(file) {
      write.csv(dataOutput()$scansTable, file, row.names=F)
@@ -469,19 +525,52 @@ json.output.file.input <- reactive({
   )
   	output$downloadBackgroundTapsTable <- downloadHandler(
     filename = function() { 
-		 paste('list_background_taps.csv', sep='') 
+		 paste('backgroundTapsTable.csv', sep='') 
 	 },
     content = function(file) {
      write.csv(dataOutput()$backgroundTapsTable, file, row.names=F)
     }
   )
-   	output$downloadCommentsTapsTable <- downloadHandler(
+   	output$downloadCommentsTable <- downloadHandler(
     filename = function() { 
-		 paste('list_texts.csv', sep='') 
+		 paste('commentsTable.csv', sep='') 
 	 },
     content = function(file) {
      write.csv(dataOutput()$commentsTable, file, row.names=F)
     }
   )
+  output$downloadDayVarsTable <- downloadHandler(
+    filename = function() { 
+		 paste('dayVarsTable.csv', sep='') 
+	 },
+    content = function(file) {
+     write.csv(dataOutput()$dayVarsTable, file, row.names=F)
+    }
+  )
+  output$downloadFocalVarsTable <- downloadHandler(
+    filename = function() { 
+		 paste('focalVarsTable.csv', sep='') 
+	 },
+    content = function(file) {
+     write.csv(dataOutput()$focalVarsTable, file, row.names=F)
+    }
+  )
+  output$downloadContinuousVarsTable <- downloadHandler(
+    filename = function() { 
+		 paste('continuousVarsTable.csv', sep='') 
+	 },
+    content = function(file) {
+     write.csv(dataOutput()$continuousVarsTable, file, row.names=F)
+    }
+  )
+  output$downloadScanVarsTable <- downloadHandler(
+    filename = function() { 
+		 paste('scanVarsTable.csv', sep='') 
+	 },
+    content = function(file) {
+     write.csv(dataOutput()$scanVarsTable, file, row.names=F)
+    }
+  )
+  
   
 })

@@ -1,8 +1,11 @@
 library(rjson)
 
-dat <- fromJSON(file="~/Documents/GITHUB clones/AOToolBox/default json files/Winnie_2016-07-17_20h42m58s.dat")
-behav <- fromJSON(file="~/Documents/GITHUB clones/AOToolBox/default json files/behaviors.json")
-layout_info.json <- fromJSON(file="~/Documents/GITHUB clones/AOToolBox/default json files/layout_info.json")
+#dat <- fromJSON(file="~/Documents/GITHUB clones/AOToolBox/default json files/Neetha_2016-08-07_15h01m43s.dat")
+#behav <- fromJSON(file="~/Documents/GITHUB clones/AOToolBox/default json files/behaviors.json")
+#layout <- fromJSON(file="~/Documents/GITHUB clones/AOToolBox/default json files/layout_info.json")
+#jsonOutputConversion(json.output.file=dat, behaviors.json=behav, layout_info.json=layout)
+
+
 jsonOutputConversion <- function(json.output.file, behaviors.json, layout_info.json)
 {
 ####path to behaviors.json
@@ -12,116 +15,234 @@ layout <- fromJSON(paste(layout_info.json, collapse=""))
 ####path to sample output data file
 dat <- fromJSON(paste(json.output.file, collapse=""))
 
-
-#jsonList <- behav$solo
 getListHeaders <- function(jsonList){
 temp <- names(unlist(jsonList))
 temp2 <- unlist(strsplit(temp, split="name"))
 unique(unlist(strsplit(temp2, split="[.]")))
 }
 
-#################get the behavior list here:
+#################get the list of behaviors and modifiers here:
 behaviorHeaders <- getListHeaders(behav$dyadic)
-#################get the scan activity list here:
+#################same for scan:
 scanHeaders <- getListHeaders(behav$scan)
-#################get the self-directed behavior list here:
+#################same for self:
 selfHeaders <- getListHeaders(behav$solo)
-#################get the self-directed behavior list here:
-selfHeaders <- getListHeaders(behav$solo)
+#################same for self:
+continuousVars <- list()
+continuousVars$continuousVars <- layout$continuous_focal_variables
+continuousVarsHeaders <- getListHeaders(continuousVars)
+#################same for scanvars:
+scanVars <- list()
+scanVars$scanVars <- layout$scan_variables
+scanVarsHeaders <- getListHeaders(scanVars)
+#################same for focalvars:
+focalVars <- list()
+focalVars$focalVars <- layout$focal_variables
+focalVarsHeaders <- getListHeaders(focalVars)
+#################same for dayvars:
+dayVars <- list()
+dayVars$dayVars <- layout$day_variables
+dayVarsHeaders <- getListHeaders(dayVars)
 
 
-#################get the layout variables
-scanVars <- unlist(lapply(layout$scan_variables, function(v) v$name))
-focalVars <- unlist(lapply(layout$focal_variables, function(v) v$name))
-dayVars <- unlist(lapply(layout$day_variables, function(v) v$name))
-
-
-#################list_focals
-focalsTable <- matrix(nrow=0, ncol=15+length(dayVars)+length(focalVars))
-colnames(focalsTable) <- c(
-	"session_start_timeStamp", 
-	"session_end_timeStamp",  
-	"device_ID",
-	"layout_info_json_version",
-	"behaviors_json_version",
-	"pin_code_name",
-	"gps_on",
-	"compass_on",
-	"map_mode_on",
-	"group_ID",
-	dayVars, 
-	"focal_start_timeStamp", 
-	"focal_end_timeStamp", 
-	"focal_set_duration", 
-	"focal_set_scan_interval",
-	focalVars,
-	"focal_individual_ID"
-	)
-	
 NAcheck <- function(x){
 	ifelse (is.null(x), NA,x)
 }
+#################list_sessions
+sessionsTable <- matrix(nrow=0, ncol=11)
+colnames(sessionsTable) <- c(
+	"device_ID",
+	"session_start_timeStamp", 
+	"session_end_timeStamp",
+	"group_ID",
+	"pin_code_name",
+	"observer_name",
+	"layout_info_json_version",
+	"behaviors_json_version",
+	"gps_on",
+	"compass_on",
+	"map_mode_on"
+)
 
+if(length(dat$data$sessions)>0){
+for (i in 1:length(dat$data$sessions)){
+	session <- dat$data$sessions[[i]]
+	sessionsTable <- rbind(sessionsTable, as.character(c(
+	NAcheck(session$device_ID),
+	NAcheck(session$arrival_time),
+	NAcheck(session$departure_time),
+	NAcheck(session$group_id),
+	NAcheck(session$pin_name),
+	NAcheck(unlist(session$details$'Observer name')),
+	NAcheck(session$layout_info_JSON_file_ID),
+	NAcheck(session$behaviors_JSON_file_ID),
+	NAcheck(session$gps_on),
+	NAcheck(session$compass_on),	
+	NAcheck(session$map_mode_on))))
+	}
+}
+
+##########generic function helping parsing hierarchical data
+varMatrix <- function(observations, headers){
+	newTable <- matrix(nrow=0, ncol=length(headers))
+	for(j in 1:length(observations)){
+		var <- observations[j]
+		varNameTemp <- names(var)
+		modifiers <- unlist(var)
+		newnames <- unlist(lapply(strsplit(names(modifiers), split="[.]"), function(v) v[-1]))
+		headers <- unlist(lapply(strsplit(headers, split="[*]"), function(v) v[1]))
+		newRow <- rep(NA,length(headers))
+		newRow[match(newnames, headers)] <- modifiers
+		newRow[1] <- varNameTemp
+		newTable <- rbind(newTable, newRow)
+	}
+	return(newTable)
+}
+
+#################list_dayVars
+dayVarsTable <- matrix(nrow=0, ncol=2+length(dayVarsHeaders))
+colnames(dayVarsTable) <- c(
+	"device_ID",
+	"session_start_timeStamp", 
+	dayVarsHeaders
+)
+if(length(dat$data$sessions)>0){
+for (i in 1:length(dat$data$sessions)){
+	session <- dat$data$sessions[[i]]
+	dayVarsDetailsTemp <- session$details[grep("Observer name", names(session$details), invert=T)]
+	newDayVarsTable <- varMatrix(dayVarsDetailsTemp, dayVarsHeaders)
+	NAcheck(session$device_ID)
+	NAcheck(session$arrival_time)
+	dayVarsTable <- rbind(dayVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), newDayVarsTable))
+	}
+}
+##################list_focalVars
+focalVarsTable <- matrix(nrow=0, ncol=3+length(focalVarsHeaders))
+colnames(focalVarsTable) <- c(
+	"device_ID",
+	"session_start_timeStamp",
+	"focal_start_timeStamp",
+	focalVarsHeaders
+)
+
+if(length(dat$data$sessions)>0){
+for (i in 1:length(dat$data$sessions)){
+	session <- dat$data$sessions[[i]]
+	if(length(session$focals)>0){
+	for (j in 1:length(session$focals)){
+		focal <- session$focals[[j]]
+		focalVarsDetailsTemp <- focal$details
+		newFocalVarsTable <- varMatrix(focalVarsDetailsTemp, focalVarsHeaders)
+	focalVarsTable <- rbind(focalVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newFocalVarsTable))
+	}
+	}
+	}
+}
+
+##################list_continuousVars
+continuousVarsTable <- matrix(nrow=0, ncol=3+length(continuousVarsHeaders))
+colnames(continuousVarsTable) <- c(
+	"device_ID",
+	"session_start_timeStamp",
+	"focal_start_timeStamp",
+	continuousVarsHeaders
+)
+
+if(length(dat$data$sessions)>0){
+for (i in 1:length(dat$data$sessions)){
+	session <- dat$data$sessions[[i]]
+	if(length(session$focals)>0){
+	for (j in 1:length(session$focals)){
+		focal <- session$focals[[j]]
+		continuousVarsDetailsTemp <- focal$continuous_focal_vars
+		newContinuousVarsTable <- varMatrix(continuousVarsDetailsTemp, continuousVarsHeaders)
+	continuousVarsTable <- rbind(continuousVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newContinuousVarsTable))
+	}
+	}
+	}
+}
+
+##################list_scanVars
+scanVarsTable <- matrix(nrow=0, ncol=4+length(scanVarsHeaders))
+colnames(scanVarsTable) <- c(
+	"device_ID",
+	"session_start_timeStamp",
+	"focal_start_timeStamp",
+	"scan_timeStamp",
+	scanVarsHeaders
+)
+
+if(length(dat$data$sessions)>0){
+for (i in 1:length(dat$data$sessions)){
+	session <- dat$data$sessions[[i]]
+	if(length(session$focals)>0){
+	for (j in 1:length(session$focals)){
+		focal <- session$focals[[j]]
+		if(length(focal$scans)>0){
+		for (k in 1:length(session$focals)){
+		scan <- focal$scans[[k]]
+		scanVarsDetailsTemp <- scan$details
+		newscanVarsTable <- varMatrix(scanVarsDetailsTemp, scanVarsHeaders)
+		scanVarsTable <- rbind(scanVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), NAcheck(scan$timestamp), newscanVarsTable))
+		}
+		}
+		}
+	}
+	}
+}
+
+#################list_focals
+focalsTable <- matrix(nrow=0, ncol=7)
+colnames(focalsTable) <- c(
+	"device_ID",
+	"session_start_timeStamp", 
+	"focal_start_timeStamp",
+	"focal_end_timeStamp", 
+	"focal_set_duration", 
+	"focal_set_scan_interval",
+	"focal_individual_ID"
+)
+
+if(length(dat$data$sessions)>0){
 for (i in 1:length(dat$data$sessions)){
 	session <- dat$data$sessions[[i]]
 	if(length(session$focal)>0){
 	for (j in 1:length(session$focal)){
 		focal <- session$focal[[j]]
-		dayVarsTemp <- unlist(session$details)
-		dayVarsTemp <- dayVarsTemp [-grep(names(dayVarsTemp), pattern="Group ID")]
-		focalVarsTemp <- unlist(focal$details)
 		focalsTable <- rbind(focalsTable, as.character(c(
-		NAcheck(session$arrival_time),
-		NAcheck(session$departure_time),
 		NAcheck(session$device_ID),
-		NAcheck(session$layout_info_JSON_file_ID),
-		NAcheck(session$behaviors_JSON_file_ID),
-		NAcheck(session$pin_name),
-		NAcheck(session$gps_on),
-		NAcheck(session$map_mode_on),
-		NAcheck(session$compass_on),
-		NAcheck(session$details$'Group ID'),
-		dayVarsTemp,
+		NAcheck(session$arrival_time),
 		NAcheck(focal$start_time),
 		NAcheck(focal$end_time),
 		NAcheck(focal$duration),
 		NAcheck(focal$scan_interval),
-		focalVarsTemp,
 		NAcheck(focal$animal_id))))
 		}
 	}
 }
+}
+
 
 #################
-behaviorsTable <- matrix(nrow=0, ncol=22+length(dayVars)+length(focalVars)+length(behaviorHeaders)+length(selfHeaders))
+behaviorsTable <- matrix(nrow=0, ncol=11+length(behaviorHeaders)+length(selfHeaders))
 colnames(behaviorsTable) <- c(
-	"session_start_timeStamp", 
-	"session_end_timeStamp",  
 	"device_ID",
-	"layout_info_json_version",
-	"behaviors_json_version",
-	"pin_code_name",
-	"gps_on",
-	"compass_on",
-	"map_mode_on",
-	"group_ID",
-	dayVars, 
-	"focal_start_timeStamp", 
-	"focal_end_timeStamp", 
-	"focal_set_duration", 
-	"focal_set_scan_interval",
-	focalVars,
-	"focal_individual_ID", 
+	"session_start_timeStamp", 
+	"focal_start_timeStamp",
 	"behavior_timeStamp", 
 	"actor", 
 	"subject",
 	 behaviorHeaders, selfHeaders,
+	"comment",
 	"latitude", 
 	"longitude",
 	"gps_horizontal_precision",
 	"altitude"
 	)
 
+if(length(dat$data$sessions)>0){
+behaviorHeaders2 <- unlist(lapply(strsplit(behaviorHeaders, split="[*]"), function(v) v[1]))
+selfHeaders2 <- unlist(lapply(strsplit(selfHeaders, split="[*]"), function(v) v[1]))
 for (i in 1:length(dat$data$sessions)){
 	session <- dat$data$sessions[[i]]
 	if(length(session$focal)>0){
@@ -129,69 +250,42 @@ for (i in 1:length(dat$data$sessions)){
 		focal <- session$focal[[j]]
 		if(length(focal$behaviors)>0){
 			for (k in 1:length(focal$behaviors)){
-				#print(paste(i,j,k))
 				behavior <- focal$behaviors[[k]]
-				dayVarsTemp <- unlist(session$details)
-				dayVarsTemp <- dayVarsTemp [-grep(names(dayVarsTemp), pattern="Group ID")]
-				focalVarsTemp <- unlist(focal$details)
 				behaviorDetailsTemp <- behavior$details
-				behaviorDetailsTemp2 <- character(length(c(behaviorHeaders, selfHeaders)))
-				behaviorDetailsTemp2[match(names(unlist(behaviorDetailsTemp)), c(behaviorHeaders, selfHeaders))] <- unlist(behaviorDetailsTemp)
+				behaviorDetailsTemp2 <- character(length(c(selfHeaders, behaviorHeaders)))
+				if(behavior$actor==behavior$subject){
+				behaviorDetailsTemp2[length(behaviorHeaders)+ match(names(unlist(behaviorDetailsTemp)), selfHeaders2)] <- unlist(behaviorDetailsTemp)
+				} else {
+				behaviorDetailsTemp2[match(names(unlist(behaviorDetailsTemp)), behaviorHeaders2)] <- unlist(behaviorDetailsTemp)
+				}
 				behaviorsTable <- rbind(behaviorsTable, as.character(c(
-				NAcheck(session$arrival_time),
-				NAcheck(session$departure_time),
 				NAcheck(session$device_ID),
-				NAcheck(session$layout_info_JSON_file_ID),
-				NAcheck(session$behaviors_JSON_file_ID),
-				NAcheck(session$pin_name),
-				NAcheck(session$gps_on),
-				NAcheck(session$map_mode_on),
-				NAcheck(session$compass_on),
-				NAcheck(session$details$'Group ID'),
-				dayVarsTemp,
-				NAcheck(focal$start_time),
-				NAcheck(focal$end_time),
-				NAcheck(focal$duration),
-				NAcheck(focal$scan_interval),
-				focalVarsTemp,
-				NAcheck(focal$animal_id),
+				NAcheck(session$arrival_time),
+				NAcheck(focal$start_time),	
 				NAcheck(behavior$timestamp),
 				NAcheck(behavior$actor),
 				NAcheck(behavior$subject),
 				behaviorDetailsTemp2,
+				NAcheck(behavior$comment),
 				NAcheck(behavior$lat),
 				NAcheck(behavior$lon),
 				NAcheck(behavior$gpsPrecision),
-				NAcheck(behavior$alt)
+				NAcheck(behavior$alt)							
 				)))
 				}
 			}
 		}
 	}
 }
+}
 
 ##############################
-scansTable <- matrix(nrow=0, ncol=25+length(dayVars)+length(focalVars)+length(scanHeaders)+length(scanVars))
+scansTable <- matrix(nrow=0, ncol=13+length(scanHeaders))
 colnames(scansTable) <- c(
-	"session_start_timeStamp", 
-	"session_end_timeStamp",  
 	"device_ID",
-	"layout_info_json_version",
-	"behaviors_json_version",
-	"pin_code_name",
-	"gps_on",
-	"compass_on",
-	"map_mode_on",
-	"group_ID",
-	dayVars, 
-	"focal_start_timeStamp", 
-	"focal_end_timeStamp", 
-	"focal_set_duration", 
-	"focal_set_scan_interval",
-	focalVars,
-	"focal_individual_ID",
+	"session_start_timeStamp", 
+	"focal_start_timeStamp",
 	"timeStamp",
-	scanVars,
 	"scanned_individual_ID",
 	scanHeaders,
 	"x_position",
@@ -204,6 +298,8 @@ colnames(scansTable) <- c(
 	"compass_bearing"
 )
 
+if(length(dat$data$sessions)>0){
+scanHeaders2 <- unlist(lapply(strsplit(scanHeaders, split="[*]"), function(v) v[1]))
 for (i in 1:length(dat$data$sessions)){
 	session <- dat$data$sessions[[i]]
 	if(length(session$focal)>0){
@@ -215,33 +311,15 @@ for (i in 1:length(dat$data$sessions)){
 				for(m in 1:length(focal$scans[[k]]$observations))
 					{
 					observation <- focal$scans[[k]]$observations[[m]]
-					dayVarsTemp <- unlist(session$details)
-					dayVarsTemp <- dayVarsTemp [-grep(names(dayVarsTemp), pattern="Group ID")]
-					focalVarsTemp <- unlist(focal$details)
-					scanDetailsTemp <- unlist(scan$details)
-					observationDetailsTemp <- observation$details
-					observationDetailsTemp2 <- character(length(c(scanHeaders)))
-					observationDetailsTemp2[match(names(unlist(observationDetailsTemp)), scanHeaders)] <- unlist(observationDetailsTemp)
+					observationDetailsTemp <- observation$details	
+					observationDetailsTemp2 <- character(length(scanHeaders))
+					observationDetailsTemp2[match(names(unlist(observationDetailsTemp)), scanHeaders2)] <- unlist(observationDetailsTemp)
+					
 					scansTable <- rbind(scansTable, as.character(c(
-					NAcheck(session$arrival_time),
-					NAcheck(session$departure_time),
 					NAcheck(session$device_ID),
-					NAcheck(session$layout_info_JSON_file_ID),
-					NAcheck(session$behaviors_JSON_file_ID),
-					NAcheck(session$pin_name),
-					NAcheck(session$gps_on),
-					NAcheck(session$map_mode_on),
-					NAcheck(session$compass_on),
-					NAcheck(session$details$'Group ID'),
-					dayVarsTemp,
+					NAcheck(session$arrival_time),
 					NAcheck(focal$start_time),
-					NAcheck(focal$end_time),
-					NAcheck(focal$duration),
-					NAcheck(focal$scan_interval),
-					focalVarsTemp,
-					NAcheck(focal$animal_id),
 					NAcheck(scan$timestamp),
-					scanDetailsTemp,
 					NAcheck(observation$actor),
 					observationDetailsTemp2,
 					NAcheck(observation$x_delta),
@@ -258,27 +336,14 @@ for (i in 1:length(dat$data$sessions)){
 		}
 	}
 }
+}
 
 ##out_of_viewData #background tap time and date, background tap action, background tap latitude, background tap longitude,
-backgroundTapsTable <- matrix(nrow=0, ncol=21+length(dayVars)+length(focalVars))
+backgroundTapsTable <- matrix(nrow=0, ncol=9)
 colnames(backgroundTapsTable) <- c(
-	"session_start_timeStamp", 
-	"session_end_timeStamp",  
 	"device_ID",
-	"layout_info_json_version",
-	"behaviors_json_version",
-	"pin_code_name",
-	"gps_on",
-	"compass_on",
-	"map_mode_on",
-	"group_ID",
-	dayVars, 
-	"focal_start_timeStamp", 
-	"focal_end_timeStamp", 
-	"focal_set_duration", 
-	"focal_set_scan_interval",
-	focalVars,
-	"focal_individual_ID",
+	"session_start_timeStamp", 
+	"focal_start_timeStamp",
 	"timeStamp",
 	"description",
 	"latitude", 
@@ -287,6 +352,7 @@ colnames(backgroundTapsTable) <- c(
 	"altitude"
 	)
 
+if(length(dat$data$sessions)>0){
 for (i in 1:length(dat$data$sessions)){
 	session <- dat$data$sessions[[i]]
 	if(length(session$focal)>0){
@@ -295,27 +361,10 @@ for (i in 1:length(dat$data$sessions)){
 			if (length(focal$backgroundTaps)>0){
 				for (k in 1:length(focal$backgroundTaps)){
 					backgroundTap <- focal$backgroundTaps[[k]]
-					dayVarsTemp <- unlist(session$details)
-					dayVarsTemp <- dayVarsTemp [-grep(names(dayVarsTemp), pattern="Group ID")]
-					focalVarsTemp <- unlist(focal$details)
 					backgroundTapsTable <- rbind(backgroundTapsTable, as.character(c(
-					NAcheck(session$arrival_time),
-					NAcheck(session$departure_time),
 					NAcheck(session$device_ID),
-					NAcheck(session$layout_info_JSON_file_ID),
-					NAcheck(session$behaviors_JSON_file_ID),
-					NAcheck(session$pin_name),
-					NAcheck(session$gps_on),
-					NAcheck(session$map_mode_on),
-					NAcheck(session$compass_on),
-					NAcheck(session$details$'Group ID'),
-					dayVarsTemp,
+					NAcheck(session$arrival_time),
 					NAcheck(focal$start_time),
-					NAcheck(focal$end_time),
-					NAcheck(focal$duration),
-					NAcheck(focal$scan_interval),
-					focalVarsTemp,
-					NAcheck(focal$animal_id),
 					NAcheck(backgroundTap$timestamp),
 					NAcheck(backgroundTap$text),
 					NAcheck(backgroundTap$lat),
@@ -328,28 +377,14 @@ for (i in 1:length(dat$data$sessions)){
 		}
 	}
 }
-
+}
 
 #######commentsData
-commentsTable <- matrix(nrow=0, ncol=21+length(dayVars)+length(focalVars))
+commentsTable <- matrix(nrow=0, ncol=9)
 colnames(commentsTable) <- c(
-	"session_start_timeStamp", 
-	"session_end_timeStamp",  
 	"device_ID",
-	"layout_info_json_version",
-	"behaviors_json_version",
-	"pin_code_name",
-	"gps_on",
-	"compass_on",
-	"map_mode_on",
-	"group_ID",
-	dayVars, 
-	"focal_start_timeStamp", 
-	"focal_end_timeStamp", 
-	"focal_set_duration", 
-	"focal_set_scan_interval",
-	focalVars,
-	"focal_individual_ID",
+	"session_start_timeStamp", 
+	"focal_start_timeStamp",
 	"comment_timeStamp",
 	"comment_text",
 	"latitude", 
@@ -357,7 +392,8 @@ colnames(commentsTable) <- c(
 	"gps_horizontal_precision",
 	"altitude"
 	)
-
+	
+if(length(dat$data$sessions)>0){
 for (i in 1:length(dat$data$sessions)){
 	session <- dat$data$sessions[[i]]
 	if(length(session$focal)>0){
@@ -366,27 +402,10 @@ for (i in 1:length(dat$data$sessions)){
 			if (length(focal$text)>0){
 				for (k in 1:length(focal$text)){
 					text <- focal$text[[k]]
-					dayVarsTemp <- unlist(session$details)
-					dayVarsTemp <- dayVarsTemp [-grep(names(dayVarsTemp), pattern="Group ID")]
-					focalVarsTemp <- unlist(focal$details)
 					commentsTable <- rbind(commentsTable, as.character(c(
-					NAcheck(session$arrival_time),
-					NAcheck(session$departure_time),
 					NAcheck(session$device_ID),
-					NAcheck(session$layout_info_JSON_file_ID),
-					NAcheck(session$behaviors_JSON_file_ID),
-					NAcheck(session$pin_name),
-					NAcheck(session$gps_on),
-					NAcheck(session$map_mode_on),
-					NAcheck(session$compass_on),
-					NAcheck(session$details$'Group ID'),
-					dayVarsTemp,
+					NAcheck(session$arrival_time),
 					NAcheck(focal$start_time),
-					NAcheck(focal$end_time),
-					NAcheck(focal$duration),
-					NAcheck(focal$scan_interval),
-					focalVarsTemp,
-					NAcheck(focal$animal_id),
 					NAcheck(text$timestamp),
 					NAcheck(text$text),
 					NAcheck(text$lat),
@@ -399,6 +418,16 @@ for (i in 1:length(dat$data$sessions)){
 		}
 	}
 }
-return(list(focalsTable= focalsTable, behaviorsTable= behaviorsTable, scansTable=scansTable, backgroundTapsTable=backgroundTapsTable, commentsTable=commentsTable))
+}
+return(list(sessionsTable= sessionsTable,
+focalsTable= focalsTable,
+behaviorsTable= behaviorsTable,
+scansTable= scansTable,
+backgroundTapsTable = backgroundTapsTable,
+commentsTable = commentsTable,
+dayVarsTable = dayVarsTable,
+focalVarsTable = focalVarsTable,
+continuousVarsTable = continuousVarsTable,
+scanVarsTable = scanVarsTable))
 }
 
