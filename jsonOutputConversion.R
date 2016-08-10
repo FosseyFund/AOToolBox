@@ -419,6 +419,18 @@ for (i in 1:length(dat$data$sessions)){
 	}
 }
 }
+sessionsTable <- data.frame(sessionsTable, row.names=NULL)
+focalsTable <- data.frame(focalsTable, row.names=NULL)
+behaviorsTable <- data.frame(behaviorsTable, row.names=NULL)
+scansTable <- data.frame(scansTable, row.names=NULL)
+backgroundTapsTable <- data.frame(backgroundTapsTable, row.names=NULL)
+commentsTable <- data.frame(commentsTable, row.names=NULL)
+dayVarsTable <- data.frame(dayVarsTable, row.names=NULL)
+focalVarsTable <- data.frame(focalVarsTable, row.names=NULL)
+continuousVarsTable <- data.frame(continuousVarsTable, row.names=NULL)
+scanVarsTable <- data.frame(scanVarsTable, row.names=NULL)
+ 
+
 return(list(sessionsTable= sessionsTable,
 focalsTable= focalsTable,
 behaviorsTable= behaviorsTable,
