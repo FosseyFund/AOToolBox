@@ -1,11 +1,5 @@
 library(rjson)
 
-#dat <- fromJSON(file="~/Documents/GITHUB clones/AOToolBox/default json files/Neetha_2016-08-07_15h01m43s.dat")
-#behav <- fromJSON(file="~/Documents/GITHUB clones/AOToolBox/default json files/behaviors.json")
-#layout <- fromJSON(file="~/Documents/GITHUB clones/AOToolBox/default json files/layout_info.json")
-#jsonOutputConversion(json.output.file=dat, behaviors.json=behav, layout_info.json=layout)
-
-
 jsonOutputConversion <- function(json.output.file, behaviors.json, layout_info.json)
 {
 ####path to behaviors.json
