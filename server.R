@@ -161,9 +161,12 @@ dataOutput2 <- eventReactive(input$template, {
   if(input$run3=="upl" & is.null(dataOutput3())){
     return(NULL)
   } else if (input$run3=="upl" & !is.null(dataOutput3())){
+  	#cat(file=stderr(), "input$run3==upl")
+  	#cat(file=stderr(), paste(dataOutput3()))
     return(dataOutput3())
   } else {
-    return(readLayoutJson(fromJSON(file="layout_info_default.json")))
+  	#cat(file=stderr(), "input$run3==template")
+return(readLayoutJson(fromJSON(file="layout_info_default.json")))
   }
 })
 
@@ -192,7 +195,7 @@ dataOptionsLayout = reactive({
     if(is.null(dataOutput2())) return(NULL)
     if(is.null(input$layoutOptions)){
     	temp = dataOutput2()
-    	MAT <- as.matrix(data.frame(settings=names(temp[[5]]), values=unlist(temp[[5]]), stringsAsFactors=F))[-1,]
+    	MAT <- as.matrix(data.frame(settings=names(temp[[2]]), values=unlist(temp[[2]]), stringsAsFactors=F))[-1,]
     } else {
     	MAT=hot_to_r(input$layoutOptions)
     }
@@ -200,49 +203,72 @@ dataOptionsLayout = reactive({
      return(MAT)
   })
   
-dataDaysLayout = reactive({
-    if(is.null(dataOutput2())) return(NULL)
-    if(is.null(input$layoutDays)){
-    	temp = dataOutput2()
-    	mat1 <- as.data.frame(rbind(names(temp[[2]]), as.matrix(temp[[2]])))
-       	MAT <- data.frame(variable.index=c("variable name:", 1:(nrow(mat1)-1)), mat1)
-    } else {
-    	MAT=data.frame(hot_to_r(input$layoutDays))
-    	MAT[,1] <- c("variable name:", 1:(nrow(MAT)-1))
-    	
-    }
-     values[["daysLayout"]] = MAT
-     return(MAT)
+dayVarsInput <- reactive({
+   	dayVars <- input$dayVars
+    if (is.null(dayVars))
+      return(NULL)
+    read.csv(dayVars$datapath)
   })
-  
-dataFocalLayout = reactive({  
-    if(is.null(dataOutput2())) return(NULL)
-    if(is.null(input$layoutFocal)){
-    	temp = dataOutput2()
-    	mat1 <- as.data.frame(rbind(names(temp[[3]]), as.matrix(temp[[3]])))
-       	MAT <- data.frame(variable.index=c("variable name:", 1:(nrow(mat1)-1)), mat1)
-    } else {
-    	MAT=hot_to_r(input$layoutFocal)
-    	MAT[,1] <- c("variable name:", 1:(nrow(MAT)-1))
-    }
-     values[["focalLayout"]] = MAT
-     return(MAT)
+focalVarsInput <- reactive({
+   	focalVars <- input$focalVars
+    if (is.null(focalVars))
+      return(NULL)
+    read.csv(focalVars$datapath)
+  })
+scanVarsInput <- reactive({
+   	scanVars <- input$scanVars
+    if (is.null(scanVars))
+      return(NULL)
+    read.csv(scanVars$datapath)
+  })	  
+contVarsInput <- reactive({
+   	contVars <- input$contVars
+    if (is.null(contVars))
+      return(NULL)
+    read.csv(contVars$datapath)
   })
 
-dataScanLayout = reactive({  
-    if(is.null(dataOutput2())) return(NULL)
-    if(is.null(input$layoutScan)){
-    	temp = dataOutput2()
-    	mat1 <- as.matrix(rbind(names(temp[[4]]), as.matrix(temp[[4]])), dimnames=NULL)
-       	MAT <- data.frame(variable.index=c("variable name:", 1:(nrow(mat1)-1)), mat1)
-      	#names(MAT) <- c(" ",LETTERS[1:(ncol(MAT)-1)])
-    } else {
-    	MAT=hot_to_r(input$layoutScan)
-    	MAT[,1] <- c("variable name:", 1:(nrow(MAT)-1))
+
+dataOutput4 <- eventReactive(input$run2, {
+	#cat(file=stderr(), "inside dataOutput4\n")
+
+    if(is.null(dayVarsInput()) | is.null(focalVarsInput()) | is.null(scanVarsInput()) | versionTextInput()=="vX.X"){
+    		#cat(file=stderr(), "dataOutput4 returning NULL\n")
+
+			return(NULL)
+			}
+			
+    	temp <- list()
+    	temp[[1]] <- values[["pinLayout"]]  
+    	temp[[2]] <- listFromCsv(dat = dayVarsInput())
+    	temp[[3]] <- listFromCsv(dat = focalVarsInput())
+   		temp[[4]] <- listFromCsv(dat = scanVarsInput())
+   		temp[[5]] <- listFromCsv(dat = contVarsInput())
+	
+	optionnames <- values[["optionsLayout"]][,1]
+	optionvalues<- as.character(values[["optionsLayout"]][,2])
+	
+	temp[[6]] <- data.frame(values=c(versionTextInput(), optionvalues))
+	temp[[6]] <- as.data.frame(t(as.matrix(temp[[6]])))
+	names(temp[[6]]) <- c("version", optionnames)
+	#cat(file=stderr(), paste(temp))
+    return(createLayoutJSON(temp))
+})
+
+output$text3 <- renderText({
+	if(is.null(dataOutput4())){return(NULL)}
+		return("DONE!")	
+		})
+
+
+output$downloadLayoutJson <- downloadHandler(
+    filename = function() { 
+		 paste('layout_info.json') 
+	 },
+    content = function(file) {
+    	writeLines(dataOutput4(), con=file)
     }
-     values[["scanLayout"]] = MAT
-     return(MAT)
-  })
+  )
 
 output$layoutOptions <- renderRHandsontable({
     MAT = dataOptionsLayout()
@@ -266,39 +292,6 @@ output$layoutPin <- renderRHandsontable({
        )
     }
   })
-  
-output$layoutDays <- renderRHandsontable({
-    MAT = dataDaysLayout()
-       if (!is.null(MAT)) {
-      return(rhandsontable(MAT, useTypes=F,  rowHeaders=NULL, colHeaders=c(" ",LETTERS[1:(ncol(MAT)-1)])) %>%
-      hot_table(highlightCol = TRUE, highlightRow = TRUE,
-            columnSorting = FALSE, exportToCsv = TRUE) %>%
-            hot_context_menu(allowRowEdit=TRUE, allowColEdit=TRUE)
-       )
-    }
-  })
-  
-output$layoutFocal <- renderRHandsontable({
-    MAT = dataFocalLayout()
-       if (!is.null(MAT)) {
-      return(rhandsontable(MAT, useTypes=F, rowHeaders=NULL, colHeaders=c(" ",LETTERS[1:(ncol(MAT)-1)])) %>%
-      hot_table(highlightCol = TRUE, highlightRow = TRUE,
-            columnSorting = FALSE, exportToCsv = TRUE) %>%
-            hot_context_menu(allowRowEdit=TRUE, allowColEdit=TRUE)
-       )
-    }
-  })
-
-output$layoutScan <- renderRHandsontable({
-    MAT = dataScanLayout()
-       if (!is.null(MAT)) {
-      return(rhandsontable(MAT, useTypes=F, rowHeaders=NULL, colHeaders=c(" ",LETTERS[1:(ncol(MAT)-1)])) %>%
-      hot_table(highlightCol = TRUE, highlightRow = TRUE,
-            columnSorting = FALSE, exportToCsv = TRUE) %>%
-            hot_context_menu(allowRowEdit=TRUE, allowColEdit=TRUE)     
-       )
-    }
-  })
 
 versionTextInput <- reactive({
 	version <- input$versionLayout
@@ -308,72 +301,17 @@ versionTextInput <- reactive({
 
 output$TextPin <- renderText({
 	if (!(is.null(dataOutput2()) & is.null(dataOutput3()))){
-		"Enter the pin codes corresponding to the different users. Use right-click to #add/delete rows."
+		"Enter the pin codes corresponding to the different users. Right-click to #add/delete rows."
 	}
 })
-
-
-
 
 output$TextOptions <- renderText({
 	if (!is.null(dataOutput2())){
-		"Options: fill in the second column of the following table, making sure you respect data types (eg, booleans must be TRUE or FALSE, number must not be characters)."
+		"Options: fill in the second column of the following table, making sure you respect data types (eg, booleans must be TRUE or FALSE, numbers must not be characters)."
 	}
 })
 
-#output$TextOptions <- renderText({
-#	dataOptionsLayout()[3,2]
-#	values[["optionsLayout"]][5,2]
-#})
 
-output$TextDays <- renderText({
-	if (!is.null(dataOutput2())){
-		"Here, list the variables you want to collect at the begining of each session. Use right-click to add/delete rows and columns."
-	}
-})
-
-output$TextFocal <- renderText({
-	if (!is.null(dataOutput2())){
-		"Here, list the variables you want to record at the begining of each Focal. Use right-click to add/delete rows and columns."
-	}
-})
-
-output$TextScan <- renderText({
-	if (!is.null(dataOutput2())){
-		"Here, list the global variables you want to record during each scan. Do not include individual-specific variables (they should already be included in behaviors.json)."
-	}
-})
-
-output$downloadLayoutJson <- downloadHandler(
-    filename = function() { 
-    	if(versionTextInput()!="vX.X"){
-		 paste('layout_info.json') 
-		 } else {
-		 	'error.txt'
-		 }
-	 },
-    content = function(file) {
-    if(versionTextInput()!="vX.X"){
-    	temp <- list()
-    	temp[[1]] <- values[["pinLayout"]]    
-    temp[[2]] <- tableToList(values[["daysLayout"]])
-    	temp[[3]] <- tableToList(values[["focalLayout"]])
-    temp[[4]] <- tableToList(values[["scanLayout"]])
-	
-	optionnames <- values[["optionsLayout"]][,1]
-	optionvalues<- as.character(values[["optionsLayout"]][,2])
-	
-	temp[[5]] <- data.frame(values=c(versionTextInput(), optionvalues))
-	
-	temp[[5]] <- as.data.frame(t(as.matrix(temp[[5]])))
-	names(temp[[5]]) <- c("version", optionnames)
-	
-    writeLines(createLayoutJSON(temp), con=file)
-    #write.csv(temp[[5]], file, row.names=FALSE)
-} else writeLines("Empty file! Make sure you've entered the version of your layout!", con=file)
-
-}
-)
 ###########################################
 ################4th tab
 json.output.file.input <- reactive({

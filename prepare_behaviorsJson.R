@@ -1,6 +1,9 @@
 ###################recursive algorithm:
 listFromCsv <- function(dat)
 {
+if(is.null(dat)) {
+	return(NULL)
+} else {
 names(dat) <- gsub("[.]", "_", names(dat))##necessary due to use of unlist in jsonoutputconversion.R
 allbehav <- dat[!duplicated(dat),]	
 
@@ -131,6 +134,7 @@ for(i in (ncol(allbehav)-1):1)
 	twigs <- twigs2
 }
 return(twigs2)
+}
 }
 
 
