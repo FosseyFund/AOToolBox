@@ -8,7 +8,7 @@ shinyUI(fluidPage(
   br(),
 	tabsetPanel(
 	id = "panels",
-	  tabPanel("What is Animal Observer?", includeMarkdown("rmarkdown/AnimalObserver.Rmd")),
+	tabPanel("What is Animal Observer?", includeMarkdown("rmarkdown/AnimalObserver.Rmd")),
     tabPanel("Create behavioral protocol file",
     br(),
     sidebarLayout(
@@ -40,12 +40,12 @@ shinyUI(fluidPage(
       textOutput("text1"),
       tabsetPanel(id="panels2",
                   
-                  tabPanel("Instructions", includeMarkdown("rmarkdown/Create_structure.Rmd")),
-                  tabPanel("Dyadic"),
-                  tabPanel("Scan"),
-                  tabPanel("Solo"),
-                  tabPanel("Foods"),
-                  tabPanel("View protocol")
+                  tabPanel("Instructions", includeMarkdown("rmarkdown/Create_structure.Rmd"))#,
+                  #tabPanel("Dyadic"),
+                  #tabPanel("Scan"),
+                  #tabPanel("Solo"),
+                  #tabPanel("Foods"),
+                  #tabPanel("View protocol")
     )
     ))),
     tabPanel("Create group composition file",
@@ -64,8 +64,9 @@ shinyUI(fluidPage(
     ),
     mainPanel(
       tabsetPanel(id="panels3",
-      tabPanel("Instructions", includeMarkdown("rmarkdown/Create_animals_list.Rmd")),
-      tabPanel("Group composition")),
+      tabPanel("Instructions", includeMarkdown("rmarkdown/Create_animals_list.Rmd"))#,
+      #tabPanel("Group composition")
+      ),
       textOutput("text2")
     )
     )
@@ -74,7 +75,6 @@ shinyUI(fluidPage(
 	################################################
 	tabPanel("Create global variables file",
 	br(),
-	
     sidebarLayout(
     # Sidebar with a slider input
     sidebarPanel(
@@ -104,39 +104,35 @@ shinyUI(fluidPage(
 	  fileInput('contVars', '6. Upload continuous focal variables csv file (optional)',
                 accept=c('text/csv', 
 								 'text/comma-separated-values,text/plain', 
-								 '.csv')),
-								 
-      
+								 '.csv')), 
 br(),
     textInput("versionLayout", label = '7. Enter protocol version:', value = "vX.X"),
 	hr(),
     actionButton("run2", label = "Run", icon=icon("play")),
 	downloadButton('downloadLayoutJson', 'Download layout_info.json')
-    ),
+    ),    
     mainPanel(
-    textOutput("text3"),
-    textOutput("TextPin"),
-    rHandsontableOutput("layoutPin"),
-	br(),    
-	br(), 
-    textOutput("TextOptions"),
-    rHandsontableOutput("layoutOptions"),
-	br(),    
-	br(),    
-	br(),    
-	br(),    
-    br(),    
-	br(),
-	br(),    
-	br(),
-	br(),    
-	br(),
-	br(),    
-	br(),
-	br(),    
-	br(),
-	br(),    
-	br()
+      #textOutput("text1"),
+      tabsetPanel(id="panels2",
+                  tabPanel("Session setup",
+                  #includeMarkdown("rmarkdown/Create_structure.Rmd"),
+                  textOutput("text3"),
+   				  textOutput("TextPin"),
+                  rHandsontableOutput("layoutPin"),
+                  br(),    
+                  br(), 
+                  textOutput("TextOptions"),
+                  rHandsontableOutput("layoutOptions")
+                  ),
+                  tabPanel("Instructions",
+                  includeMarkdown("rmarkdown/Create_structure.Rmd")
+                  )
+                  #tabPanel("Session variables"),
+                  #tabPanel("Focal variables"),
+                  #tabPanel("Scan variables"),
+                  #tabPanel("Continuous variables"),
+                  #tabPanel("View protocol")
+    )
     )
     )
     ),
