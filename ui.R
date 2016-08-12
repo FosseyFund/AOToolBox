@@ -112,7 +112,6 @@ br(),
 	downloadButton('downloadLayoutJson', 'Download layout_info.json')
     ),    
     mainPanel(
-      #textOutput("text1"),
       tabsetPanel(id="panels2",
                   tabPanel("Session setup",
                   #includeMarkdown("rmarkdown/Create_structure.Rmd"),
