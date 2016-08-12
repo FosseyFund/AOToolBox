@@ -7,25 +7,25 @@ dyadicInput <- reactive({
    	dyadic <- input$dyadic
     if (is.null(dyadic))
       return(NULL)
-    read.csv(dyadic$datapath)
+    read.csv(dyadic$datapath, check.names=F)
   })
 scanInput <- reactive({
    	scan <- input$scan
     if (is.null(scan))
       return(NULL)
-    read.csv(scan$datapath)
+    read.csv(scan$datapath, check.names=F)
   })
 soloInput <- reactive({
    	solo <- input$solo
     if (is.null(solo))
       return(NULL)
-    read.csv(solo$datapath)
+    read.csv(solo$datapath, check.names=F)
   })	
 foodInput <- reactive({
    	food <- input$foods
     if (is.null(food))
       return(NULL)
-    read.csv(food$datapath)
+    read.csv(food$datapath, check.names=F)
   })
   
 textInput <- reactive({
@@ -135,7 +135,7 @@ compoInput <- reactive({
    	compo <- input$compo
     if (is.null(compo))
       return(NULL) else {
-    return(prepareGroupCompo(read.csv(compo$datapath)))
+    return(prepareGroupCompo(read.csv(compo$datapath, check.names=F)))
     }
 })
 
@@ -207,25 +207,25 @@ dayVarsInput <- reactive({
    	dayVars <- input$dayVars
     if (is.null(dayVars))
       return(NULL)
-    read.csv(dayVars$datapath)
+    read.csv(dayVars$datapath, check.names=F)
   })
 focalVarsInput <- reactive({
    	focalVars <- input$focalVars
     if (is.null(focalVars))
       return(NULL)
-    read.csv(focalVars$datapath)
+    read.csv(focalVars$datapath, check.names=F)
   })
 scanVarsInput <- reactive({
    	scanVars <- input$scanVars
     if (is.null(scanVars))
       return(NULL)
-    read.csv(scanVars$datapath)
+    read.csv(scanVars$datapath, check.names=F)
   })	  
 contVarsInput <- reactive({
    	contVars <- input$contVars
     if (is.null(contVars))
       return(NULL)
-    read.csv(contVars$datapath)
+    read.csv(contVars$datapath, check.names=F)
   })
 
 
