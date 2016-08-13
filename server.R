@@ -515,5 +515,26 @@ dataOutput <- reactive({
     }
   )
   
+  output$downloadZip <- downloadHandler(
+       filename = function() {
+         paste("AO_OutPut_", Sys.time(), ".zip", sep="")
+       },
+       content = function(fname) {
+         fs <- c()
+         tmpdir <- tempdir()
+         initwd <- getwd()
+         setwd(tempdir())
+         
+         for (i in 1:length(dataOutput())){
+         	#cat(file=stderr(), paste0(names(dataOutput())[i], ".csv"))
+         	write.csv(dataOutput()[[i]], file=paste0(names(dataOutput())[i], ".csv"), row.names=F)
+         	
+         }
+                  
+         zip(zipfile=fname, files=paste0(names(dataOutput()), ".csv"))
+       },
+       contentType = "application/zip"
+     )
+  
   
 })
