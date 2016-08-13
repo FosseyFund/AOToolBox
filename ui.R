@@ -124,7 +124,7 @@ br(),
                   rHandsontableOutput("layoutOptions")
                   ),
                   tabPanel("Instructions",
-                  includeMarkdown("rmarkdown/Create_structure.Rmd")
+                  includeMarkdown("rmarkdown/Create_layout_info.Rmd")
                   )
                   #tabPanel("Session variables"),
                   #tabPanel("Focal variables"),

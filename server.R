@@ -38,6 +38,11 @@ observeEvent(input$link_to_structure, {
   updateTabsetPanel(session,"panels",newvalue)
 })
 
+observeEvent(input$link_to_structure2, {
+  newvalue <- "Create behavioral protocol file"
+  updateTabsetPanel(session,"panels",newvalue)
+})
+
 observeEvent(input$link_to_studyanimals, {
   newvalue <- "Create group composition file"
   updateTabsetPanel(session,"panels",newvalue)
