@@ -8,7 +8,7 @@ shinyUI(fluidPage(
   br(),
 	tabsetPanel(
 	id = "panels",
-	tabPanel("What is Animal Observer?", includeMarkdown("rmarkdown/AnimalObserver.Rmd")),
+	tabPanel("What is AO Toolbox?", includeMarkdown("rmarkdown/AnimalObserver.Rmd")),
     tabPanel("Create behavioral protocol file",
     br(),
     sidebarLayout(
@@ -31,7 +31,7 @@ shinyUI(fluidPage(
                 accept=c('text/csv',
 								 'text/comma-separated-values,text/plain', 
 								 '.csv')),
-	textInput("version", label = '5. Enter protocol version:', value = "vX.X"),
+	textInput("version", label = '5. Enter protocol version (mandatory):', value = "vX.X"),
 	hr(),
     actionButton("run", label = "Run", icon=icon("play")),
 	downloadButton('downloadBehaviorsJson', 'Download behaviors.json')
@@ -48,13 +48,13 @@ shinyUI(fluidPage(
                   #tabPanel("View protocol")
     )
     ))),
+	################################################
+	################################################
     tabPanel("Create group composition file",
     br(),
     sidebarLayout(
-
-    # Sidebar with a slider input
-    sidebarPanel(
-    helpText("Upload list of individuals"),
+   sidebarPanel(
+    #helpText("Upload list of individuals"),
     fileInput('compo', 'Upload group composition csv file',
                 accept=c('text/csv', 
 								 'text/comma-separated-values,text/plain', 
@@ -106,25 +106,40 @@ shinyUI(fluidPage(
 								 'text/comma-separated-values,text/plain', 
 								 '.csv')), 
 br(),
-    textInput("versionLayout", label = '7. Enter protocol version:', value = "vX.X"),
+    textInput("versionLayout", label = '7. Enter protocol version (mandatory):', value = "vX.X"),
 	hr(),
     actionButton("run2", label = "Run", icon=icon("play")),
 	downloadButton('downloadLayoutJson', 'Download layout_info.json')
     ),    
     mainPanel(
-      tabsetPanel(id="panels2",
-                  tabPanel("Session setup",
-                  #includeMarkdown("rmarkdown/Create_structure.Rmd"),
-                  textOutput("text3"),
-   				  textOutput("TextPin"),
-                  rHandsontableOutput("layoutPin"),
-                  br(),    
-                  br(), 
-                  textOutput("TextOptions"),
-                  rHandsontableOutput("layoutOptions")
-                  ),
+      tabsetPanel(id="panels4",
                   tabPanel("Instructions",
                   includeMarkdown("rmarkdown/Create_layout_info.Rmd")
+                  ),
+                  tabPanel("Session setup",
+                  #includeMarkdown("rmarkdown/Create_structure.Rmd"),
+                  br(),
+                  textOutput("text3"),
+   				  htmlOutput("TextPin"),
+   				  br(),
+                  rHandsontableOutput("layoutPin"),
+                  br(), 
+                  htmlOutput("TextOptions"),
+                  rHandsontableOutput("layoutOptions"),
+                  br(),
+                  br(),
+                  br(),
+                  br(),
+                  br(),
+                  br(),
+                  br(),
+                  br(),
+                  br(),
+                  br(),
+                  br(),
+                  br(),
+                  br(),
+                  br()
                   )
                   #tabPanel("Session variables"),
                   #tabPanel("Focal variables"),
@@ -160,7 +175,9 @@ br(),
     #helpText("Upload collected data"),
     fileInput('json.output.file', '1. Upload "Username_Date_Time.dat"'),
 	fileInput('behaviors.json', '2. Upload "behaviors.json"'),
-    fileInput('layout_info.json', '3. Upload "layout_info.json"'),           
+    fileInput('layout_info.json', '3. Upload "layout_info.json"'),
+    downloadButton("downloadZip", label = "Download all data as zip"),
+    br(), br(), h5("    OR"), br(),      
       downloadButton('downloadSessionsTable', 'Download list of sessions'),
       downloadButton('downloadFocalsTable', 'Download list of focals'),
       downloadButton('downloadBehaviorsTable', 'Download list of behaviors'),
@@ -173,7 +190,7 @@ br(),
   	  downloadButton('downloadScanVarsTable', 'Download scan variables')
     ),
     mainPanel(
-      tabsetPanel(id="panels3",
+      tabsetPanel(id="panels5",
           tabPanel("Instructions", includeMarkdown("rmarkdown/Convert_datatocsv.Rmd"))),
 
 		textOutput("sessionsTable.csv"),

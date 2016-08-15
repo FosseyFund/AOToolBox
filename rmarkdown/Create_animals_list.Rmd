@@ -1,11 +1,9 @@
 
 ***
 
-#### Upload list of study animals
+#### 1. Upload list of study animals
 
-The application will also need a file that includes all the study animals. Upload the necessary ".csv" file using the panel on the left. This allows you to generate the **"animals.json"** file that is used by the app. 
-
-Create a ".csv" file which specifies the names of these individuals. 
+To customize the list of animals, you need to create a ".json" file named **"animals.json"**, which includes the list of the study animals. Upload the necessary ".csv" file using the panel on the left to generate **"animals.json"**.
 
 Below is an example of what this ".csv" file can look like:
 
@@ -73,17 +71,19 @@ Below is an example of what this ".csv" file can look like:
 
 ***
 
-This file can include as many variables about group composition as necessary, for example the sex and age. The following columns  are *required* and the labels *must* be typed as in the quotes:
+This file can include as many variables about group composition as you want, for example the sex and age. The following columns  are *required* and the labels *must* be typed as in the quotes:
 
 * <font face="Courier New">"ID"</font> | to specify the identity of the individuals.  
 * <font face="Courier New">"GR"</font> | to specify the group, if multiple social units are being studied.
 
-*N.B. You can view and edit the uploaded ".csv" file using the <a id="link_to_grp" href="#" class="action-button">Group composition</a> tab above.* 
-
 ***
 
-#### Add animals.json file to iPad
+#### 2. Add animals.json file to iPad
 
-* Once this ".csv" file has been uploaded in the left panel, the **"animals.json"** file will be generated. Click on "Download animals.json" to save the file and upload it to the iPad following <a id="link_to_welcome2" href="#" class="action-button">these instructions</a>. 
+* Once this ".csv" file has been uploaded in the left panel, the **"animals.json"** file will be generated. Click on "Download animals.json" to save the file and upload it to the iPad following <a id="link_to_welcome2" href="#" class="action-button">these instructions</a>.
   
 ***
+Note that you can edit layout_info.json manually using any basic text editor or online using [jsoneditoronline.org](http://www.jsoneditoronline.org).
+
+***
+

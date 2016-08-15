@@ -108,6 +108,13 @@ observeEvent(input$link_to_globalvar3, {
   updateTabsetPanel(session,"panels",newvalue)
 })
   
+observeEvent(input$link_to_sessionSetup, {
+  newvalue <- "Session setup"
+  updateTabsetPanel(session,"panels4",newvalue)
+})
+  
+  
+  
 dataOutput1 <- eventReactive(input$run, {
     if(is.null(dyadicInput()) | is.null(scanInput()) | is.null(soloInput()) | textInput()=="vX.X"){
 			return(NULL)
@@ -304,16 +311,16 @@ versionTextInput <- reactive({
 })
   
 
-output$TextPin <- renderText({
+output$TextPin <- renderUI({
 	if (!(is.null(dataOutput2()) & is.null(dataOutput3()))){
-		"Enter the pin codes corresponding to the different users. Right-click to #add/delete rows."
+				includeMarkdown("rmarkdown/pincodes_instructions.Rmd")
 	}
 })
 
-output$TextOptions <- renderText({
-	if (!is.null(dataOutput2())){
-		"Options: fill in the second column of the following table, making sure you respect data types (eg, booleans must be TRUE or FALSE, numbers must not be characters)."
-	}
+output$TextOptions <- renderUI({
+	if (!(is.null(dataOutput2()) & is.null(dataOutput3()))){
+		includeMarkdown("rmarkdown/options_instructions.Rmd")
+}
 })
 
 

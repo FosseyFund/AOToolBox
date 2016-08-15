@@ -1,3 +1,7 @@
+***
+
+
+**Read instructions below, then <a id="link_to_sessionSetup" href="#" class="action-button">switch tab</a> and follow the steps on the left pannel.**
 
 ***
 
@@ -8,7 +12,7 @@ To customize the variables which can be selected in the session settings, focal 
 3. Scan variables, recorded during scans, and corresponding to variables that must be recorded at fixed time intervals such as weather, temperature, group activity, vegetation type, ...etc.
 4. Optionally, continuous focal variables, recorded continuously between scans. For example, health data on the focal individual can be opportunistically collected during the focal using this feature. One can also use it to record information about biological samples collected during the focal, ...etc. Entering all the continuous variables is NOT required to complete a focal.
 
-*N.B.* The structure of these 3 (or 4) ".csv" files is important. It is identical to the structure of the ".csv" files described in <a id="link_to_structure2" href="#" class="action-button">Creating behavioral protocol file</a>. Each row corresponds to a possible sequence of variables and modifiers. For example, if you are interested in 3 different variables, and each behavior has a single modifier with 4 different levels, you should have 12 rows in your ".csv" file. The structure of the file should be hierarchical--from the leftmost to the rightmost columns--to match the sequence of behaviors and modifiers you wish to display in the pop-up windows on the app. 
+*N.B.* The structure of these 3 (or 4) ".csv" files is important. It is identical to the structure of the ".csv" files described in <a id="link_to_structure2" href="#" class="action-button">Creating behavioral protocol file</a>. Each row corresponds to a possible sequence of variables and modifiers. For example, if you are interested in 3 different variables, and each behavior has a single modifier with 4 different levels, you should have 12 rows in your ".csv" file. The structure of the file should be hierarchical -- from the leftmost to the rightmost columns -- to match the sequence of behaviors and modifiers you wish to display in the pop-up windows on the app. 
 
 Here is an example of a table that can be saved as ".csv" file to customize session variables:
 
@@ -82,10 +86,10 @@ Here is an example of a table that can be saved as ".csv" file to customize sess
 
 #### Additional customizations
 
-If "*" is added at the end of the column header in one of the four ".csv" files, the corresponding modifier will allow multiple levels to be selected.
-If a given modifier takes "_ID" as a possible value, then the user will be able to select one of the individuals of the selected groups. *N.B.*: do not use "_ID" for session variables, because social groups may not have been selected yet at this stage.
+If "**\***" is added at the end of a column header, the corresponding modifier will allow multiple levels to be selected.
+If a modifier takes "**\_ID**" as a possible value, then the user will be able to select one of the individuals of the selected groups. *N.B.*: do not use "**\_ID**" for session variables, because social groups may not have been selected yet at this stage.
 
-Here is an example of a table that can be saved as ".csv" file to customize continuous focal variables:
+Below is an example of a table that can be saved as ".csv" file to customize continuous focal variables. This file allows multiple types of skin lesions to be selected, and allows multiple individuals to be selected for the "fecal sample collection" variable.
 
 ***
 
@@ -220,3 +224,7 @@ Here is an example of a table that can be saved as ".csv" file to customize cont
 </table>
 
 ***
+Note that you can edit layout_info.json manually using any basic text editor or online using [jsoneditoronline.org](http://www.jsoneditoronline.org).
+
+***
+
