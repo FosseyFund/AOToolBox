@@ -1,7 +1,7 @@
 ***
 
 
-**Read instructions below, then <a id="link_to_sessionSetup" href="#" class="action-button">switch tab</a> and follow the steps on the left pannel.**
+**Read instructions below, then <a id="link_to_sessionSetup" href="#" class="action-button">switch tab</a> and follow the steps on the left panel.**
 
 ***
 
