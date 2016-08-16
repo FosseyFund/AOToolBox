@@ -1,92 +1,234 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="UTF-8">
-    <title>Animal Observer by FosseyFund</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-  </head>
-  <body>
-    <section class="page-header">
-      <h1 class="project-name">Animal Observer</h1>
-      <h2 class="project-tagline">An iPad application for behavior data collection</h2>
-      <a href="https://github.com/FosseyFund/AOToolBox" class="btn">View on GitHub</a>
-      <a href="https://github.com/FosseyFund/AOToolBox/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/FosseyFund/AOToolBox/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
 
-    <section class="main-content">
-      <h3>
-<a id="what-is-animal-observer" class="anchor" href="#what-is-animal-observer" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is Animal Observer?</h3>
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>Behavioral Observation Application | Animal Observer by DFGFI</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
 
-<p><strong>Animal Observer</strong> is an iOS application optimized for iPad and iPad mini. It allows users to collect behavioral data in the field or in captivity, but can also be used to record health data or any other individual-specific data. The current beta-version of <strong>Animal Observer</strong> is currently used by Fossey Fund scientists studying gorillas in Rwanda and Congo. The application will be made available to the public on the Apple App Store in April 2015.</p>
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-<h3>
-<a id="current-features" class="anchor" href="#current-features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Current features</h3>
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="stylesheets/base.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+	<link rel="stylesheet" href="stylesheets/layout.css">
+    <link rel="stylesheet" href="stylesheets/flexslider.css">
+    <link rel="stylesheet" href="stylesheets/prettyPhoto.css">
+    
+    <!-- CSS
+  ================================================== -->
+ 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+    <script src="js/jquery.flexslider-min.js"></script>
+    <script src="js/scripts.js"></script>
 
-<p><strong>Animal Observer</strong> is an iPad application specifically developed to help behavioral ecologist collect focal-follow and scan data on social animals. It can also be used to record several types of ad libitum data. <strong>Animal Observer</strong> includes a default data collection protocol and a few gorilla group composition data which you can use to practice and assess if the App meets your needs. Feel free to play with it and test the following features:</p>
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
 
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+</head>
+<body class="wrap">
+
+
+
+	<!-- Primary Page Layout
+	================================================== -->
+
+	<header id="header" class="site-header" role="banner">
+    <div id="header-inner" class="container sixteen columns over">
+    <hgroup class="one-third column alpha">
+    <h1 id="site-title" class="site-title">
+    <a href="index.html" id="logo"><img src="images/DFGFI-images/DFGFI-logo.jpg" alt="DFGFI logo" height="120" width="511" /></a>
+    </h1>
+    </hgroup>
+    <nav id="main-nav" class="two thirds column omega">
+    <ul id="main-nav-menu" class="nav-menu">
+    <li id="menu-item-1" class="current">
+    <a href="index.html">Home</a>
+    </li>
+    <li id="menu-item-2">
+    <a href="how_to_use.html">How to Use</a>
+    </li>
+    <li id="menu-item-3">
+    <a href="sidebar-right.html">Current Features</a>
+    </li>
+    <li id="menu-item-4">
+    <a href="sidebar-left.html">AO Toolbox</a>
+    </li>
+    <li id="menu-item-5">
+    <a href="contact.html">Contact Us</a>
+    </li>
+    </ul>
+    </nav>
+    </div>
+    </header>
+
+	<div class="container">
+    
+		<div class="sixteen columns">
+        
+        <div class="flex-container">
+        <div class="flexslider">
+  <ul class="slides">
+    <li>
+      <a href="#"><img src="images/gorilla1.jpeg" alt="Random Gorilla Photo" /></a>
+      <div class="flex-caption">
+				<h5><a href="#">Both advanced and easy to use</a></h5>
+		
+				<p>A user-friendly interface to collect focal, scan and ad libitum behavioral data on any animal species - no need to type any text!</p>		
+	</div>
+    </li>
+    <li>
+      <a href="#"><img src="images/gorilla2.jpeg" alt="Random Gorilla Photo" /></a>
+      <div class="flex-caption" style="display:none;">
+				<h5><a href="#">Ideal for difficult field conditions</a></h5>
+		
+				<p>Dian Fossey Gorilla Fund researchers in Rwanda and Congo use Animal Observer to study eastern gorillas</p>		
+	</div>
+    </li>
+    <li>
+      <a href="#"><img src="images/gorilla3.jpeg" alt="Random Gorilla Photo" /></a>
+      <div class="flex-caption" style="display:none;">
+				<h5><a href="#">Completely customizable</a></h5>
+		
+				<p>After some easy tweaking using companion software "AO Toolbox", use Animal Observer to study your favorite animal species</p>		
+	</div>
+    </li>
+  </ul>
+</div>
+
+		
+
+
+</div>
+
+<div class="tagline">
+        <p><strong>Animal Observer</strong>, a free iPad application for behavioral observations, activity budgets and animal health monitoring.<br />
+        <a href="#">Download</a> and get started today!</p>
+        </div>
+
+		</div><!-- container -->
+        
+        <hr>
+        
+        <section class="container">
+        
+		<div class="one-third column">
+			<h3><i class="icon-heart rounded"></i> User Friendly</h3>
+			<p>Animal Observer is a free, easy-to-use iPad application for behavioral data collection, with a SIMPLE and straightforward interface developed to record data VERY FAST in the field or in captive settings. Perfect for ADVANCED research or student projects.</p>
+		</div>
+		<div class="one-third column">
+			<h3><i class="icon-cog rounded"></i> Entirely Customizable</h3>
+			<p>This application is completely customizable for data collection on any observable species with discernible individuals. Add your study animals, pictures, social groups, habitat maps, behavior/activity variables, health variables and more!</p>
+		</div>
+		<div class="one-third column">
+			<h3><i class="icon-resize-full rounded"></i> Spatially Explicit</h3>
+			<p>Using the GPS and compass features, Animal Observer records the latitude, longitude, altitude, and gps precision of every recorded data point. During scans, the app will also record the x,y coordinates of all the individuals on the scene and will an save the compass bearing of the focal individual.</p>
+		</div>
+        
+        </section>
+        
+        <hr>
+        
+        <section class="container">
+        
+        <h1 align="center">Main Features</h1>
+        
+        <article id="photo-item-1" class="feature-column one-third column">
+        <div class="featured-image img-wrapper">
+        <a href="images/images-of-app/focal-drag-line-dyadicindivs.PNG" rel="prettyPhoto" class="img-link" title="Connect individuals to record social behaviors">
+        <img src="images/images-of-app/focal-drag-line-dyadicindivs.PNG" class="scale-with-grid" alt="Focal Animal Sampling">
+        <div class="overlay zoom"></div>
+        </a>
+        </div>
+        
+        <h4>Focal Animal Sampling</h4>
+        <p><a href="how_to_use.html#focalSampling">Click</a> for more information about using the app for focal animal sampling</p>
+        
+        </article>
+        
+        <article id="photo-item-2" class="feature-column one-third column">
+        <div class="featured-image img-wrapper">
+        <a href="images/images-of-app/session-added-indivs.PNG" rel="prettyPhoto" class="img-link" title="Record the activity and x,y coordinates of observed animals">
+        <img src="images/images-of-app/session-added-indivs.PNG" class="scale-with-grid" alt="Scan Sampling">
+        <div class="overlay zoom"></div>
+        </a>
+        </div>
+        <h4>Scan Sampling</h4>
+        <p><a href="how_to_use.html#scanSampling">Click</a> for more information about using the app for scan sampling</p>
+        </article>
+        
+        <article id="photo-item-3" class="feature-column one-third column">
+        <div class="featured-image img-wrapper">
+        <a href="images/images-of-app/map-mode-w-indivs.PNG" rel="prettyPhoto" class="img-link" title="Add a map of your field site or animal enclosure to record the x,y coordinates of each individual during scans">
+        <img src="images/images-of-app/map-mode-w-indivs.PNG" class="scale-with-grid" alt="Map Mode">
+        <div class="overlay zoom"></div>
+        </a>
+        </div>
+        <h4>Map Mode</h4>
+        <p><a href="sidebar-right.html#map-mode">Click</a> for more information about special features of the app, like Map Mode</p>
+        </article>
+       
+	</section><!-- container -->
+
+<footer>
+
+<div class="footer-inner container">
+
+
+<div class="social footer-columns one-third column">
+<h2><i class="icon-bullhorn icon-large"></i> Follow us!</h2>
 <ul>
-<li><p>user-specific pin codes: if several users share the same device, you can give each of them a specific pin code. Default pin codes values range form 1111, 2222... etc to 7777.</p></li>
-<li><p>after dialing your pin code the App starts a new session. On the first screen you can select session-specific variables. Default variable include the observer name and observer type. These variables can be modified and more variables can be added (see customizing tool below).</p></li>
-<li><p>select the social group you want to study during the session. Double tap on the images to zoom in. Add additional individuals using the + button at the end of the image list.</p></li>
-<li><p>GPS feature: if GPS is turned on, the App will record a GPS coordinate (lat, lon, alt, precision)  each time a new behavior is recorded, each time a scan is recorded and each time a text comment is entered. If you use the App in the field, we recommend pairing the iPad with a bluetooth GPS. Several models exist. We currently use the Garmin GLO and it works well (although it's not waterproof...).</p></li>
-<li><p>Use Compass: if you turn this feature on, you will be able to enter the compass bearing of the focal individual at the end of each scan. Combined with the GPS data, this feature can be used to calculate the lat/lon coordinate of all the individuals you are observing. This type of data can then be used to study individual movement patterns (who is at the front of the group, who walks behind...etc).</p></li>
-<li><p>Map mode: in this mode, the typical background (target with circles at 2m, 5m, 10m, 20m... etc) is replaced by an image in png format. If this image is a map of a small study area (eg, forest clearing visited by gorillas, enclosure in a sanctuary or a zoo), you will be able to use your scan data to look at which areas of your map are used the most (or the least) by your study individuals or groups.</p></li>
-<li><p>the data upload/download button also offers a few features, the most important being "delete all behavior data"...</p></li>
-<li><p>tap "confirm settings" and access the focal settings. Select an individual, a focal duration and a scan interval.</p></li>
-<li><p>if you want to enter focal-specific variable, it's possible. The default version only has one such variable (Data usage) but this can be customized.</p></li>
-<li><p>press "Start Focal" and proceed with the first scan. Drag individuals from the left panel to the scene and place them wherever you see them around the focal individual. Tap on the individuals you want to record activities for. To select several individuals at the same time, double tap on the scene and draw a circle around these individuals BEFORE your second tap looses contact with the screen. This gesture may require a little bit of practice... The x,y position of each individual is recorded at the end of the scan. If map mode is off, the focal individual has coordinates {0,0} and the other individuals' coordinates are expressed in meters. If map mode is on, the origin of the coordinate system is the lower left corner of the background map.</p></li>
-<li><p>Enter scan-specific variables on the bottom left panel and finish your scan. If Compass is on, you can then enter the bearing of the focal individual.</p></li>
-<li><p>During the interval between scans, you can enter social behavior data and move individual on the scene. The movements are NOT recorded, and the location of each individual on the scene is only a tool to help with animal identification and to prepare the next scan. To enter social interaction data, lock the "move" switch and drag your finger between two individuals. If the behavioral is directional (eg, grooming, dominance interactions...), make sure you drag from the actor to the subject.</p></li>
-<li><p>To enter individual-specific data, double tap on an individual and follow the menus. Such data may include self-directed behaviors (self-grooming...) or information such as health data.</p></li>
-<li><p>Dyadic interaction data and individual-specific data can be edited by tapping on the edit button at the top right corner of the screen. Comments can then be added.</p></li>
-<li><p>If your focal animal disappears, just tap the scene two fingers. The scene will turn red and the time stamp and GPS location will be recorded. Tap again with two fingers when the animal is back in view. You can actually use this feature for something else than "animal out-of-view/back-in-view". The message saved each time you use the two-finger tap gesture can be customized.</p></li>
-<li><p>All three types of pop-up menus (dyadic interaction, individual activities recorded during scans and individual-specific data) can be customized.</p></li>
-<li><p>At the bottom of the scene, three buttons allow recording videos, photos, voice or written comments. When written comments are saved, the GPS coordinate is also recorded.</p></li>
+<li><a href="https://twitter.com/SavingGorillas"><i class="icon-twitter-sign icon-large"></i> Twitter</a></li>
+<li><a href="https://www.facebook.com/savinggorillas/"><i class="icon-facebook-sign icon-large"></i> Facebook</a></li>
+<div style="font-size: 98px; color:#09F;">
+ <i class="icon-instagram-sign icon-large"></i>
+</div>
+<li><a href="https://www.instagram.com/savinggorillas/"><i class="icon-instagram-sign icon-large"></i> Instagram</a></li>
 </ul>
+</div>
 
-<h3>
-<a id="customizing-animal-observer" class="anchor" href="#customizing-animal-observer" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Customizing <strong>Animal Observer</strong>
-</h3>
+<div class="footer-columns two-thirds column">
+<h2><i class="icon-user icon-large"></i> About Us</h2>
+<p>Animal Observer v1.0 was designed by Damien Caillaud from the <a href="https://gorillafund.org/">Dian Fossey Gorilla Fund International</a>, with financial support from Oracle. Many thanks to Neetha Iyer, Winnie Eckardt, Crickette Sanz, Dave Morgan, Tara Stoinski, Reggies Gazes, Meg Crofoot, Rebecca Lewis, Julie Rushmore, and Rand Lines for their help beta testing Animal Observer.</p>
+<p>Please tell us what you think about <a href="mailto:animal.observer@gorillafund.org?subject=comments%20on%20Animal%20Observer">Animal Observer</a>. We will do our best to take your comments/suggestions into account for future versions</p>
 
-<p>We designed a small application names <strong>Animal Observer Toolbox</strong> to allow you to generate the <em>json</em> files needed to customize your user interface. You will need a recent version of software R to be able to access this application. R can be downloaded <a href="https://cran.r-project.org/">here</a>. Make sure R is installed on every computer you will use to set up Animal Observer and to download collected data. You will also need package 'shiny' to be installed. To do so, just type <code>install.packages('shiny')</code> in the R console.</p>
+</div>
+</div>
 
-<p>You will need an internet connection the first time you run the toolbox. To launch it, just type:</p>
+<div id="footer-base">
+<div class="container">
+<div class="eight columns">
+<a href="http://www.opendesigns.org/design/icebrrrg/">Icebrrg Website Template</a> &copy; 2012
+</div>
 
-<pre><code>library(shiny)
-runGitHub("FosseyFund/AOToolBox-public")
-</code></pre>
+<div class="eight columns far-edge">
+Design by <a href="http://www.opendesigns.org">OD</a>
+</div>
+</div>
+</div>
 
-<p>Necessary packages will then automatically be downloaded and the toolbox will start in your default internet browser. Follow the instructions in the different tabs to set up your user interface and convert the data you've collected to a set of csv files.</p>
+</footer>
 
-<p>Once you've launched the Toolbox once using the above command, you can run it even without an internet access using the following procedure:</p>
+<!-- End Document
+================================================== -->
 
-<ul>
-<li>Download the whole repository using the links at the top of the page. Unzip or untar it if you've downloaded it in a compressed format. You should obtain a folder named 'AOToolBox-master'.</li>
-<li>Make sure R's working directory includes the AOToolBox folder.</li>
-<li>Launch it from R by typing:</li>
-</ul>
-
-<pre><code>library(shiny)
-runApp('AOToolBox-master')
-</code></pre>
-
-<p>Note that although the <strong>Animal Observer Tool Box</strong> is fully functional, it is still in development. The tutorials will be improved, video demos will be included and additional features will be added. Ideas and feedback are welcome !</p>
-
-<p>Thanks !</p>
-
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/FosseyFund/AOToolBox">Animal Observer</a> is maintained by <a href="https://github.com/FosseyFund">FosseyFund</a>.</span>
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
-      </footer>
-
-    </section>
-
-  
-  </body>
+<script src="js/jquery.prettyPhoto.js"></script>
+</body>
 </html>
+

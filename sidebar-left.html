@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>How to Customize Animal Observer | Animal Observer by DFGFI</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="stylesheets/base.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+	<link rel="stylesheet" href="stylesheets/layout.css">
+    <link rel="stylesheet" href="stylesheets/flexslider.css">
+    <link rel="stylesheet" href="stylesheets/prettyPhoto.css">
+    
+    <!-- CSS
+  ================================================== -->
+ 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+    <script src="js/jquery.flexslider-min.js"></script>
+    <script src="js/scripts.js"></script>
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+
+
+	<!-- Primary Page Layout
+	================================================== -->
+
+	<header id="header" class="site-header" role="banner">
+    <div id="header-inner" class="container fourteen columns over">
+    <hgroup class="one-third column alpha">
+    <h1 id="site-title" class="site-title">
+    <a href="index.html" id="logo"><img src="images/DFGFI-images/DFGFI-logo.jpg" alt="DFGFI logo" height="120" width="511" /></a>
+    </h1>
+    </hgroup>
+    <nav id="main-nav" class="two thirds column omega">
+    <ul id="main-nav-menu" class="nav-menu">
+    <li id="menu-item-1">
+    <a href="index.html">Home</a>
+    </li>
+    <li id="menu-item-2">
+    <a href="how_to_use.html">How to Use</a>
+    </li>
+    <li id="menu-item-3">
+    <a href="sidebar-right.html">Current Features</a>
+    </li>
+    <li id="menu-item-4" class="current">
+    <a href="sidebar-left.html">AO Toolbox</a>
+    </li>
+    <li id="menu-item-5">
+    <a href="contact.html">Contact Us</a>
+    </li>
+    </ul>
+    </nav>
+    </div>
+    </header>
+
+	<div class="container">
+   
+        <article class="fourteen columns main-content">
+        <h2>How to Customize Animal Observer and convert collected data to CSV</h2>
+                
+        <p>We created an application named <strong>Animal Observer Toolbox</strong> to allow you to generate the three <em>JSON</em> files needed to customize your user interface and convert Animal Observer output file to CSV. Although you do not need to have any prior knowledge of the R language to run AO Toolbox, you will need a recent version of the software R to be able to run this application. R can be downloaded <a href="https://cran.r-project.org/">here</a>. Make sure R is installed on every computer you will use to set up Animal Observer and to download collected data. You will also need package 'shiny' to be installed. To do so, just open R and type <strong>install.packages('shiny')</strong> in the R console.</p>
+        <p>You will need an internet connection the first time you run the toolbox. To launch it, just type:</p>
+        
+
+
+<h4><p style="padding-left: 60px;">library(shiny)<br />runGitHub("FosseyFund/AOToolBox-public")</p></h4>
+
+        <p>Necessary packages will then automatically be downloaded and the toolbox will start in your default internet browser. Follow the instructions in the different tabs to set up your user interface and convert the data you've collected to a set of csv files. If you use RStudio to open AO Toolbox, make sure you click 'Open in Browser' in the RStudio html window.</p>
+
+<img src="images/images-of-app/AOToolbox.PNG" id="table-change" height="531" width="850" class="scale-with-grid">
+        
+
+<HR>
+        <p>Once you have launched the Toolbox using the above command once, you can run it even without an internet access using the following procedure:</p>
+       
+        <ul style="margin-left: 20px; list-style-type:disc">
+          <li><a href="https://github.com/FosseyFund/AOToolBox/zipball/master">Download</a> the whole repository using the links at the top of the page. Unzip it and rename the folder to something simple like 'AOToolBox-master'.</li>
+          <li>Make sure R's working directory includes the 'AOToolBox-master' folder (in MAC, go to Misc/Change Working Directory).</li>
+          <li>Launch AO Toolbox from R by typing in the R console:</li>
+        </ul>
+
+<h4><p style="padding-left: 60px;">library(shiny)<br />runApp('AOToolBox-master')</p></h4>
+
+<li>Follow the instructions in AO Toolbox to customize Animal Observer and convert the output .dat file to the Excel-compatible CSV format.</li>
+        
+        <p>Have fun!</p>
+        </article>
+        <!-- End main Content -->
+      
+    
+    </div>
+
+
+<!-- End Document
+================================================== -->
+
+</body>
+</html>
+
