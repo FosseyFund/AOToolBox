@@ -14,7 +14,7 @@ To run all the behaviors you wish to record during focal observations, you will 
 #### 1. Upload dyadic interactions csv file
 
 To upload the list of social behaviors, create a ".csv" file that includes all relevant social behaviors that you wish to record between the focal animal and other individuals in the social unit.
-Important: if "**\***" is added at the end of a column header, the corresponding modifier will allow multiple levels to be selected.
+Important: if the "multiply" sign "\*" is added at the end of a column header, the corresponding modifier will allow multiple levels to be selected.
 
 Below is an example of what this ".csv" file can look like:
 
@@ -140,7 +140,7 @@ Below is an example of what this ".csv" file can look like:
 
 * If the identity of another individual is to be recorded for a certain activity, this *must* be specified in one of the columns with the value _ID. This refers to the group composition ".csv" file (See <a id="link_to_animals" href="#" class="action-button">"Create group composition"</a> for specifications). Note that the special _ID tag can also be used in the dyadic interactions csv file (eg, to characterize social interactions involving three individuals) or in the self-directed/health csv file.
 
-* Note the presence of "**\***" at the end of the GROOMEE_ID column header. This allows muliple individual IDs to be selected simultaneously. The "**\***" symbol can be used for any column of the dyadic, scan and self directed/health csv files.
+* Note the presence of "\*" at the end of the GROOMEE_ID column header. This allows muliple individual IDs to be selected simultaneously. The "\*" symbol can be used for any column of the dyadic, scan and self directed/health csv files.
 
 ***
 
