@@ -1,5 +1,12 @@
 library(rjson)
 
+# fromJSON(file="~/Documents/GITHUB clones/temp/amy/behaviors.json")
+ behav <- fromJSON(file="~/Documents/GITHUB clones/temp/amy/behaviors.json")
+# ####path to layout_info.json
+ layout <- fromJSON(file="~/Documents/GITHUB clones/temp/amy/layout_info.json")
+# ####path to sample output data file
+ dat <- fromJSON(file="~/Documents/GITHUB clones/temp/amy/Amy_2016-08-19_12h55m18s.dat")
+
 jsonOutputConversion <- function(json.output.file, behaviors.json, layout_info.json)
 {
 ####path to behaviors.json
@@ -11,9 +18,10 @@ dat <- fromJSON(paste(json.output.file, collapse=""))
 
 getListHeaders <- function(jsonList){
 temp <- names(unlist(jsonList))
-temp2 <- unlist(strsplit(temp, split="name"))
+temp2 <- unlist(strsplit(temp, split="[.]name"))
 unique(unlist(strsplit(temp2, split="[.]")))
 }
+
 
 #################get the list of behaviors and modifiers here:
 behaviorHeaders <- getListHeaders(behav$dyadic)
@@ -79,6 +87,7 @@ for (i in 1:length(dat$data$sessions)){
 ##########generic function helping parsing hierarchical data
 varMatrix <- function(observations, headers){
 	newTable <- matrix(nrow=0, ncol=length(headers))
+	if(length(observations)>0){
 	for(j in 1:length(observations)){
 		var <- observations[j]
 		varNameTemp <- names(var)
@@ -90,8 +99,11 @@ varMatrix <- function(observations, headers){
 		newRow[1] <- varNameTemp
 		newTable <- rbind(newTable, newRow)
 	}
+	}
 	return(newTable)
 }
+
+
 
 #################list_dayVars
 dayVarsTable <- matrix(nrow=0, ncol=2+length(dayVarsHeaders))
@@ -149,6 +161,9 @@ for (i in 1:length(dat$data$sessions)){
 	for (j in 1:length(session$focals)){
 		focal <- session$focals[[j]]
 		continuousVarsDetailsTemp <- focal$continuous_focal_vars
+		if(is.null(focal$continuous_focal_vars)) {
+			next
+			}
 		newContinuousVarsTable <- varMatrix(continuousVarsDetailsTemp, continuousVarsHeaders)
 	continuousVarsTable <- rbind(continuousVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newContinuousVarsTable))
 	}
