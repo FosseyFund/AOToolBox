@@ -1,12 +1,5 @@
 library(rjson)
 
-# fromJSON(file="~/Documents/GITHUB clones/temp/amy/behaviors.json")
- behav <- fromJSON(file="~/Documents/GITHUB clones/temp/amy/behaviors.json")
-# ####path to layout_info.json
- layout <- fromJSON(file="~/Documents/GITHUB clones/temp/amy/layout_info.json")
-# ####path to sample output data file
- dat <- fromJSON(file="~/Documents/GITHUB clones/temp/amy/Amy_2016-08-19_12h55m18s.dat")
-
 jsonOutputConversion <- function(json.output.file, behaviors.json, layout_info.json)
 {
 ####path to behaviors.json
@@ -367,9 +360,9 @@ for (i in 1:length(dat$data$sessions)){
 	if(length(session$focal)>0){
 		for (j in 1:length(session$focal)){
 			focal <- session$focal[[j]]
-			if (length(focal$backgroundTaps)>0){
-				for (k in 1:length(focal$backgroundTaps)){
-					backgroundTap <- focal$backgroundTaps[[k]]
+			if (length(focal$background_taps)>0){
+				for (k in 1:length(focal$background_taps)){
+					backgroundTap <- focal$background_taps[[k]]
 					backgroundTapsTable <- rbind(backgroundTapsTable, as.character(c(
 					NAcheck(session$device_ID),
 					NAcheck(session$arrival_time),
