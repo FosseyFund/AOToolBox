@@ -1,5 +1,6 @@
 library(rjson)
 
+
 jsonOutputConversion <- function(json.output.file, behaviors.json, layout_info.json)
 {
 ####path to behaviors.json
@@ -44,14 +45,13 @@ NAcheck <- function(x){
 	ifelse (is.null(x), NA,x)
 }
 #################list_sessions
-sessionsTable <- matrix(nrow=0, ncol=11)
+sessionsTable <- matrix(nrow=0, ncol=10)
 colnames(sessionsTable) <- c(
 	"device_ID",
 	"session_start_timeStamp", 
 	"session_end_timeStamp",
 	"group_ID",
 	"pin_code_name",
-	"observer_name",
 	"layout_info_json_version",
 	"behaviors_json_version",
 	"gps_on",
@@ -68,7 +68,6 @@ for (i in 1:length(dat$data$sessions)){
 	NAcheck(session$departure_time),
 	NAcheck(session$group_id),
 	NAcheck(session$pin_name),
-	NAcheck(unlist(session$details$'Observer name')),
 	NAcheck(session$layout_info_JSON_file_ID),
 	NAcheck(session$behaviors_JSON_file_ID),
 	NAcheck(session$gps_on),
@@ -181,7 +180,7 @@ for (i in 1:length(dat$data$sessions)){
 	for (j in 1:length(session$focals)){
 		focal <- session$focals[[j]]
 		if(length(focal$scans)>0){
-		for (k in 1:length(session$focals)){
+		for (k in 1:length(focal$scans)){
 		scan <- focal$scans[[k]]
 		scanVarsDetailsTemp <- scan$details
 		newscanVarsTable <- varMatrix(scanVarsDetailsTemp, scanVarsHeaders)
@@ -310,13 +309,13 @@ for (i in 1:length(dat$data$sessions)){
 		if(length(focal$scans)>0){
 			for (k in 1:length(focal$scans)){
 				scan <- focal$scans[[k]]
-				for(m in 1:length(focal$scans[[k]]$observations))
+				if(length(scan$observations)>0){
+				for(m in 1:length(scan$observations))
 					{
-					observation <- focal$scans[[k]]$observations[[m]]
+					observation <- scan$observations[[m]]
 					observationDetailsTemp <- observation$details	
 					observationDetailsTemp2 <- character(length(scanHeaders))
 					observationDetailsTemp2[match(names(unlist(observationDetailsTemp)), scanHeaders2)] <- unlist(observationDetailsTemp)
-					
 					scansTable <- rbind(scansTable, as.character(c(
 					NAcheck(session$device_ID),
 					NAcheck(session$arrival_time),
@@ -333,6 +332,7 @@ for (i in 1:length(dat$data$sessions)){
 					NAcheck(scan$alt),
 					NAcheck(scan$compassBearing))))
 					}
+				}
 				}
 			}
 		}
