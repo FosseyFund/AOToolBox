@@ -32,7 +32,7 @@ h1 a { text-indent: -9999px; }
 #main-nav { float: right; }
 #main-nav ul, #main-nav li { list-style: none; padding: 0; margin: 0; display: inline; } 
 #main-nav ul li { float: left; position: relative; }
-#main-nav ul li a { display: inline-block; padding: 48px 10px 34px 10px; margin: 0 5px; text-decoration: none; font-size: 12px; border-bottom: 3px solid transparent; }
+#main-nav ul li a { display: inline-block; padding: 48px 10px 34px 10px; margin: 0 5px; text-decoration: none; font-size: 16px; border-bottom: 3px solid transparent; }
 #main-nav ul li:hover { border-bottom: 3px solid #228b22 !important; }
 .current { font-weight: bold !important; color: #444 !important; border-bottom: 3px solid #228b22 !important; }
 
@@ -94,7 +94,11 @@ footer {background: #CAFF70; border-top: 1px solid #afdfff; }
 ================================================== */
 
 	/* Smaller than standard 960 (devices and browsers) */
-	@media only screen and (max-width: 959px) {}
+	@media only screen and (max-width: 950px) {
+    #header { text-align:center;  border-bottom: 1px solid #E3E3E8; margin-bottom: 30px; }
+    #main-nav ul li a {  padding: 15px 15px 15px 5px; margin: 0 5px; text-decoration: none; font-size: 30px; border-bottom: 3px solid transparent; }
+    #main-nav ul, #main-nav li { text-align:center; list-style: none; padding: 0; margin: 0; display: block; width:100%; float:none;} 
+  }
 
 	/* Tablet Portrait size to standard 960 (devices and browsers) */
 	@media only screen and (min-width: 768px) and (max-width: 959px) {}
@@ -132,7 +136,7 @@ footer {background: #CAFF70; border-top: 1px solid #afdfff; }
 
 .flex-container .flex-caption { font-family: Helvetica, Arial, sans-serif!important; width: 96%; padding: 10px 0 0 10px; position: absolute; bottom: 0; background: rgba(0, 0, 0, .5); color: white; text-shadow: 0 -1px 0 rgba(0, 0, 0, .5); font-style: italic; }
 .flex-container .flex-caption h5, .flex-container .flex-caption h5 a { font-family: Helvetica, Arial, sans-serif!important; color: white; font-weight: bold; margin-bottom: 0px; font-style: normal; text-decoration: none; text-transform: uppercase; }
-.flex-container .flexslider { padding: 0; background:none; border: 10px solid #005088; -webkit-border-radius: 0; -moz-border-radius: 0; border-radius: 0; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none; }
+.flex-container .flexslider { padding: 0; background:none; border: 10px solid Black; -webkit-border-radius: 0; -moz-border-radius: 0; border-radius: 0; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none; }
 .flexslider li { margin-bottom: 0; }
 ..flex-direction-nav { display: none; position: absolute; width: 100%; top: 50%; margin-top: -25px; display: block	9; }
 
@@ -163,7 +167,7 @@ footer {background: #CAFF70; border-top: 1px solid #afdfff; }
 @font-face {
   font-family: "FontAwesome";
   src: url('../font/fontawesome-webfont.eot');
-  src: url('../font/fontawesome-webfont.eot?#iefix') format('eot'), url('../font/fontawesome-webfont.woff') format('woff'), url('../font/fontawesome-webfont.ttf') format('truetype'), url('../font/fontawesome-webfont.svg#FontAwesome') format('svg');
+  src: url('../font/fontawesome-webfont.eot%3F') format('eot'), url('../font/fontawesome-webfont.woff') format('woff'), url('../font/fontawesome-webfont.ttf') format('truetype'), url('../font/fontawesome-webfont.svg') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -468,11 +472,11 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
 
 #message { margin: 10px 0; padding: 0; }
 
-.error_message { display: block; height: 22px; line-height: 22px; background: #FBE3E4 url('../assets/error.gif') no-repeat 10px center; padding: 3px 10px 3px 35px; color:#8a1f11;border: 1px solid #FBC2C4; -webkit-border-radius:5px; }
+.error_message { display: block; height: 22px; line-height: 22px; background: #FBE3E4 url('http://fosseyfund.github.io/AOToolBox/assets/error.gif') no-repeat 10px center; padding: 3px 10px 3px 35px; color:#8a1f11;border: 1px solid #FBC2C4; -webkit-border-radius:5px; }
 
 .loader { padding: 0 10px; }
 
-#contact #success_page h1 { background: url('../assets/success.gif') left no-repeat; padding-left:22px; }
+#contact #success_page h1 { background: url('http://fosseyfund.github.io/AOToolBox/assets/success.gif') left no-repeat; padding-left:22px; }
 
 acronym { border-bottom:1px dotted #ccc; }
 
