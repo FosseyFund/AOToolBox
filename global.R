@@ -4,6 +4,7 @@ if (!require(package.name, character.only=T)) install.packages(package.name)
 library(package.name, character.only=T)
 }
 install.load("rjson")
+install.load("visNetwork")
 install.load("shiny")
 install.load("rhandsontable")
 install.load("markdown")

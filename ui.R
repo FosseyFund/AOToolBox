@@ -191,8 +191,9 @@ br(),
     ),
     mainPanel(
       tabsetPanel(id="panels5",
-          tabPanel("Instructions", includeMarkdown("rmarkdown/Convert_datatocsv.Rmd"))),
-
+          tabPanel("Instructions", includeMarkdown("rmarkdown/Convert_datatocsv.Rmd")),
+          tabPanel("Output Tables",
+		br(),br(),
 		textOutput("sessionsTable.csv"),
 		tableOutput("table1"),
 		br(),
@@ -222,7 +223,23 @@ br(),
 		br(),
 		textOutput("scanVarsTable.csv"),
 		tableOutput("table10"),
-		br()
+		br()),
+		tabPanel("Data Inspection (in development)", 
+		wellPanel(
+      h4("Pick a Session/Focal"),
+      sliderInput("session_nb",
+                  "Session number:",
+                  min = 0, max = 0, value = 0, step=1, round=T, ticks=F),
+                  br(),
+      sliderInput("focal_nb",
+                  "Focal number:",
+                  min = 0, max = 0, value = 0, step=1, round=T, ticks=F)
+    	),
+    	htmlOutput("networkTitle"),br(),
+    	visNetworkOutput("network_behav", height = "600px")
+    	
+		)
+		)
 )
 )
 )

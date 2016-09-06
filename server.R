@@ -389,8 +389,6 @@ dataOutput <- reactive({
    		"scanVarsTable.csv"
    		})
     		
-
-		
 	output$table1 <- renderTable({
 		if(is.null(dataOutput())) return(NULL)
 		dataOutput()$sessionsTable
@@ -542,6 +540,58 @@ dataOutput <- reactive({
        },
        contentType = "application/zip"
      )
-  
+observe({
+		session_nb <- input$session_nb
+	focal_nb <- input$focal_nb
+	max_session_nb <- nrow(dataOutput()$sessionsTable)
+	focalListTemp <- dataOutput()$focalsTable[dataOutput()$focalsTable$session_start_timeStamp==dataOutput()$sessionsTable$session_start_timeStamp[session_nb],]
+	
+	behavListTemp <- dataOutput()$behaviorsTable[dataOutput()$behaviorsTable$focal_start_timeStamp== focalListTemp$focal_start_timeStamp[focal_nb],]
+	focal_ID <- as.character(focalListTemp$focal_individual_ID[focal_nb])
+
+	
+ 	updateSliderInput(session, "session_nb",
+      label = paste("Session number:", session_nb), max= max_session_nb
+      )
+ 
+    updateSliderInput(session, "focal_nb",
+      label = paste("Focal number:", focal_nb), max=nrow(focalListTemp),
+      )
+    output$networkTitle <- renderUI({
+    	if (is.null(behavListTemp) ) return(NULL) else if (nrow(behavListTemp)==0) return(NULL) else {
+    		HTML(paste0("<h4 align='center'>Focal Individual: ", focal_ID, "<br/>Focal start time: ", behavListTemp$focal_start_timeStamp[1], "</h4>"))
+    		}
+    })
+    output$network_behav <- renderVisNetwork({
+    	if (is.null(behavListTemp) ) return(NULL) else if (nrow(behavListTemp)==0) return(NULL) else {
+    ids <- 	unique(c(focal_ID , as.character(behavListTemp$actor), as.character(behavListTemp$subject)))
+    focal_index <- which(ids==focal_ID)
+    behavListTemp$actor <- factor(behavListTemp$actor, levels=ids)
+    behavListTemp$subject <- factor(behavListTemp$subject, levels=ids)
+    colorNodes <- rep(colors()[589], length(ids))
+    colorNodes[focal_index] <- colors()[76]
+    nodes <- data.frame(id = 1:length(ids), label=ids, shape="box", shadow=T)
+    
+    lowbound <- which(names(behavListTemp)=="subject")
+    upperbound <- which(names(behavListTemp)=="comment")
+     modifiers <- behavListTemp[,(lowbound+1):(upperbound-1)]
+    edgeLabels <- apply(modifiers,1,function(v) {
+    	v1 <- v[v!=""]
+	return(v1[1])
+    })
+    
+    titleEdges <- apply(modifiers,1,function(v) {
+    	v1 <- v[v!=""]
+	return(paste(v1, collapse="/"))
+    })
+    edges <- data.frame(from = as.numeric(behavListTemp$actor), to = as.numeric(behavListTemp$subject), arrows="to", label= edgeLabels, title=titleEdges)
+    
+    visNetwork(nodes, edges)
+    }
+  })  
+})
+  		
+ 
+
   
 })
