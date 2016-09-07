@@ -540,29 +540,38 @@ dataOutput <- reactive({
        },
        contentType = "application/zip"
      )
+     
 observe({
-		session_nb <- input$session_nb
+	session_nb <- input$session_nb
 	focal_nb <- input$focal_nb
 	max_session_nb <- nrow(dataOutput()$sessionsTable)
-	focalListTemp <- dataOutput()$focalsTable[dataOutput()$focalsTable$session_start_timeStamp==dataOutput()$sessionsTable$session_start_timeStamp[session_nb],]
+	focalListTemp <- dataOutput()$focalsTable[as.character(dataOutput()$focalsTable$session_start_timeStamp)==as.character(dataOutput()$sessionsTable$session_start_timeStamp[session_nb]),]
 	
-	behavListTemp <- dataOutput()$behaviorsTable[dataOutput()$behaviorsTable$focal_start_timeStamp== focalListTemp$focal_start_timeStamp[focal_nb],]
-	focal_ID <- as.character(focalListTemp$focal_individual_ID[focal_nb])
+	focalStartTime <- as.character(focalListTemp$focal_start_timeStamp[focal_nb])
+	
+	behavListTemp <- dataOutput()$behaviorsTable[as.character(dataOutput()$behaviorsTable$focal_start_timeStamp)== focalStartTime,]
+	 focal_ID <- as.character(focalListTemp$focal_individual_ID[focal_nb])
 
+#cat(file=stderr(), paste("focalstarttime =", as.character(focalListTemp$focal_start_timeStamp[focal_nb])))
 	
- 	updateSliderInput(session, "session_nb",
+ 	 updateSliderInput(session, "session_nb",
       label = paste("Session number:", session_nb), max= max_session_nb
       )
  
     updateSliderInput(session, "focal_nb",
       label = paste("Focal number:", focal_nb), max=nrow(focalListTemp),
       )
+     
+
     output$networkTitle <- renderUI({
-    	if (is.null(behavListTemp) ) return(NULL) else if (nrow(behavListTemp)==0) return(NULL) else {
-    		HTML(paste0("<h4 align='center'>Focal Individual: ", focal_ID, "<br/>Focal start time: ", behavListTemp$focal_start_timeStamp[1], "</h4>"))
+    	if (is.null(focalStartTime) ) return(NULL) else if (length(focalStartTime)==0) return(NULL) else {
+    		HTML(paste0("<h4 align='center'>Focal Individual: ", focal_ID, "<br/>Focal start time: ", focalStartTime, "</h4>"))
     		}
     })
+
+
     output$network_behav <- renderVisNetwork({
+    
     	if (is.null(behavListTemp) ) return(NULL) else if (nrow(behavListTemp)==0) return(NULL) else {
     ids <- 	unique(c(focal_ID , as.character(behavListTemp$actor), as.character(behavListTemp$subject)))
     focal_index <- which(ids==focal_ID)
@@ -578,20 +587,24 @@ observe({
     edgeLabels <- apply(modifiers,1,function(v) {
     	v1 <- v[v!=""]
 	return(v1[1])
-    })
-    
+    }
+    )
     titleEdges <- apply(modifiers,1,function(v) {
     	v1 <- v[v!=""]
 	return(paste(v1, collapse="/"))
-    })
+    }
+    )
     edges <- data.frame(from = as.numeric(behavListTemp$actor), to = as.numeric(behavListTemp$subject), arrows="to", label= edgeLabels, title=titleEdges)
-    
     visNetwork(nodes, edges)
     }
-  })  
-})
+  }
+  )  
+    })
+
 ######################################
 ###################postgres connection
+
+
 
 DBname <- reactive({
 	return(input$postgresDBname)
@@ -619,7 +632,6 @@ database <- eventReactive(input$postgresConnect, {
     con <- dbConnect(drv, dbname = DBname(),
                  host = DBhost(), port = DBport(),
                  user = DBuser(), password = DBpwd())
-
     return(con)
 })  		
 
@@ -633,19 +645,12 @@ output$table11 <- renderTable({
 })
 
 
-
 # con <- dbConnect(drv, dbname = "postgres", host = "localhost", port = 5432, user = "postgres", password = "postgres")
 # dbGetQuery(con, "select *  from pg_tables where schemaname!='pg_catalog' AND schemaname!='information_schema';")##table list
 # dbGetQuery(con, "select count(*) from information_schema.columns where table_name='list_food_items';")##number of columns
 # dbGetQuery(con, "select column_name from information_schema.columns where table_name='list_food_items';")[,1]##column names
 # dbGetQuery(con, "SELECT schemaname,relname,n_live_tup FROM pg_stat_user_tables ORDER BY n_live_tup DESC;")##number of rows, approximate
 # dbGetQuery(con, "SELECT * FROM main_tables.list_food_items;")
-
-
-
-
-
-
 
 
 
