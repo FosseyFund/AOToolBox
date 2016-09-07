@@ -41,11 +41,7 @@ shinyUI(fluidPage(
       tabsetPanel(id="panels2",
                   
                   tabPanel("Instructions", includeMarkdown("rmarkdown/Create_structure.Rmd"))#,
-                  #tabPanel("Dyadic"),
-                  #tabPanel("Scan"),
-                  #tabPanel("Solo"),
-                  #tabPanel("Foods"),
-                  #tabPanel("View protocol")
+
     )
     ))),
 	################################################
@@ -247,23 +243,33 @@ br(),
 ),
   	################################################
 	################################################
-tabPanel("PostgreSQL Database", 
+tabPanel("PostgreSQL Database (in development)", 
 br(),
    
     sidebarLayout(
 
     # Sidebar with a slider input
     sidebarPanel(
+    HTML("<h4><b>    Connect to postgreSQL database</b></h4>"),
+	br(),
     textInput("postgresHost", label = "Host name or IP address", value = "localhost"),
-    textInput("postgresDBname", label = "Database name", value = ""),
-	textInput("postgresUser", label = "User name", value = ""),
+    textInput("postgresDBname", label = "Database name (if you have not set up an Animal Observer database yet enter the default database name)", value = "postgres"),
+	textInput("postgresUser", label = "User name", value = "postgres"),
 	numericInput("postgresPort", label = "Port", value = "5432"),
-	passwordInput("postgresPwd", label = "Password (non-encrypted, use a VPN for safer connection!)", value = ""),
-	actionButton("postgresConnect", label = "Connect")
-
+	passwordInput("postgresPwd", label = "Password (non-encrypted, use a VPN for safer connection!)", value = "postgres"),
+	actionButton("postgresConnect", label = "Connect"),
+	hr(),
+	HTML("<h4><b>    First time users: do you want to create a relational database structure matching your <em>layout_info.json</em> and <em>behaviors.json</em> files?</b></h4>"),
+	br(),
+	fileInput('behaviors.json2', '1. Upload "behaviors.json"'),
+    fileInput('layout_info.json2', '2. Upload "layout_info.json"'),
+	textInput("newDBname", label = "Database name (no space)", value = ""),
+	actionButton("createEmptyDB", label = "Create empty database structure"),
+	hr(),
+	HTML("<h4><b>    Upload collected data to existing database</b></h4>")
     ),
     mainPanel(
-    textOutput("postgresDBnameOutput"),
+    htmlOutput("postgresDBnameOutput"),br(),
     tableOutput("table11")
     )
 

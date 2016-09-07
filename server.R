@@ -623,7 +623,14 @@ database <- eventReactive(input$postgresConnect, {
     return(con)
 })  		
 
-output$postgresDBnameOutput <- renderText({DBname()}) 
+
+output$postgresDBnameOutput <- renderUI({
+    	if(is.null(database())) return(NULL)
+		HTML(paste0("<h4 align='left'>Content of database <b><em>", DBname(),"</b></em></h4>"))
+    	}
+    )
+
+
  
 output$table11 <- renderTable({
 		if(is.null(database())) return(NULL)
@@ -631,6 +638,29 @@ output$table11 <- renderTable({
 		}, include.rownames=F)
   
 })
+
+############################################
+behaviors.json.input2 <- reactive({
+    if (is.null(input$behaviors.json2))
+      return(NULL)
+    readLines(input$behaviors.json2$datapath, warn=F)
+  })
+layout_info.json.input2 <- reactive({
+    if (is.null(input$layout_info.json2))
+      return(NULL)
+    readLines(input$layout_info.json2$datapath, warn=F)
+  })
+
+createDB <- eventReactive(input$createEmptyDB, {
+	if(is.null(behaviors.json.input2()) | is.null(layout_info.json.input2())) return(NULL)
+    return(jsonOutputConversion(json.output.file =NULL, layout_info.json.input2(), behaviors.json.input2()))
+})  
+
+
+
+############################################
+
+
 
 
 
