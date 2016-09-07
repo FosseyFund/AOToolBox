@@ -8,11 +8,13 @@ install.load("visNetwork")
 install.load("shiny")
 install.load("rhandsontable")
 install.load("markdown")
+install.load("RPostgreSQL")
 source("prepare_behaviorsJson.R")
 source("prepare_foodsDyadicScanSolo.R")
 source("jsonOutputConversion.R")
 source("prepare_animalsJSON.R")
 source("prepare_layoutInfoJSON.R")
+source("postgres_connection.R")
 includesFOOD <- function(dat)
 {
 	temp <- dat=="_FOOD"

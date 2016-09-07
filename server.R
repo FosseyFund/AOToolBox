@@ -590,8 +590,62 @@ observe({
     }
   })  
 })
-  		
- 
+######################################
+###################postgres connection
 
+DBname <- reactive({
+	return(input$postgresDBname)
+})
+
+DBuser <- reactive({
+	return(input$postgresUser)
+})
+
+DBhost <- reactive({
+	return(input$postgresHost)
+})
+
+DBpwd <- reactive({
+	return(input$postgresPwd)
+})
+
+DBport <- reactive({
+	return(input$postgresPort)
+})
+
+database <- eventReactive(input$postgresConnect, {
+	if(is.null(DBname()) | is.null(DBuser()) | is.null(DBhost()) | is.null(DBpwd()) | is.null(DBport())) return(NULL)
+    drv <- dbDriver("PostgreSQL")
+    con <- dbConnect(drv, dbname = DBname(),
+                 host = DBhost(), port = DBport(),
+                 user = DBuser(), password = DBpwd())
+
+    return(con)
+})  		
+
+output$postgresDBnameOutput <- renderText({DBname()}) 
+ 
+output$table11 <- renderTable({
+		if(is.null(database())) return(NULL)
+		return(getTableList(database()))
+		}, include.rownames=F)
   
 })
+
+
+
+# con <- dbConnect(drv, dbname = "postgres", host = "localhost", port = 5432, user = "postgres", password = "postgres")
+# dbGetQuery(con, "select *  from pg_tables where schemaname!='pg_catalog' AND schemaname!='information_schema';")##table list
+# dbGetQuery(con, "select count(*) from information_schema.columns where table_name='list_food_items';")##number of columns
+# dbGetQuery(con, "select column_name from information_schema.columns where table_name='list_food_items';")[,1]##column names
+# dbGetQuery(con, "SELECT schemaname,relname,n_live_tup FROM pg_stat_user_tables ORDER BY n_live_tup DESC;")##number of rows, approximate
+# dbGetQuery(con, "SELECT * FROM main_tables.list_food_items;")
+
+
+
+
+
+
+
+
+

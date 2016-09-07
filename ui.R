@@ -165,6 +165,8 @@ br(),
 	  br(),
 	  br(),
 	  br()),
+  	################################################
+	################################################
     tabPanel("Convert collected data to csv",
     br(),
    
@@ -242,7 +244,67 @@ br(),
 		)
 )
 )
+),
+  	################################################
+	################################################
+tabPanel("PostgreSQL Database", 
+br(),
+   
+    sidebarLayout(
+
+    # Sidebar with a slider input
+    sidebarPanel(
+    textInput("postgresHost", label = "Host name or IP address", value = "localhost"),
+    textInput("postgresDBname", label = "Database name", value = ""),
+	textInput("postgresUser", label = "User name", value = ""),
+	numericInput("postgresPort", label = "Port", value = "5432"),
+	passwordInput("postgresPwd", label = "Password (non-encrypted, use a VPN for safer connection!)", value = ""),
+	actionButton("postgresConnect", label = "Connect")
+
+    ),
+    mainPanel(
+    textOutput("postgresDBnameOutput"),
+    tableOutput("table11")
+    )
+
+
+)
+)
+  	################################################
+	################################################
 )
 )
 )
-)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
