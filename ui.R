@@ -245,9 +245,7 @@ br(),
 	################################################
 tabPanel("PostgreSQL Database (in development)", 
 br(),
-   
     sidebarLayout(
-
     # Sidebar with a slider input
     sidebarPanel(
     HTML("<h4><b>    Connect to postgreSQL database</b></h4>"),
@@ -270,7 +268,18 @@ br(),
     ),
     mainPanel(
     htmlOutput("postgresDBnameOutput"),br(),
-    tableOutput("table11")
+    tableOutput("table11")# ,
+    # htmlOutput("postgresSessions"),br(),
+    # rHandsontableOutput("postgresSessionsTable"),
+    # br(),
+    # htmlOutput("postgresFocals"),br(),
+    # rHandsontableOutput("postgresFocalsTable"),
+    # br(),
+    # htmlOutput("postgresFocals"),br(),
+    # rHandsontableOutput("postgresFocalsTable"),
+	# br(),
+    # htmlOutput("postgresBehaviors"),br(),
+    # rHandsontableOutput("postgresFocalsTable"),
     )
 
 

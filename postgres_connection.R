@@ -9,7 +9,7 @@ return(temp)
 
 #listTables <- jsonOutputConversion(NULL, "~/Documents/git repositories/temp/behaviors.json", "~/Documents/git repositories/temp/layout_info.json")
 
-createListSQLTables <- function(listTables){
+createListSQLTables <- function(listTables, con){
 	#list of headers
 	tableHeaders <- list()
 	tableHeaders[[1]] <- names(listTables$sessionsTable)
@@ -22,12 +22,18 @@ createListSQLTables <- function(listTables){
 	tableHeaders[[8]] <- names(listTables$focalVarsTable)
 	tableHeaders[[9]] <- names(listTables$continuousVarsTable)
 	tableHeaders[[10]] <- names(listTables$scanVarsTable)
+	
+	dbGetQuery(con, "create database animal_observer;")
+	dbDisconnect(con)
+	#dbConnect(drv=dbDriver("PostgreSQL"), dbname = "animal_observer",
+    #              host = DBhost(), port = DBport(),
+    #             user = DBuser(), password = DBpwd())
+	con <- dbConnect(drv, dbname =  "animal_observer", host = "localhost", port = 5432, user = "postgres", password = "postgres")
 	sqlCode <- list()
-	sqlCode <- c(sqlCode, "create schema animal_observer;")
-	sqlCode <- c(sqlCode, paste("create schema animal_observer;"))
-
+	sqlCode <- c(sqlCode, paste("create schema main_tables;"))
+	sqlCode <- c(sqlCode, paste("drop schema public;"))
+	sqlCode <- c(sqlCode, paste("create schema accessory_tables;"))
+	#write(unlist(sqlCode), file="~/Documents/git repositories/temp/test.txt")
+	dbGetQuery(con, paste(unlist(sqlCode), collapse=" "))
 	
 }
-
-
-
