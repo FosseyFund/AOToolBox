@@ -107,7 +107,7 @@ colnames(dayVarsTable) <- c(
 if(length(dat$data$sessions)>0){
 for (i in 1:length(dat$data$sessions)){
 	session <- dat$data$sessions[[i]]
-	dayVarsDetailsTemp <- session$details[grep("Observer name", names(session$details), invert=T)]
+	dayVarsDetailsTemp <- session$details#[grep("Observer name", names(session$details), invert=T)]
 	newDayVarsTable <- varMatrix(dayVarsDetailsTemp, dayVarsHeaders)
 	NAcheck(session$device_ID)
 	NAcheck(session$arrival_time)
