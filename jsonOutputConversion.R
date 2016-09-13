@@ -11,11 +11,11 @@ layout <- fromJSON(paste(layout_info.json, collapse=""))
 if(is.null(json.output.file)) {dat <- NULL} else {dat <- fromJSON(paste(json.output.file, collapse=""))}
 
 getListHeaders <- function(jsonList){
+if(length(jsonList)==0) return(NULL)
 temp <- names(unlist(jsonList))
 temp2 <- unlist(strsplit(temp, split="[.]name"))
-unique(unlist(strsplit(temp2, split="[.]")))
+return(unique(unlist(strsplit(temp2, split="[.]"))))
 }
-
 
 #################get the list of behaviors and modifiers here:
 behaviorHeaders <- getListHeaders(behav$dyadic)
