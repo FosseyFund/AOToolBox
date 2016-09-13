@@ -346,7 +346,7 @@ layout_info.json.input <- reactive({
 dataOutput <- reactive({
 		if(is.null(json.output.file.input()) | is.null(behaviors.json.input()) | is.null(layout_info.json.input())) {return(NULL)} else 
 		jsonOutputConversion(json.output.file.input(), behaviors.json.input(), layout_info.json.input())
-		})
+})
 		
 	output$sessionsTable.csv <- renderText({
 	if(is.null(dataOutput())) return(NULL)
