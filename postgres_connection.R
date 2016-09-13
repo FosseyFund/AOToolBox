@@ -10,7 +10,7 @@ return(temp)
 }
 
 
-createListSQLTables <- function(listTables, con, newdbname){
+createListSQLTables <- function(listTables, con, newdbname, username, hostname, pwd){
 	#list of headers
 	tableHeaders <- list()
 	tableHeaders[[1]] <- names(listTables$sessionsTable)
@@ -32,16 +32,23 @@ createListSQLTables <- function(listTables, con, newdbname){
 		tableHeaders[[i]] <- fixHeader(tableHeaders[[i]])
 	}
 	
+	if(newdbname %in% dbGetQuery(con, "SELECT datname FROM pg_database WHERE datistemplate = false;")[,1]) {
+		cat(file=stderr(), paste0("Database ", newdbname," already exists!\n"))
+		return(NULL)
+		}
+
+
 	#con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname =  "postgres", host = "localhost", port = 5432, user = "postgres", password = "postgres")
-	dbGetQuery(con, "select pg_terminate_backend(pid) from pg_stat_activity where datname='animal_observer';")##disconnect all users of animal_observer
+	#dbGetQuery(con, paste0("select pg_terminate_backend(pid) from pg_stat_activity where datname=", newdbname,"'animal_observer';"))##disconnect all users of animal_observer
 	#dbGetQuery(con, "drop database if exists animal_observer;")	
 	dbGetQuery(con, paste0("create database ",newdbname,";"))
-	dbDisconnect(con)
-	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname =  newdbname, host = "localhost", port = 5432, user = "postgres", password = "postgres")
+		all_cons <- dbListConnections(dbDriver("PostgreSQL"))
+    for(con in all_cons) dbDisconnect(con)
+	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname =  newdbname, host = hostname, port = 5432, user = username, password = pwd)
 	sqlCode <- list()
 	sqlCode <- c(sqlCode, "create schema main_tables;")
 	sqlCode <- c(sqlCode, "drop schema public;")
-	sqlCode <- c(sqlCode, "create schema accessory_tables;")
+	#sqlCode <- c(sqlCode, "create schema accessory_tables;")
 	
 	sqlCode <- c(sqlCode, "CREATE OR REPLACE FUNCTION main_tables.row_modif_stamp() RETURNS trigger AS $BODY$
    	BEGIN
@@ -145,18 +152,19 @@ createListSQLTables <- function(listTables, con, newdbname){
 	PRIMARY KEY (device_ID, scan_time, scanVars),
 	FOREIGN KEY (device_ID, scan_time) REFERENCES main_tables.list_scans(device_ID, scan_time) ON UPDATE CASCADE
 	);"))
+	if(length(tableHeaders[[9]])>3){
 	sqlCode <- c(sqlCode, paste0("create table main_tables.continuous_focal_variables (
 	device_ID text NOT NULL,
 	focal_start_time  timestamp NOT NULL, ",
-	paste(gsub("[.]", "_", tableHeaders[[9]][4:(length(tableHeaders[[9]]))]), collapse=" text,\n"),
-	" text,	
-	created_by text DEFAULT CURRENT_USER,
+	paste0(paste(gsub("[.]", "_", tableHeaders[[9]][4:(length(tableHeaders[[9]]))]), collapse=" text,\n"), " text,\n"),
+	"created_by text DEFAULT CURRENT_USER,
 	created_on timestamp DEFAULT CURRENT_TIMESTAMP,
 	last_modif_by text DEFAULT CURRENT_USER,
 	last_modif_on timestamp DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (device_ID, focal_start_time, continuousVars),
 	FOREIGN KEY (device_ID, focal_start_time) REFERENCES main_tables.list_focals(device_ID, focal_start_time) ON UPDATE CASCADE
 	);"))
+	}
 	sqlCode <- c(sqlCode, paste0("create table main_tables.focal_variables (
 	device_ID text NOT NULL,
 	focal_start_time  timestamp NOT NULL, ",
@@ -213,25 +221,25 @@ createListSQLTables <- function(listTables, con, newdbname){
 	PRIMARY KEY (device_ID, focal_start_time, comment_time),
 	FOREIGN KEY (device_ID, focal_start_time) REFERENCES main_tables.list_focals(device_ID, focal_start_time) ON UPDATE CASCADE
 	);"))
-	for(i in c(
+	for(i in c(na.omit(c(
 	"main_tables.list_sessions",
 	"main_tables.list_focals",
 	"main_tables.list_behaviors",
 	"main_tables.list_scans",
 	"main_tables.scan_data",
 	"main_tables.scan_variables",
-	"main_tables.continuous_focal_variables",
+	ifelse(length(tableHeaders[[9]])>3,"main_tables.continuous_focal_variables",NA),
 	"main_tables.focal_variables",
 	"main_tables.session_variables",
 	"main_tables.list_background_taps",
-	"main_tables.list_comments")){
+	"main_tables.list_comments")))){
 		sqlCode <- c(sqlCode, paste("CREATE TRIGGER row_modif_stamp BEFORE INSERT OR UPDATE ON",i, "FOR EACH ROW EXECUTE PROCEDURE main_tables.row_modif_stamp();"))
 	}
 
 	dbGetQuery(con, paste(unlist(sqlCode), collapse=" "))
 	
-	
-
+	cat(file=stderr(), paste0("Database ", newdbname ," created!\n"))
+	return("success")
 	#write(unlist(sqlCode), file="~/Downloads/test.txt")
 	
 }

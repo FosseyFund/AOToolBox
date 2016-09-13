@@ -199,6 +199,7 @@ dataPinLayout = reactive({
     } else {
     	MAT=hot_to_r(input$layoutPin)
     }
+    for(i in 1:ncol(MAT)) MAT[,i] <- as.character(MAT[,i])
      values[["pinLayout"]] = MAT
      return(MAT)
   })
@@ -211,6 +212,7 @@ dataOptionsLayout = reactive({
     } else {
     	MAT=hot_to_r(input$layoutOptions)
     }
+     for(i in 1:ncol(MAT)) MAT[,i] <- as.character(MAT[,i])
      values[["optionsLayout"]] = MAT
      return(MAT)
   })
@@ -285,7 +287,7 @@ output$downloadLayoutJson <- downloadHandler(
 output$layoutOptions <- renderRHandsontable({
     MAT = dataOptionsLayout()
        if (!is.null(MAT)) {
-        return(rhandsontable(MAT, usesTypes=F, rowHeaders=1:nrow(MAT)) %>%
+        return(rhandsontable(MAT, usesTypes=F, rowHeaders=1:length(MAT)) %>%
       hot_table(highlightCol = FALSE, highlightRow = TRUE,
             allowRowEdit = FALSE,
             columnSorting = FALSE,exportToCsv = TRUE) %>%
@@ -297,9 +299,10 @@ output$layoutOptions <- renderRHandsontable({
 output$layoutPin <- renderRHandsontable({
     MAT = dataPinLayout()
        if (!is.null(MAT)) {
-      return(rhandsontable(MAT, useTypes=F, rowHeaders=1:nrow(MAT)) %>%
+      return(rhandsontable(MAT, rowHeaders=NULL) %>%
       hot_table(highlightCol = TRUE, highlightRow = TRUE,
             columnSorting = FALSE, exportToCsv = TRUE) %>%
+            hot_col(col = 1, readOnly = FALSE) %>%
             hot_context_menu(allowRowEdit=TRUE, allowColEdit=FALSE)
        )
     }
@@ -679,7 +682,7 @@ createDB <- eventReactive(input$createEmptyDB, {
 		}
 	 cat(file=stderr(), "Creating empty database...\n")
     listTables1 <- jsonOutputConversion(json.output.file =NULL, behaviors.json.input2(), layout_info.json.input2())
-    return(createListSQLTables(listTables1, con=database(), newdbname= newDBname()))
+    return(createListSQLTables(listTables1, con=database(), newdbname= newDBname(), username= DBuser(), hostname= DBhost(), pwd= DBpwd()))
 })  
 
 output$newDBcreated <- renderUI({
@@ -696,7 +699,7 @@ output$newDBcreated <- renderUI({
 
 
 
-# con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = "postgres", host = "localhost", port = 5432, user = "postgres", password = "postgres")
+# con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = "animal_observer", host = "localhost", port = 5432, user = "postgres", password = "postgres")
 # dbGetQuery(con, "select *  from pg_tables where schemaname!='pg_catalog' AND schemaname!='information_schema';")##table list
 # dbGetQuery(con, "select count(*) from information_schema.columns where table_name='list_food_items';")##number of columns
 # dbGetQuery(con, "select column_name from information_schema.columns where table_name='list_food_items';")[,1]##column names
