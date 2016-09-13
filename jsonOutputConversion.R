@@ -8,7 +8,7 @@ behav <- fromJSON(paste(behaviors.json, collapse=""))
 ####path to layout_info.json
 layout <- fromJSON(paste(layout_info.json, collapse=""))
 ####path to sample output data file
-dat <- fromJSON(paste(json.output.file, collapse=""))
+if(is.null(json.output.file)) {dat <- NULL} else {dat <- fromJSON(paste(json.output.file, collapse=""))}
 
 getListHeaders <- function(jsonList){
 temp <- names(unlist(jsonList))

@@ -604,8 +604,6 @@ observe({
 ######################################
 ###################postgres connection
 
-
-
 DBname <- reactive({
 	return(input$postgresDBname)
 })
@@ -628,7 +626,11 @@ DBport <- reactive({
 
 database <- eventReactive(input$postgresConnect, {
 	if(is.null(DBname()) | is.null(DBuser()) | is.null(DBhost()) | is.null(DBpwd()) | is.null(DBport())) return(NULL)
+    
     drv <- dbDriver("PostgreSQL")
+    	all_cons <- dbListConnections(drv)
+    for(con in all_cons) dbDisconnect(con)
+
     con <- dbConnect(drv, dbname = DBname(),
                  host = DBhost(), port = DBport(),
                  user = DBuser(), password = DBpwd())
@@ -646,10 +648,12 @@ output$postgresDBnameOutput <- renderUI({
  
 output$table11 <- renderTable({
 		if(is.null(database())) return(NULL)
-		return(getTableList(database()))
+				#cat(file=stderr(), "test")
+
+		return(getTableList(database(), DBname()))
 		}, include.rownames=F)
   
-})
+
 
 ############################################
 behaviors.json.input2 <- reactive({
@@ -663,19 +667,36 @@ layout_info.json.input2 <- reactive({
     readLines(input$layout_info.json2$datapath, warn=F)
   })
 
-createDB <- eventReactive(input$createEmptyDB, {
-	if(is.null(behaviors.json.input2()) | is.null(layout_info.json.input2())) return(NULL)
-    return(jsonOutputConversion(json.output.file =NULL, layout_info.json.input2(), behaviors.json.input2()))
+
+newDBname <- reactive({
+	if(input$newDBname=="") return(NULL)
+	return(input$newDBname)
+})
+
+createDB <- eventReactive(input$createEmptyDB, {	
+	if(is.null(behaviors.json.input2()) | is.null(layout_info.json.input2()) | is.null(newDBname())) {
+		return(NULL)
+		}
+	 cat(file=stderr(), "Creating empty database...\n")
+    listTables1 <- jsonOutputConversion(json.output.file =NULL, behaviors.json.input2(), layout_info.json.input2())
+    return(createListSQLTables(listTables1, con=database(), newdbname= newDBname()))
 })  
 
+output$newDBcreated <- renderUI({
+    	if(is.null(createDB())) return(NULL)
+		HTML(paste0("<h4 align='left'>Voilà!</h4>"))
+    	}
+    )
 
+
+})
 
 ############################################
 
 
 
 
-# con <- dbConnect(drv, dbname = "postgres", host = "localhost", port = 5432, user = "postgres", password = "postgres")
+# con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = "postgres", host = "localhost", port = 5432, user = "postgres", password = "postgres")
 # dbGetQuery(con, "select *  from pg_tables where schemaname!='pg_catalog' AND schemaname!='information_schema';")##table list
 # dbGetQuery(con, "select count(*) from information_schema.columns where table_name='list_food_items';")##number of columns
 # dbGetQuery(con, "select column_name from information_schema.columns where table_name='list_food_items';")[,1]##column names

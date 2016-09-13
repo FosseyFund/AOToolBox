@@ -261,15 +261,15 @@ br(),
 	br(),
 	fileInput('behaviors.json2', '1. Upload "behaviors.json"'),
     fileInput('layout_info.json2', '2. Upload "layout_info.json"'),
-	textInput("newDBname", label = "Database name (no space)", value = ""),
+	textInput("newDBname", label = "Database name (no space)", value = "animal_observer"),
 	actionButton("createEmptyDB", label = "Create empty database structure"),
 	hr(),
 	HTML("<h4><b>    Upload collected data to existing database</b></h4>")
     ),
     mainPanel(
     htmlOutput("postgresDBnameOutput"),br(),
-    tableOutput("table11")# ,
-    # htmlOutput("postgresSessions"),br(),
+    tableOutput("table11"),
+    htmlOutput("newDBcreated"),br()#,
     # rHandsontableOutput("postgresSessionsTable"),
     # br(),
     # htmlOutput("postgresFocals"),br(),
@@ -281,8 +281,6 @@ br(),
     # htmlOutput("postgresBehaviors"),br(),
     # rHandsontableOutput("postgresFocalsTable"),
     )
-
-
 )
 )
   	################################################
