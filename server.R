@@ -699,6 +699,11 @@ output$newDBcreated <- renderUI({
 })
 
 ############################################
+json.output.file.input2 <- reactive({
+   if (is.null(input$datafile.dat))
+      return(NULL)
+    readLines(input$datafile.dat$datapath, warn=F)
+  })
 
 
 

@@ -263,7 +263,15 @@ br(),
 	textInput("newDBname", label = "Database name (no space)", value = "animal_observer"),
 	actionButton("createEmptyDB", label = "Create empty database structure"),
 	hr(),
-	HTML("<h4><b>    Upload collected data to existing database</b></h4>")
+	HTML("<h4><b>    Upload collected data to existing database</b></h4>"),
+	br(),
+	fileInput('datafile.dat', 'OPTION 1. Upload "Username_Date_Time.dat" directly to the database'),
+	fileInput('behaviors.json3', '        Then upload "behaviors.json"'),
+    fileInput('layout_info.json3', '        Finally, upload "layout_info.json"'),
+
+    
+	HTML('<h5><b>    Alternatively: use the "convert collecte data to CSV" tab to convert the .dat file to csv files, download the resulting zip folder, edit files within this zip folder (if needed) and upload resulting zip folder below:</b></h5>'),br(),
+	fileInput('zipFolder', 'OPTION 2. Upload zip folder containing all the csv data files you wish to upload to the database (files must be named as in the output of the "convert data to csv" procedure)')
     ),
     mainPanel(
     htmlOutput("postgresDBnameOutput"),br(),
