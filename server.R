@@ -558,11 +558,11 @@ observe({
 #cat(file=stderr(), paste("focalstarttime =", as.character(focalListTemp$focal_start_timeStamp[focal_nb])))
 	
  	 updateSliderInput(session, "session_nb",
-      label = paste("Session number:", session_nb), max= max_session_nb
+      label = paste("Session number:", session_nb), max= max_session_nb, min=1
       )
  
     updateSliderInput(session, "focal_nb",
-      label = paste("Focal number:", focal_nb), max=nrow(focalListTemp),
+      label = paste("Focal number:", focal_nb), max=nrow(focalListTemp),min=1
       )
      
 
