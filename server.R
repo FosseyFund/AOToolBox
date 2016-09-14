@@ -251,7 +251,7 @@ dataOutput4 <- eventReactive(input$run2, {
 
 			return(NULL)
 			}
-			
+
     	temp <- list()
     	temp[[1]] <- values[["pinLayout"]]  
     	temp[[2]] <- listFromCsv(dat = dayVarsInput())
@@ -640,7 +640,11 @@ database <- eventReactive(input$postgresConnect, {
     return(con)
 })  		
 
-
+output$DoneConnect <- renderText({
+	if(is.null(database())){return(NULL)}
+		return("SUCCESS!")	
+		})
+		
 output$postgresDBnameOutput <- renderUI({
     	if(is.null(database())) return(NULL)
 		HTML(paste0("<h4 align='left'>Content of database <b><em>", DBname(),"</b></em></h4>"))

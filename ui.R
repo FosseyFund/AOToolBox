@@ -33,14 +33,12 @@ shinyUI(fluidPage(
 								 '.csv')),
 	textInput("version", label = '5. Enter protocol version (mandatory):', value = "vX.X"),
 	hr(),
-    actionButton("run", label = "Run", icon=icon("play")),
+    actionButton("run", label = "Run", icon=icon("play")),  textOutput("text1"),
 	downloadButton('downloadBehaviorsJson', 'Download behaviors.json')
     ),
     mainPanel(
-      textOutput("text1"),
       tabsetPanel(id="panels2",
-                  
-                  tabPanel("Instructions", includeMarkdown("rmarkdown/Create_structure.Rmd"))#,
+	  tabPanel("Instructions", includeMarkdown("rmarkdown/Create_structure.Rmd"))#,
 
     )
     ))),
@@ -55,6 +53,7 @@ shinyUI(fluidPage(
                 accept=c('text/csv', 
 								 'text/comma-separated-values,text/plain', 
 								 '.csv')),
+      textOutput("text2"),
 	hr(),
 	downloadButton('downloadAnimalsJson', 'Download animals.json')
     ),
@@ -62,8 +61,7 @@ shinyUI(fluidPage(
       tabsetPanel(id="panels3",
       tabPanel("Instructions", includeMarkdown("rmarkdown/Create_animals_list.Rmd"))#,
       #tabPanel("Group composition")
-      ),
-      textOutput("text2")
+      )
     )
     )
     ),
@@ -105,6 +103,7 @@ br(),
     textInput("versionLayout", label = '7. Enter protocol version (mandatory):', value = "vX.X"),
 	hr(),
     actionButton("run2", label = "Run", icon=icon("play")),
+    textOutput("text3"),
 	downloadButton('downloadLayoutJson', 'Download layout_info.json')
     ),    
     mainPanel(
@@ -115,7 +114,6 @@ br(),
                   tabPanel("Session setup",
                   #includeMarkdown("rmarkdown/Create_structure.Rmd"),
                   br(),
-                  textOutput("text3"),
    				  htmlOutput("TextPin"),
    				  br(),
                   rHandsontableOutput("layoutPin"),
@@ -256,6 +254,7 @@ br(),
 	numericInput("postgresPort", label = "Port", value = "5432"),
 	passwordInput("postgresPwd", label = "Password (non-encrypted, use a VPN for safer connection!)", value = "postgres"),
 	actionButton("postgresConnect", label = "Connect"),
+	textOutput("DoneConnect"),	
 	hr(),
 	HTML("<h4><b>    First time users: do you want to create a relational database structure matching your <em>layout_info.json</em> and <em>behaviors.json</em> files?</b></h4>"),
 	br(),
