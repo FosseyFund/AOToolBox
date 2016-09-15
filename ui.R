@@ -255,38 +255,34 @@ br(),
 	passwordInput("postgresPwd", label = "Password (non-encrypted, use a VPN for safer connection!)", value = "postgres"),
 	actionButton("postgresConnect", label = "Connect"),
 	textOutput("DoneConnect"),	
-	hr(),
+	HTML('<hr style="height:2px;border:none;color:#000;background-color:#000;" />
+'),
 	HTML("<h4><b>    First time users: do you want to create a relational database structure matching your <em>layout_info.json</em> and <em>behaviors.json</em> files?</b></h4>"),
 	br(),
 	fileInput('behaviors.json2', '1. Upload "behaviors.json"'),
     fileInput('layout_info.json2', '2. Upload "layout_info.json"'),
 	textInput("newDBname", label = "Database name (no space)", value = "animal_observer"),
 	actionButton("createEmptyDB", label = "Create empty database structure"),
-	hr(),
+	textOutput("newDBcreated"),
+	HTML('<hr style="height:2px;border:none;color:#000;background-color:#000;" />
+'),
 	HTML("<h4><b>    Upload collected data to existing database</b></h4>"),
 	br(),
 	fileInput('datafile.dat', 'OPTION 1. Upload "Username_Date_Time.dat" directly to the database'),
 	fileInput('behaviors.json3', '        Then upload "behaviors.json"'),
     fileInput('layout_info.json3', '        Finally, upload "layout_info.json"'),
-
-    
-	HTML('<h5><b>    Alternatively: use the "convert collecte data to CSV" tab to convert the .dat file to csv files, download the resulting zip folder, edit files within this zip folder (if needed) and upload resulting zip folder below:</b></h5>'),br(),
-	fileInput('zipFolder', 'OPTION 2. Upload zip folder containing all the csv data files you wish to upload to the database (files must be named as in the output of the "convert data to csv" procedure)')
+	actionButton("runDbUpload1", label = "Run", icon=icon("play")),
+    textOutput("text4"),
+    HTML('<hr style="height:1px;border:none;color:#333;background-color:#333;" />'),
+	fileInput('zipFolder', 'OPTION 2. Use the "convert collected data to CSV" tab to convert the .dat file to csv files and download the resulting zip folder. You can then edit files within this zip folder (if needed) and upload the resulting zip folder below. The zip folder must contain the files you wish to upload to the database, named as in the output of the "convert data to csv" procedure.'),
+	actionButton("runDbUpload1", label = "Run", icon=icon("play")),
+    textOutput("text5"),
+    br()
     ),
     mainPanel(
     htmlOutput("postgresDBnameOutput"),br(),
     tableOutput("table11"),
-    htmlOutput("newDBcreated"),br()#,
-    # rHandsontableOutput("postgresSessionsTable"),
-    # br(),
-    # htmlOutput("postgresFocals"),br(),
-    # rHandsontableOutput("postgresFocalsTable"),
-    # br(),
-    # htmlOutput("postgresFocals"),br(),
-    # rHandsontableOutput("postgresFocalsTable"),
-	# br(),
-    # htmlOutput("postgresBehaviors"),br(),
-    # rHandsontableOutput("postgresFocalsTable"),
+    br()
     )
 )
 )

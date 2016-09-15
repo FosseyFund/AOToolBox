@@ -628,7 +628,7 @@ DBport <- reactive({
 })
 
 database <- eventReactive(input$postgresConnect, {
-	cat(file=stderr(), paste(DBname(), DBhost(), DBport(), DBuser(), DBpwd(), collapse=", "))
+	#cat(file=stderr(), paste(DBname(), DBhost(), DBport(), DBuser(), DBpwd(), collapse=", "))
 	if(is.null(DBname()) | is.null(DBuser()) | is.null(DBhost()) | is.null(DBpwd()) | is.null(DBport())) return(NULL)
     
     drv <- dbDriver("PostgreSQL")
@@ -691,11 +691,11 @@ createDB <- eventReactive(input$createEmptyDB, {
     return(createListSQLTables(listTables1, con=database(), newdbname= newDBname(), username= DBuser(), hostname= DBhost(), pwd= DBpwd()))
 })  
 
-output$newDBcreated <- renderUI({
-    	if(is.null(createDB())) return(NULL)
-		HTML(paste0("<h4 align='left'>Voilà!</h4>"))
-    	}
-    )
+
+output$newDBcreated <- renderText({
+	if(is.null(createDB())){return(NULL)}
+		return("SUCCESS!")	
+		})
 
 
 })
