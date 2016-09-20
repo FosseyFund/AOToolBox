@@ -45,7 +45,7 @@ NAcheck <- function(x){
 	ifelse (is.null(x), NA,x)
 }
 #################list_sessions
-sessionsTable <- matrix(nrow=0, ncol=10)
+sessionsTable <- matrix(nrow=0, ncol=11)
 colnames(sessionsTable) <- c(
 	"device_ID",
 	"session_start_timeStamp", 
@@ -56,7 +56,8 @@ colnames(sessionsTable) <- c(
 	"behaviors_json_version",
 	"gps_on",
 	"compass_on",
-	"map_mode_on"
+	"map_mode_on",
+	"physical_contact_threshold"
 )
 
 if(length(dat$data$sessions)>0){
@@ -72,7 +73,8 @@ for (i in 1:length(dat$data$sessions)){
 	NAcheck(session$behaviors_JSON_file_ID),
 	NAcheck(session$gps_on),
 	NAcheck(session$compass_on),	
-	NAcheck(session$map_mode_on))))
+	NAcheck(session$map_mode_on),
+	NAcheck(layout$physical_contact_threshold))))
 	}
 }
 
@@ -286,7 +288,7 @@ colnames(scansTable) <- c(
 	"device_ID",
 	"session_start_timeStamp", 
 	"focal_start_timeStamp",
-	"timeStamp",
+	"scan_timeStamp",
 	"scanned_individual_ID",
 	scanHeaders,
 	"x_position",
@@ -346,7 +348,7 @@ colnames(backgroundTapsTable) <- c(
 	"device_ID",
 	"session_start_timeStamp", 
 	"focal_start_timeStamp",
-	"timeStamp",
+	"backgroundTap_timeStamp",
 	"description",
 	"latitude", 
 	"longitude",

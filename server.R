@@ -755,13 +755,25 @@ dataOutput5 <- reactive({
 		   #cat(file=stderr(), "jsonOutputConversion")
 		
 	outputTables <- jsonOutputConversion(json.output.file.input3(), behaviors.json.input3(), layout_info.json.input3())
-    cat(file=stderr(), "uploading file...\n")
+    cat(file=stderr(), "Uploading file...\n")
 	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = DBname(),
            host = DBhost(), port = DBport(),
            user = DBuser(), password = DBpwd())
-uploadSessionsTable(outputTables$sessionsTable, con)
-uploadFocalsTable(outputTables$focalsTable, con)
-uploadBehaviorsTable(outputTables$behaviorsTable, con)
+if(nrow(outputTables$sessionsTable)>0) uploadSessionsTable(outputTables$sessionsTable, con)
+if(nrow(outputTables$focalsTable)>0) uploadFocalsTable(outputTables$focalsTable, con)
+if(nrow(outputTables$behaviorsTable)>0) uploadBehaviorsTable(outputTables$behaviorsTable, con)
+if(nrow(outputTables$scansTable)>0) uploadScansTable(outputTables$scansTable, con)
+if(nrow(outputTables$scansTable)>0) uploadScanData(outputTables$scansTable, con)
+if(nrow(outputTables$scanVarsTable)>0) uploadScanVariables(outputTables$scanVarsTable, con)
+if("continuous_focal_variables" %in% dbListTables(con) & nrow(outputTables$continuousVarsTable)>0) {
+uploadContinuousVariables(outputTables$continuousVarsTable, con)
+}
+if(nrow(outputTables$scanVarsTable)>0) uploadFocalVariables(outputTables$focalVarsTable, con)
+if(nrow(outputTables$dayVarsTable)>0) uploadSessionVariables(outputTables$dayVarsTable, con)
+if(nrow(outputTables$backgroundTapsTable)>0) uploadBackgroundTapsTable(outputTables$backgroundTapsTable, con)
+if(nrow(outputTables$commentsTable)>0) uploadCommentTable(outputTables$commentsTable, con)
+
+cat(file=stderr(), "File uploaded!\n")
 return("SUCCESS")
 })
 
