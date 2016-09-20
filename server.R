@@ -598,7 +598,7 @@ observe({
     }
     )
     edges <- data.frame(from = as.numeric(behavListTemp$actor), to = as.numeric(behavListTemp$subject), arrows="to", label= edgeLabels, title=titleEdges)
-    visNetwork(nodes, edges)
+    visNetwork(nodes, edges) %>% visPhysics(solver = "repulsion", repulsion=list(nodeDistance=400))
     }
   }
   )  
