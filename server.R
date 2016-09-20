@@ -635,7 +635,7 @@ database <- eventReactive(input$postgresConnect, {
     	all_cons <- dbListConnections(drv)
     for(con in all_cons) dbDisconnect(con)
 
-    con <- dbConnect(drv, dbname = DBname(),
+    con <- dbConnect(dbDriver("PostgreSQL"), dbname = DBname(),
                  host = DBhost(), port = DBport(),
                  user = DBuser(), password = DBpwd())
 #cat(file=stderr(), paste(DBname(), DBhost(), DBport(),DBuser(), DBpwd(), collapse=", "))
@@ -658,8 +658,10 @@ output$postgresDBnameOutput <- renderUI({
 output$table11 <- renderTable({
 		if(is.null(database())) return(NULL)
 				#cat(file=stderr(), "test")
-
-		return(getTableList(database(), DBname()))
+				ans <- getTableList(database(), DBname())
+all_cons <- dbListConnections(dbDriver("PostgreSQL"))
+    for(con in all_cons) dbDisconnect(con)
+		return(ans)
 		}, include.rownames=F)
   
 
@@ -668,7 +670,7 @@ output$table11 <- renderTable({
 behaviors.json.input2 <- reactive({
     if (is.null(input$behaviors.json2))
       return(NULL)
-      cat(file=stderr(), "behaviors.json.input2")
+      #cat(file=stderr(), "behaviors.json.input2")
     readLines(input$behaviors.json2$datapath, warn=F)
   })
 layout_info.json.input2 <- reactive({
@@ -685,13 +687,19 @@ newDBname <- reactive({
 
 
 createDB <- eventReactive(input$createEmptyDB, {
-	cat(file=stderr(), "test")	
+	#cat(file=stderr(), "test")	
 	if(is.null(behaviors.json.input2()) | is.null(layout_info.json.input2()) | is.null(newDBname())) {
 		return(NULL)
 		}
 	 cat(file=stderr(), "Creating empty database...\n")
     listTables1 <- jsonOutputConversion(json.output.file =NULL, behaviors.json.input2(), layout_info.json.input2())
-    return(createListSQLTables(listTables1, con=database(), newdbname= newDBname(), username= DBuser(), hostname= DBhost(), pwd= DBpwd()))
+    con <- dbConnect(dbDriver("PostgreSQL"), dbname = DBname(),
+                 host = DBhost(), port = DBport(),
+                 user = DBuser(), password = DBpwd())
+ans <- createListSQLTables(listTables1, con=con, newdbname= newDBname(), username= DBuser(), hostname= DBhost(), pwd= DBpwd())
+all_cons <- dbListConnections(dbDriver("PostgreSQL"))
+    for(con in all_cons) dbDisconnect(con)
+    return(ans)
 })  
 
 
@@ -706,6 +714,8 @@ output$newDBcreated <- renderText({
                  user = DBuser(), password = DBpwd())
 		return(getTableList(con, DBname()))
 		}, include.rownames=F)
+		all_cons <- dbListConnections(dbDriver("PostgreSQL"))
+    for(con in all_cons) dbDisconnect(con)
 		return("SUCCESS!")	
 })
 
@@ -749,16 +759,18 @@ dataOutput5 <- reactive({
 	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = DBname(),
            host = DBhost(), port = DBport(),
            user = DBuser(), password = DBpwd())
-uploadDatFile(outputTables, con)
+uploadSessionsTable(outputTables$sessionsTable, con)
+uploadFocalsTable(outputTables$focalsTable, con)
+uploadBehaviorsTable(outputTables$behaviorsTable, con)
 return("SUCCESS")
 })
 
 output$dataUploaded <- renderText({
 	if(is.null(dataOutput5())){return(NULL)}
+	all_cons <- dbListConnections(dbDriver("PostgreSQL"))
+    for(con in all_cons) dbDisconnect(con)
 		return("SUCCESS!")	
 })
-
-
 })
 
 # con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = "animal_observer", host = "localhost", port = 5432, user = "postgres", password = "postgres")

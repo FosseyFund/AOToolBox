@@ -9,7 +9,11 @@ temp[,3] <- as.integer(temp[,3])
 return(temp)
 }
 
-
+fixHeader <- function(v)
+	{
+		unlist(lapply(strsplit(make.names(tolower(v), unique=T), "[.]"), function(x) paste(x, collapse="_")))
+	}
+	
 createListSQLTables <- function(listTables, con, newdbname, username, hostname, pwd){
 	#list of headers
 	tableHeaders <- list()
@@ -23,10 +27,7 @@ createListSQLTables <- function(listTables, con, newdbname, username, hostname, 
 	tableHeaders[[8]] <- names(listTables$focalVarsTable)
 	tableHeaders[[9]] <- names(listTables$continuousVarsTable)
 	tableHeaders[[10]] <- names(listTables$scanVarsTable)
-	fixHeader <- function(v)
-	{
-		unlist(lapply(strsplit(make.names(tolower(v), unique=T), "[.]"), function(x) paste(x, collapse="_")))
-	}
+	
 	
 	for(i in 1:length(tableHeaders)){
 		tableHeaders[[i]] <- fixHeader(tableHeaders[[i]])
@@ -107,7 +108,7 @@ createListSQLTables <- function(listTables, con, newdbname, username, hostname, 
 	created_on timestamp DEFAULT CURRENT_TIMESTAMP,
 	last_modif_by text DEFAULT CURRENT_USER,
 	last_modif_on timestamp DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (device_ID, behavior_time, ",tableHeaders[[3]][7]," , actor, subject),
+	PRIMARY KEY (device_ID, behavior_time, actor, subject),
 	FOREIGN KEY (device_ID, focal_start_time) REFERENCES main_tables.list_focals(device_ID, focal_start_time) ON UPDATE CASCADE
 	);"))
 	sqlCode <- c(sqlCode, paste0("create table main_tables.list_scans (
