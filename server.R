@@ -668,6 +668,7 @@ output$table11 <- renderTable({
 behaviors.json.input2 <- reactive({
     if (is.null(input$behaviors.json2))
       return(NULL)
+      cat(file=stderr(), "behaviors.json.input2")
     readLines(input$behaviors.json2$datapath, warn=F)
   })
 layout_info.json.input2 <- reactive({
@@ -682,7 +683,9 @@ newDBname <- reactive({
 	return(input$newDBname)
 })
 
-createDB <- eventReactive(input$createEmptyDB, {	
+
+createDB <- eventReactive(input$createEmptyDB, {
+	cat(file=stderr(), "test")	
 	if(is.null(behaviors.json.input2()) | is.null(layout_info.json.input2()) | is.null(newDBname())) {
 		return(NULL)
 		}
@@ -694,21 +697,69 @@ createDB <- eventReactive(input$createEmptyDB, {
 
 output$newDBcreated <- renderText({
 	if(is.null(createDB())){return(NULL)}
+	updateTextInput(session, "postgresDBname",
+      value = newDBname())
+        output$table11 <- renderTable({
+				#cat(file=stderr(), "test")
+		con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = DBname(),
+                 host = DBhost(), port = DBport(),
+                 user = DBuser(), password = DBpwd())
+		return(getTableList(con, DBname()))
+		}, include.rownames=F)
 		return("SUCCESS!")	
-		})
+})
+
+
+############################################
+
+outputblah <- eventReactive(input$runDbUpload6, {
+   #cat(file=stderr(), "uploading dat file1")
+  #if (is.null(dataOutput5())) return(NULL)
+return("SUCCESS")
+})
+
+
+json.output.file.input3 <- reactive({
+   if (is.null(input$datafile.dat))
+      return(NULL)
+     #cat(file=stderr(), "json.output.file.input3")
+    readLines(input$datafile.dat$datapath, warn=F)
+})
+
+behaviors.json.input3 <- reactive({
+    if (is.null(input$behaviors.json3))
+      return(NULL)
+    readLines(input$behaviors.json3$datapath, warn=F)
+  })
+  
+layout_info.json.input3 <- reactive({
+    if (is.null(input$layout_info.json3))
+      return(NULL)
+    readLines(input$layout_info.json3$datapath, warn=F)
+  })
+
+dataOutput5 <- reactive({
+			   #cat(file=stderr(), "jsonOutputConversion1")
+
+		if(is.null(json.output.file.input3()) | is.null(behaviors.json.input3()) | is.null(layout_info.json.input3()) | is.null(outputblah())) {return(NULL)} else 
+		   #cat(file=stderr(), "jsonOutputConversion")
+		
+	outputTables <- jsonOutputConversion(json.output.file.input3(), behaviors.json.input3(), layout_info.json.input3())
+    cat(file=stderr(), "uploading file...\n")
+	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = DBname(),
+           host = DBhost(), port = DBport(),
+           user = DBuser(), password = DBpwd())
+uploadDatFile(outputTables, con)
+return("SUCCESS")
+})
+
+output$dataUploaded <- renderText({
+	if(is.null(dataOutput5())){return(NULL)}
+		return("SUCCESS!")	
+})
 
 
 })
-
-############################################
-json.output.file.input2 <- reactive({
-   if (is.null(input$datafile.dat))
-      return(NULL)
-    readLines(input$datafile.dat$datapath, warn=F)
-  })
-
-
-
 
 # con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = "animal_observer", host = "localhost", port = 5432, user = "postgres", password = "postgres")
 # dbConnect(drv=dbDriver("PostgreSQL"), dbname = "postgres", host = "localhost", port = 5432, user = "postgres", password = "postgres")

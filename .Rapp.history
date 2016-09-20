@@ -1,3 +1,1267 @@
+grcompT
+grDuration <- table(grCompWeek$GR)#
+grList2 <- names(grDuration)[which(table(grCompWeek$GR)>30)]#
+grcomp <- grCompWeek[grCompWeek$GR%in%grList2,]#
+##remove groups of size <=2#
+grcompT <- grcomp[0,]#
+for (i in unique(grcomp$date)){#
+	temp <- grcomp[grcomp$date==i,]#
+	keep <- names(table(temp$GR))[table(temp$GR)>2]#
+grcompT <- rbind(grcompT, temp[temp$GR%in%keep,])	#
+}#
+grcomp <- grcompT
+grDuration <- table(grCompWeek$GR)#
+grList2 <- names(grDuration)[which(table(grCompWeek$GR)>30)]#
+grcomp <- grCompWeek[grCompWeek$GR%in%grList2,]#
+##remove groups of size <=2#
+grcompT <- grcomp[0,]#
+for (i in unique(grcomp$date)){#
+	print(i)#
+	temp <- grcomp[grcomp$date==i,]#
+	keep <- names(table(temp$GR))[table(temp$GR)>2]#
+grcompT <- rbind(grcompT, temp[temp$GR%in%keep,])	#
+}#
+grcomp <- grcompT
+grcomp$ID <- factor(grcomp$ID)#
+grcomp$GR <- factor(grcomp$GR, levels=c("NTA", "SHI", "URU", "UGE", "BEE", "GIR", "TIT", "INS", "KUY", "BWE", "ISA", "PAB", "PbSubgrp", "MSK", "GSH","MAF", "IYA", "HIM"))#
+levels(grcomp$GR)
+grcomp <- grcompT#
+grcomp$ID <- factor(grcomp$ID)#
+grcomp$GR <- factor(grcomp$GR
+)
+levels(grcomp$GR)
+grcomp$ID <- factor(grcomp$ID)#
+grcomp$GR <- factor(grcomp$GR, levels=c("NTA", "SHI", "URU", "UGE", "BEE", "GIR", "TIT", "INS", "KUY", "BWE", "ISA", "PAB", "PbSubgrp", "MSK", "GSH","MAF", "IYA", "HIM"))#
+levels(grcomp$GR)#
+#grcomp$GR <- factor(grcomp$GR, levels=c("NTA", "SHI", "URU", "UGE", "BEE", "TIT", "INS", "KUY", "BWE", "ISA", "PAB"))#
+grcomp$date <- as.Date(grcomp$date, "%Y-%m-%d")#
+##select only the first day of the month#
+grcomp2 <- grcomp[as.numeric(format(grcomp$date, "%d"))<8,]####change this line to reduce time intervals, monthly: <8#
+grcomp2 <- grcomp2[as.numeric(format(grcomp2$date, "%m"))==7,]####change this line to reduce time intervals, monthly: <8#
+grcomp2$ID <- factor(grcomp2$ID)#
+grcomp2$GR <- factor(grcomp2$GR)#
+levels(grcomp2$GR)#
+grcomp2#
+dim(grcomp2)#
+grcomp2[as.numeric(format(grcomp2$date, "%Y"))==2016,]#
+#
+ans <- table(grcomp2$date, grcomp2$ID, grcomp2$GR)#
+#ans3 <- ans[,,rank(levels(grcomp2$GR))]#
+ans2 <- ans[,,1]#
+for (i in 2:length(levels(grcomp2$GR)))#
+{#
+	print(i)#
+	ans2 <- ans2+i*ans[,,i]#
+}#
+xdates <- as.Date(row.names(ans2), "%Y-%m-%d")#
+linecoord2 <- data.frame(x0=numeric(0), x1=numeric(0), y0=numeric(0), y1=numeric(0), thick=numeric(0))#
+for (i in 2:nrow(ans2))#
+{#
+	print(i/nrow(ans2))#
+	temp1 <- ans2[(i-1):i,]#
+	temp2 <- numeric(0)#
+	for (j in 1:length(levels(grcomp2$GR)))#
+	{#
+		for (k in 1:length(levels(grcomp2$GR)))#
+		{#
+			linecoord2 <- rbind(linecoord2, data.frame(x0=xdates[i-1], x1=xdates[i], y0=j, y1=k, thick=sum(apply(temp1, 2, function(v) ifelse(v[1]==j & v[2]==k, 1, 0)))))#
+		}#
+	}#
+}#
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(4,6,2,2))#
+plot(as.Date(c("2000-01-01","2016-01-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3)#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1)#
+}
+grcomp$GR <- factor(grcomp$GR, levels=c("NTA", "SHI", "URU", "UGE", "GSH", "BEE", "GIR", "TIT", "INS", "KUY", "MAF", "BWE", "ISA", "PAB", "PbSubgrp", "MSK", "IYA", "HIM"))#
+levels(grcomp$GR)#
+#grcomp$GR <- factor(grcomp$GR, levels=c("NTA", "SHI", "URU", "UGE", "BEE", "TIT", "INS", "KUY", "BWE", "ISA", "PAB"))#
+grcomp$date <- as.Date(grcomp$date, "%Y-%m-%d")#
+##select only the first day of the month#
+grcomp2 <- grcomp[as.numeric(format(grcomp$date, "%d"))<8,]####change this line to reduce time intervals, monthly: <8#
+grcomp2 <- grcomp2[as.numeric(format(grcomp2$date, "%m"))==7,]####change this line to reduce time intervals, monthly: <8#
+grcomp2$ID <- factor(grcomp2$ID)#
+grcomp2$GR <- factor(grcomp2$GR)#
+levels(grcomp2$GR)#
+grcomp2#
+dim(grcomp2)#
+grcomp2[as.numeric(format(grcomp2$date, "%Y"))==2016,]#
+#
+ans <- table(grcomp2$date, grcomp2$ID, grcomp2$GR)#
+#ans3 <- ans[,,rank(levels(grcomp2$GR))]#
+ans2 <- ans[,,1]#
+for (i in 2:length(levels(grcomp2$GR)))#
+{#
+	print(i)#
+	ans2 <- ans2+i*ans[,,i]#
+}#
+xdates <- as.Date(row.names(ans2), "%Y-%m-%d")#
+linecoord2 <- data.frame(x0=numeric(0), x1=numeric(0), y0=numeric(0), y1=numeric(0), thick=numeric(0))#
+for (i in 2:nrow(ans2))#
+{#
+	print(i/nrow(ans2))#
+	temp1 <- ans2[(i-1):i,]#
+	temp2 <- numeric(0)#
+	for (j in 1:length(levels(grcomp2$GR)))#
+	{#
+		for (k in 1:length(levels(grcomp2$GR)))#
+		{#
+			linecoord2 <- rbind(linecoord2, data.frame(x0=xdates[i-1], x1=xdates[i], y0=j, y1=k, thick=sum(apply(temp1, 2, function(v) ifelse(v[1]==j & v[2]==k, 1, 0)))))#
+		}#
+	}#
+}#
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(4,6,2,2))#
+plot(as.Date(c("2000-01-01","2016-01-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3)#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1)#
+}
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-01-01","2016-01-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3)#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1)#
+}
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-01-01","2017-01-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2017-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3)#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1)#
+}
+seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2017-01-01", "%Y-%m-%d"),by="year")
+linecoord2
+unique(grcomp2$date)
+unique(grcomp2$date)-7
+grcomp2$date <- grcomp2$date-7
+grcomp2$date
+grcomp$ID <- factor(grcomp$ID)#
+grcomp$GR <- factor(grcomp$GR, levels=c("NTA", "SHI", "URU", "UGE", "GSH", "BEE", "GIR", "TIT", "INS", "KUY", "MAF", "BWE", "ISA", "PAB", "PbSubgrp", "MSK", "IYA", "HIM"))#
+levels(grcomp$GR)#
+#grcomp$GR <- factor(grcomp$GR, levels=c("NTA", "SHI", "URU", "UGE", "BEE", "TIT", "INS", "KUY", "BWE", "ISA", "PAB"))#
+grcomp$date <- as.Date(grcomp$date, "%Y-%m-%d")#
+##select only the first day of the month#
+grcomp2 <- grcomp[as.numeric(format(grcomp$date, "%d"))<8,]####change this line to reduce time intervals, monthly: <8#
+grcomp2 <- grcomp2[as.numeric(format(grcomp2$date, "%m"))==7,]####change this line to reduce time intervals, monthly: <8#
+grcomp2$date <- grcomp2$date-7
+unique(grcomp2$date)
+grcomp2$ID <- factor(grcomp2$ID)#
+grcomp2$GR <- factor(grcomp2$GR)#
+levels(grcomp2$GR)#
+#grcomp2#
+dim(grcomp2)#
+#grcomp2[as.numeric(format(grcomp2$date, "%Y"))==2016,]#
+#
+ans <- table(grcomp2$date, grcomp2$ID, grcomp2$GR)#
+#ans3 <- ans[,,rank(levels(grcomp2$GR))]#
+ans2 <- ans[,,1]#
+for (i in 2:length(levels(grcomp2$GR)))#
+{#
+	print(i)#
+	ans2 <- ans2+i*ans[,,i]#
+}#
+xdates <- as.Date(row.names(ans2), "%Y-%m-%d")#
+linecoord2 <- data.frame(x0=numeric(0), x1=numeric(0), y0=numeric(0), y1=numeric(0), thick=numeric(0))#
+for (i in 2:nrow(ans2))#
+{#
+	print(i/nrow(ans2))#
+	temp1 <- ans2[(i-1):i,]#
+	temp2 <- numeric(0)#
+	for (j in 1:length(levels(grcomp2$GR)))#
+	{#
+		for (k in 1:length(levels(grcomp2$GR)))#
+		{#
+			linecoord2 <- rbind(linecoord2, data.frame(x0=xdates[i-1], x1=xdates[i], y0=j, y1=k, thick=sum(apply(temp1, 2, function(v) ifelse(v[1]==j & v[2]==k, 1, 0)))))#
+		}#
+	}#
+}#
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-01-01","2017-01-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2017-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3)#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1)#
+}
+ans <- table(grcomp2$date, grcomp2$ID, grcomp2$GR)
+ans
+grcomp$ID <- factor(grcomp$ID)#
+grcomp$GR <- factor(grcomp$GR, levels=c("NTA", "SHI", "URU", "UGE", "GSH", "BEE", "GIR", "TIT", "INS", "KUY", "MAF", "BWE", "ISA", "PAB", "PbSubgrp", "MSK", "IYA", "HIM"))#
+levels(grcomp$GR)#
+#grcomp$GR <- factor(grcomp$GR, levels=c("NTA", "SHI", "URU", "UGE", "BEE", "TIT", "INS", "KUY", "BWE", "ISA", "PAB"))#
+grcomp$date <- as.Date(grcomp$date, "%Y-%m-%d")#
+##select only the first day of the month#
+grcomp2 <- grcomp[as.numeric(format(grcomp$date, "%d"))<8,]####change this line to reduce time intervals, monthly: <8#
+grcomp2 <- grcomp2[as.numeric(format(grcomp2$date, "%m"))==6,]####change this line to reduce time intervals, monthly: <8#
+grcomp2$date <- grcomp2$date#
+grcomp2$ID <- factor(grcomp2$ID)#
+grcomp2$GR <- factor(grcomp2$GR)#
+levels(grcomp2$GR)#
+#grcomp2#
+dim(grcomp2)#
+#grcomp2[as.numeric(format(grcomp2$date, "%Y"))==2016,]#
+#
+ans <- table(grcomp2$date, grcomp2$ID, grcomp2$GR)#
+#ans3 <- ans[,,rank(levels(grcomp2$GR))]#
+ans2 <- ans[,,1]#
+for (i in 2:length(levels(grcomp2$GR)))#
+{#
+	print(i)#
+	ans2 <- ans2+i*ans[,,i]#
+}#
+xdates <- as.Date(row.names(ans2), "%Y-%m-%d")#
+linecoord2 <- data.frame(x0=numeric(0), x1=numeric(0), y0=numeric(0), y1=numeric(0), thick=numeric(0))#
+for (i in 2:nrow(ans2))#
+{#
+	print(i/nrow(ans2))#
+	temp1 <- ans2[(i-1):i,]#
+	temp2 <- numeric(0)#
+	for (j in 1:length(levels(grcomp2$GR)))#
+	{#
+		for (k in 1:length(levels(grcomp2$GR)))#
+		{#
+			linecoord2 <- rbind(linecoord2, data.frame(x0=xdates[i-1], x1=xdates[i], y0=j, y1=k, thick=sum(apply(temp1, 2, function(v) ifelse(v[1]==j & v[2]==k, 1, 0)))))#
+		}#
+	}#
+}#
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-01-01","2017-01-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2017-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3)#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1)#
+}
+levels(grcomp2$GR)
+grcomp2[grcomp2$GR=="IYA",]
+grcomp$ID <- factor(grcomp$ID)#
+grcomp$GR <- factor(grcomp$GR, levels=c("NTA", "SHI", "URU", "UGE", "GSH", "TIT","BEE", "KUY", "GIR",  "INS", "MAF", "BWE", "ISA", "PAB", "PbSubgrp", "MSK", "IYA", "HIM"))#
+levels(grcomp$GR)#
+#grcomp$GR <- factor(grcomp$GR, levels=c("NTA", "SHI", "URU", "UGE", "BEE", "TIT", "INS", "KUY", "BWE", "ISA", "PAB"))#
+grcomp$date <- as.Date(grcomp$date, "%Y-%m-%d")#
+##select only the first day of the month#
+grcomp2 <- grcomp[as.numeric(format(grcomp$date, "%d"))<8,]####change this line to reduce time intervals, monthly: <8#
+grcomp2 <- grcomp2[as.numeric(format(grcomp2$date, "%m"))==6,]####change this line to reduce time intervals, monthly: <8#
+grcomp2$date <- grcomp2$date#
+grcomp2$ID <- factor(grcomp2$ID)#
+grcomp2$GR <- factor(grcomp2$GR)#
+levels(grcomp2$GR)#
+#grcomp2#
+dim(grcomp2)#
+#grcomp2[as.numeric(format(grcomp2$date, "%Y"))==2016,]#
+#
+ans <- table(grcomp2$date, grcomp2$ID, grcomp2$GR)#
+#ans3 <- ans[,,rank(levels(grcomp2$GR))]#
+ans2 <- ans[,,1]#
+for (i in 2:length(levels(grcomp2$GR)))#
+{#
+	print(i)#
+	ans2 <- ans2+i*ans[,,i]#
+}#
+xdates <- as.Date(row.names(ans2), "%Y-%m-%d")#
+linecoord2 <- data.frame(x0=numeric(0), x1=numeric(0), y0=numeric(0), y1=numeric(0), thick=numeric(0))#
+for (i in 2:nrow(ans2))#
+{#
+	print(i/nrow(ans2))#
+	temp1 <- ans2[(i-1):i,]#
+	temp2 <- numeric(0)#
+	for (j in 1:length(levels(grcomp2$GR)))#
+	{#
+		for (k in 1:length(levels(grcomp2$GR)))#
+		{#
+			linecoord2 <- rbind(linecoord2, data.frame(x0=xdates[i-1], x1=xdates[i], y0=j, y1=k, thick=sum(apply(temp1, 2, function(v) ifelse(v[1]==j & v[2]==k, 1, 0)))))#
+		}#
+	}#
+}#
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-01-01","2017-01-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2017-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3)#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1)#
+}
+grcomp$ID <- factor(grcomp$ID)#
+grcomp$GR <- factor(grcomp$GR, levels=c("NTA", "SHI", "URU", "UGE", "GSH", "TIT","BEE", "KUY", "GIR",  "INS", "MAF", "BWE", "ISA", "PbSubgrp", "MSK", "IYA", "HIM", "PAB"))#
+levels(grcomp$GR)#
+#grcomp$GR <- factor(grcomp$GR, levels=c("NTA", "SHI", "URU", "UGE", "BEE", "TIT", "INS", "KUY", "BWE", "ISA", "PAB"))#
+grcomp$date <- as.Date(grcomp$date, "%Y-%m-%d")#
+##select only the first day of the month#
+grcomp2 <- grcomp[as.numeric(format(grcomp$date, "%d"))<8,]####change this line to reduce time intervals, monthly: <8#
+grcomp2 <- grcomp2[as.numeric(format(grcomp2$date, "%m"))==6,]####change this line to reduce time intervals, monthly: <8#
+grcomp2$date <- grcomp2$date#
+grcomp2$ID <- factor(grcomp2$ID)#
+grcomp2$GR <- factor(grcomp2$GR)#
+levels(grcomp2$GR)#
+#grcomp2#
+dim(grcomp2)#
+#grcomp2[as.numeric(format(grcomp2$date, "%Y"))==2016,]#
+#
+ans <- table(grcomp2$date, grcomp2$ID, grcomp2$GR)#
+#ans3 <- ans[,,rank(levels(grcomp2$GR))]#
+ans2 <- ans[,,1]#
+for (i in 2:length(levels(grcomp2$GR)))#
+{#
+	print(i)#
+	ans2 <- ans2+i*ans[,,i]#
+}#
+xdates <- as.Date(row.names(ans2), "%Y-%m-%d")#
+linecoord2 <- data.frame(x0=numeric(0), x1=numeric(0), y0=numeric(0), y1=numeric(0), thick=numeric(0))#
+for (i in 2:nrow(ans2))#
+{#
+	print(i/nrow(ans2))#
+	temp1 <- ans2[(i-1):i,]#
+	temp2 <- numeric(0)#
+	for (j in 1:length(levels(grcomp2$GR)))#
+	{#
+		for (k in 1:length(levels(grcomp2$GR)))#
+		{#
+			linecoord2 <- rbind(linecoord2, data.frame(x0=xdates[i-1], x1=xdates[i], y0=j, y1=k, thick=sum(apply(temp1, 2, function(v) ifelse(v[1]==j & v[2]==k, 1, 0)))))#
+		}#
+	}#
+}#
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-01-01","2017-01-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2017-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3)#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1)#
+}
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-01-01","2017-01-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2017-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3)#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1.5)#
+}
+grcomp2[grcomp2$GR=="GIR",]
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-01-01","2017-01-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2017-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3)
+(range(xdates)
+)
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365,0), c(i,i), lty=3)
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-01-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365,0), c(i,i), lty=3)#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1.5)#
+}
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-06-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3)#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1.5)#
+}
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3)#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1.5)#
+}
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3)#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4],col="grey", lwd=linecoord2[i,5]/1.5)#
+}
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1.5)#
+}
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}
+linecoord2
+pdf(file="~/Documents/GITHUB clones/IPS2016/group dynamics by year.pdf", width=16, height=9)#
+#####group compo from first week of june#
+##select only the first day of the month#
+grcomp2 <- grcomp[as.numeric(format(grcomp$date, "%d"))<8,]####change this line to reduce time intervals, monthly: <8#
+grcomp2 <- grcomp2[as.numeric(format(grcomp2$date, "%m"))==6,]####change this line to reduce time intervals, monthly: <8#
+grcomp2$date <- grcomp2$date#
+grcomp2$ID <- factor(grcomp2$ID)#
+grcomp2$GR <- factor(grcomp2$GR)#
+levels(grcomp2$GR)#
+#grcomp2#
+dim(grcomp2)#
+#grcomp2[as.numeric(format(grcomp2$date, "%Y"))==2016,]#
+#
+ans <- table(grcomp2$date, grcomp2$ID, grcomp2$GR)#
+#ans3 <- ans[,,rank(levels(grcomp2$GR))]#
+ans2 <- ans[,,1]#
+for (i in 2:length(levels(grcomp2$GR)))#
+{#
+	print(i)#
+	ans2 <- ans2+i*ans[,,i]#
+}#
+xdates <- as.Date(row.names(ans2), "%Y-%m-%d")#
+linecoord2 <- data.frame(x0=numeric(0), x1=numeric(0), y0=numeric(0), y1=numeric(0), thick=numeric(0))#
+for (i in 2:nrow(ans2))#
+{#
+	print(i/nrow(ans2))#
+	temp1 <- ans2[(i-1):i,]#
+	temp2 <- numeric(0)#
+	for (j in 1:length(levels(grcomp2$GR)))#
+	{#
+		for (k in 1:length(levels(grcomp2$GR)))#
+		{#
+			linecoord2 <- rbind(linecoord2, data.frame(x0=xdates[i-1], x1=xdates[i], y0=j, y1=k, thick=sum(apply(temp1, 2, function(v) ifelse(v[1]==j & v[2]==k, 1, 0)))))#
+		}#
+	}#
+}#
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(3,4,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+##add color code for multimale vs single male group#
+#
+###
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1.5)#
+}#
+dev.off()
+pdf(file="~/Documents/GITHUB clones/IPS2016/figures/group dynamics by year.pdf", width=16, height=9)
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+##add color code for multimale vs single male group#
+#
+###
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1.5)#
+}#
+dev.off()
+#pdf(file="~/Documents/GITHUB clones/IPS2016/figures/group dynamics by year.pdf", width=16, height=9)#
+pdf(file="~/Documents/GITHUB clones/IPS2016/figures/group dynamics by month.pdf", width=16, height=9)#
+##select only the first day of the month#
+grcomp2 <- grcomp[as.numeric(format(grcomp$date, "%d"))<8,]####change this line to reduce time intervals, monthly: <8#
+#####group compo from first week of june#
+#grcomp2 <- grcomp2[as.numeric(format(grcomp2$date, "%m"))==6,]####change this line to reduce time intervals, monthly: <8#
+#
+grcomp2$date <- grcomp2$date#
+grcomp2$ID <- factor(grcomp2$ID)#
+grcomp2$GR <- factor(grcomp2$GR)#
+levels(grcomp2$GR)#
+#grcomp2#
+dim(grcomp2)#
+#grcomp2[as.numeric(format(grcomp2$date, "%Y"))==2016,]#
+#
+ans <- table(grcomp2$date, grcomp2$ID, grcomp2$GR)#
+#ans3 <- ans[,,rank(levels(grcomp2$GR))]#
+ans2 <- ans[,,1]#
+for (i in 2:length(levels(grcomp2$GR)))#
+{#
+	print(i)#
+	ans2 <- ans2+i*ans[,,i]#
+}#
+xdates <- as.Date(row.names(ans2), "%Y-%m-%d")#
+linecoord2 <- data.frame(x0=numeric(0), x1=numeric(0), y0=numeric(0), y1=numeric(0), thick=numeric(0))#
+for (i in 2:nrow(ans2))#
+{#
+	print(i/nrow(ans2))#
+	temp1 <- ans2[(i-1):i,]#
+	temp2 <- numeric(0)#
+	for (j in 1:length(levels(grcomp2$GR)))#
+	{#
+		for (k in 1:length(levels(grcomp2$GR)))#
+		{#
+			linecoord2 <- rbind(linecoord2, data.frame(x0=xdates[i-1], x1=xdates[i], y0=j, y1=k, thick=sum(apply(temp1, 2, function(v) ifelse(v[1]==j & v[2]==k, 1, 0)))))#
+		}#
+	}#
+}#
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+##add color code for multimale vs single male group#
+#
+###
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1.5)#
+}#
+dev.off()
+pdf(file="~/Documents/GITHUB clones/IPS2016/figures/group dynamics by year.pdf", width=16, height=9)#
+#pdf(file="~/Documents/GITHUB clones/IPS2016/figures/group dynamics by month.pdf", width=16, height=9)#
+##select only the first day of the month#
+grcomp2 <- grcomp[as.numeric(format(grcomp$date, "%d"))<8,]####change this line to reduce time intervals, monthly: <8#
+#####group compo from first week of june#
+grcomp2 <- grcomp2[as.numeric(format(grcomp2$date, "%m"))==6,]####change this line to reduce time intervals, monthly: <8#
+#
+grcomp2$date <- grcomp2$date#
+grcomp2$ID <- factor(grcomp2$ID)#
+grcomp2$GR <- factor(grcomp2$GR)#
+levels(grcomp2$GR)#
+#grcomp2#
+dim(grcomp2)#
+#grcomp2[as.numeric(format(grcomp2$date, "%Y"))==2016,]#
+#
+ans <- table(grcomp2$date, grcomp2$ID, grcomp2$GR)#
+#ans3 <- ans[,,rank(levels(grcomp2$GR))]#
+ans2 <- ans[,,1]#
+for (i in 2:length(levels(grcomp2$GR)))#
+{#
+	print(i)#
+	ans2 <- ans2+i*ans[,,i]#
+}#
+xdates <- as.Date(row.names(ans2), "%Y-%m-%d")#
+linecoord2 <- data.frame(x0=numeric(0), x1=numeric(0), y0=numeric(0), y1=numeric(0), thick=numeric(0))#
+for (i in 2:nrow(ans2))#
+{#
+	print(i/nrow(ans2))#
+	temp1 <- ans2[(i-1):i,]#
+	temp2 <- numeric(0)#
+	for (j in 1:length(levels(grcomp2$GR)))#
+	{#
+		for (k in 1:length(levels(grcomp2$GR)))#
+		{#
+			linecoord2 <- rbind(linecoord2, data.frame(x0=xdates[i-1], x1=xdates[i], y0=j, y1=k, thick=sum(apply(temp1, 2, function(v) ifelse(v[1]==j & v[2]==k, 1, 0)))))#
+		}#
+	}#
+}#
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=.8)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+##add color code for multimale vs single male group#
+#
+###
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1.5)#
+}#
+dev.off()
+grcomp <- grcompT#
+grcomp$ID <- factor(grcomp$ID)#
+grcomp$GR <- factor(grcomp$GR, levels=c("HIM", "NTA", "SHI", "URU", "UGE", "GSH", "TIT","BEE", "KUY", "GIR",  "INS", "MAF", "BWE", "ISA", "PbSubgrp", "MSK", "IYA", "PAB"))#
+grcomp$date <- as.Date(grcomp$date, "%Y-%m-%d")#
+pdf(file="~/Documents/GITHUB clones/IPS2016/figures/group dynamics by year.pdf", width=16, height=9)#
+#pdf(file="~/Documents/GITHUB clones/IPS2016/figures/group dynamics by month.pdf", width=16, height=9)#
+##select only the first day of the month#
+grcomp2 <- grcomp[as.numeric(format(grcomp$date, "%d"))<8,]####change this line to reduce time intervals, monthly: <8#
+#####group compo from first week of june#
+grcomp2 <- grcomp2[as.numeric(format(grcomp2$date, "%m"))==6,]####change this line to reduce time intervals, monthly: <8#
+#
+grcomp2$date <- grcomp2$date#
+grcomp2$ID <- factor(grcomp2$ID)#
+grcomp2$GR <- factor(grcomp2$GR)#
+levels(grcomp2$GR)#
+#grcomp2#
+dim(grcomp2)#
+#grcomp2[as.numeric(format(grcomp2$date, "%Y"))==2016,]#
+#
+ans <- table(grcomp2$date, grcomp2$ID, grcomp2$GR)#
+#ans3 <- ans[,,rank(levels(grcomp2$GR))]#
+ans2 <- ans[,,1]#
+for (i in 2:length(levels(grcomp2$GR)))#
+{#
+	print(i)#
+	ans2 <- ans2+i*ans[,,i]#
+}#
+xdates <- as.Date(row.names(ans2), "%Y-%m-%d")#
+linecoord2 <- data.frame(x0=numeric(0), x1=numeric(0), y0=numeric(0), y1=numeric(0), thick=numeric(0))#
+for (i in 2:nrow(ans2))#
+{#
+	print(i/nrow(ans2))#
+	temp1 <- ans2[(i-1):i,]#
+	temp2 <- numeric(0)#
+	for (j in 1:length(levels(grcomp2$GR)))#
+	{#
+		for (k in 1:length(levels(grcomp2$GR)))#
+		{#
+			linecoord2 <- rbind(linecoord2, data.frame(x0=xdates[i-1], x1=xdates[i], y0=j, y1=k, thick=sum(apply(temp1, 2, function(v) ifelse(v[1]==j & v[2]==k, 1, 0)))))#
+		}#
+	}#
+}#
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F, cex.axis=1.2)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=1)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+##add color code for multimale vs single male group#
+#
+###
+for (i in 1:nrow(linecoord2))#
+{#
+	lines(linecoord2[i,1:2], linecoord2[i,3:4], lwd=linecoord2[i,5]/1.5)#
+}#
+dev.off()
+linecoord2
+colors()[12]
+colors()[234]
+class(colors()[234])
+linecoords2[,2]-linecoords2[,1]
+linecoord2[,2]-linecoord2[,1]
+i
+pop.state(indivs, transfers, date=linecoord2[i,2], gr.list=levels(grcomp2$GR))$all
+pop.state(indivs, transfers, date=linecoord2[i,2], gr.list=levels(grcomp2$GR))$all$AGESEX
+sum(pop.state(indivs, transfers, date=linecoord2[i,2], gr.list=levels(grcomp2$GR))$all$AGESEX=="SB")
+pop.state(indivs, transfers, date=linecoord2[i,2], gr.list=levels(grcomp2$GR))$all$AGESEX=="SB"
+sum(!is.na(pop.state(indivs, transfers, date=linecoord2[i,2], gr.list=levels(grcomp2$GR))$all$AGESEX)=="SB")
+!is.na(pop.state(indivs, transfers, date=linecoord2[i,2], gr.list=levels(grcomp2$GR))$all$AGESEX)
+na.omit(pop.state(indivs, transfers, date=linecoord2[i,2], gr.list=levels(grcomp2$GR))$all$AGESEX)
+sum(na.omit(pop.state(indivs, transfers, date=linecoord2[i,2], gr.list=levels(grcomp2$GR))$all$AGESEX)=="SB")
+sum(na.omit(pop.state(indivs, transfers, date=linecoord2[i,2], gr.list=levels(grcomp2$GR)[linecoord2[i,3]])$all$AGESEX)=="SB")
+linecoord2[i,
+]
+levels(grcomp2$GR)
+segmentCol <- numeric(0)#
+for (i in 1:nrow(linecoord2)){#
+	print(i/nrow(linecoord2))#
+	if(linecoord2[i,3]!=linecoord2[i,4]) {#
+		next#
+		}#
+	segmentCol <- c(segmentCol, sum(na.omit(pop.state(indivs, transfers, date=linecoord2[i,2], gr.list=levels(grcomp2$GR)[linecoord2[i,3]])$all$AGESEX)=="SB"))#
+}
+segmentCol
+linecoord3 <- cbind(linecoord2, nSB=NA)
+linecoord3
+linecoord3 <- cbind(linecoord2, nSB=NA)#
+for (i in 1:nrow(linecoord2)){#
+	print(i/nrow(linecoord2))#
+	if(linecoord2[i,3]!=linecoord2[i,4]) {#
+		next#
+		}#
+	linecoord3[i,5] <- sum(na.omit(pop.state(indivs, transfers, date=linecoord2[i,2], gr.list=levels(grcomp2$GR)[linecoord2[i,3]])$all$AGESEX)=="SB")#
+}
+linecoord3
+linecoord3[i,6] <- linecoord3[i,5]
+linecoord3
+linecoord3 <- cbind(linecoord2, nSB=NA)
+for (i in 1:5){#
+	print(i/nrow(linecoord2))#
+	if(linecoord2[i,3]!=linecoord2[i,4]) {#
+		next#
+		}#
+	linecoord3[i,6] <- sum(na.omit(pop.state(indivs, transfers, date=linecoord2[i,2], gr.list=levels(grcomp2$GR)[linecoord2[i,3]])$all$AGESEX)=="SB")#
+}
+linecoord3
+linecoord3 <- cbind(linecoord2, nSB=NA)#
+for (i in 1:nrow(linecoord2)){#
+#for (i in 1:5){#
+	print(i/nrow(linecoord2))#
+	if(linecoord2[i,3]!=linecoord2[i,4]) {#
+		next#
+		}#
+	linecoord3[i,6] <- sum(na.omit(pop.state(indivs, transfers, date=linecoord2[i,2], gr.list=levels(grcomp2$GR)[linecoord2[i,3]])$all$AGESEX)=="SB")#
+}
+ifelse(is.na(linecoord3[i,6]), 1, linecoord3[i,6])
+ifelse(is.na(linecoord3[,6]), 1, linecoord3[,6])
+linecoord3
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F, cex.axis=1.2)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=1)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[,6]), 1, linecoord3[,6]))#
+}
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, linecoord3[i,6]))#
+}
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))))#
+}
+pdf(file="~/Documents/GITHUB clones/IPS2016/figures/group dynamics by year_color.pdf", width=16, height=9)
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F, cex.axis=1.2)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=1)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))))#
+}#
+dev.off()
+write.csv(linecoord3, file="~/Documents/GITHUB clones/IPS2016/intermediate data/segments for group dynamics by year.csv", row.names=F)
+grcomp2 <- grcomp[as.numeric(format(grcomp$date, "%d"))<8,]####change this line to reduce time intervals, monthly: <8#
+#####group compo from first week of june#
+#grcomp2 <- grcomp2[as.numeric(format(grcomp2$date, "%m"))==6,]####change this line to reduce time intervals, monthly: <8#
+#
+grcomp2$date <- grcomp2$date#
+grcomp2$ID <- factor(grcomp2$ID)#
+grcomp2$GR <- factor(grcomp2$GR)#
+levels(grcomp2$GR)#
+#grcomp2#
+dim(grcomp2)#
+#grcomp2[as.numeric(format(grcomp2$date, "%Y"))==2016,]#
+#
+ans <- table(grcomp2$date, grcomp2$ID, grcomp2$GR)#
+#ans3 <- ans[,,rank(levels(grcomp2$GR))]#
+ans2 <- ans[,,1]#
+for (i in 2:length(levels(grcomp2$GR)))#
+{#
+	print(i)#
+	ans2 <- ans2+i*ans[,,i]#
+}#
+xdates <- as.Date(row.names(ans2), "%Y-%m-%d")#
+linecoord2 <- data.frame(x0=numeric(0), x1=numeric(0), y0=numeric(0), y1=numeric(0), thick=numeric(0))#
+for (i in 2:nrow(ans2))#
+{#
+	print(i/nrow(ans2))#
+	temp1 <- ans2[(i-1):i,]#
+	temp2 <- numeric(0)#
+	for (j in 1:length(levels(grcomp2$GR)))#
+	{#
+		for (k in 1:length(levels(grcomp2$GR)))#
+		{#
+			linecoord2 <- rbind(linecoord2, data.frame(x0=xdates[i-1], x1=xdates[i], y0=j, y1=k, thick=sum(apply(temp1, 2, function(v) ifelse(v[1]==j & v[2]==k, 1, 0)))))#
+		}#
+	}#
+}#
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F, cex.axis=1.2)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=1)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+##add color code for multimale vs single male group#
+write.csv(linecoord3, file="~/Documents/GITHUB clones/IPS2016/intermediate data/segments for group dynamics by month_no sb number.csv", row.names=F)#
+linecoord3 <- cbind(linecoord2, nSB=NA)#
+for (i in 1:nrow(linecoord2)){#
+#for (i in 1:5){#
+	print(i/nrow(linecoord2))#
+	if(linecoord2[i,3]!=linecoord2[i,4]) {#
+		next#
+		}#
+	linecoord3[i,6] <- sum(na.omit(pop.state(indivs, transfers, date=linecoord2[i,2], gr.list=levels(grcomp2$GR)[linecoord2[i,3]])$all$AGESEX)=="SB")#
+}#
+#write.csv(linecoord3, file="~/Documents/GITHUB clones/IPS2016/intermediate data/segments for group dynamics by year.csv", row.names=F)#
+write.csv(linecoord3, file="~/Documents/GITHUB clones/IPS2016/intermediate data/segments for group dynamics by month.csv", row.names=F)#
+###
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))))#
+}
+write.csv(linecoord2, file="~/Documents/GITHUB clones/IPS2016/intermediate data/segments for group dynamics by month_no sb number.csv", row.names=F)
+linecoord3 <- read.csv(linecoord3, file="~/Documents/GITHUB clones/IPS2016/intermediate data/segments for group dynamics by month.csv")#
+#
+pdf(file="~/Documents/GITHUB clones/IPS2016/figures/group dynamics by month_color.pdf", width=16, height=9)#
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F, cex.axis=1.2)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=1)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))))#
+}#
+#
+dev.off()
+linecoord3 <- read.csv(file="~/Documents/GITHUB clones/IPS2016/intermediate data/segments for group dynamics by month.csv")#
+#
+pdf(file="~/Documents/GITHUB clones/IPS2016/figures/group dynamics by month_color.pdf", width=16, height=9)#
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F, cex.axis=1.2)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=1)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))))#
+}#
+#
+dev.off()
+linecoord3
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F, cex.axis=1.2)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=1)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))))#
+}
+linecoord3[i,1:2]
+linecoord3[i,3:4]
+inecoord3[i,6]
+linecoord3[i,6]
+linecoord3[i,1:2]
+linecoord3[i,3:4]
+linecoord3[i,5]/1.5
+ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red"))))
+nrow(linecoord3)
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))))#
+}
+linecoord3
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F, cex.axis=1.2)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=1)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}
+linecoord3[i,1:2]
+linecoord3
+i
+nrow(linecoord3)
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))))#
+}
+i
+lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))))
+linecoord3[i,1:2]
+linecoord3[i,1:2][,1]
+linecoord3[,1] <- as.Date(linecoord3[,1])#
+linecoord3[,2] <- as.Date(linecoord3[,2])#
+pdf(file="~/Documents/GITHUB clones/IPS2016/figures/group dynamics by month_color.pdf", width=16, height=9)#
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F, cex.axis=1.2)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=1)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))))#
+}
+dev.off()
+?lines
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))), lend=1)#
+}
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))), lend=2)#
+}
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))), lend=ifelse(linecoord3[i,3]==linecoord3[i,4], 0,1))#
+}
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))), lend=ifelse(linecoord3[i,3]==linecoord3[i,4], 1,0))#
+}
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F, cex.axis=1.2)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=1)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))), lend=ifelse(linecoord3[i,3]==linecoord3[i,4], 1,0))#
+}
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F, cex.axis=1.2)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=1)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+##start with non-horizontal to put their butt end in the background#
+for (i in which(linecoord3[i,3]!=linecoord3[i,4]))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))), lend=ifelse(linecoord3[i,3]==linecoord3[i,4], 1,0))#
+}#
+for (i in which(linecoord3[i,3]==linecoord3[i,4]))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))), lend=ifelse(linecoord3[i,3]==linecoord3[i,4], 1,0))#
+}
+which(linecoord3[i,3]!=linecoord3[i,4])
+linecoord3[i,3]
+for (i in which(linecoord3[,3]!=linecoord3[,4]))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))), lend=ifelse(linecoord3[i,3]==linecoord3[i,4], 1,0))#
+}#
+for (i in which(linecoord3[,3]==linecoord3[,4]))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))), lend=ifelse(linecoord3[i,3]==linecoord3[i,4], 1,0))#
+}
+pdf(file="~/Documents/GITHUB clones/IPS2016/figures/group dynamics by month_color.pdf", width=16, height=9)#
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F, cex.axis=1.2)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=1)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+##start with non-horizontal to put their butt end in the background#
+for (i in which(linecoord3[,3]!=linecoord3[,4]))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))), lend=ifelse(linecoord3[i,3]==linecoord3[i,4], 1,0))#
+}#
+for (i in which(linecoord3[,3]==linecoord3[,4]))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))), lend=ifelse(linecoord3[i,3]==linecoord3[i,4], 1,0))#
+}#
+dev.off()
+linecoord3 <- read.csv(file="~/Documents/GITHUB clones/IPS2016/intermediate data/segments for group dynamics by year.csv")#
+linecoord3[,1] <- as.Date(linecoord3[,1])#
+linecoord3[,2] <- as.Date(linecoord3[,2])#
+pdf(file="~/Documents/GITHUB clones/IPS2016/figures/group dynamics by year_color.pdf", width=16, height=9)#
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F, cex.axis=1.2)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=1)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}#
+##start with non-horizontal to put their butt end in the background#
+for (i in which(linecoord3[,3]!=linecoord3[,4]))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))), lend=0)#
+}#
+for (i in which(linecoord3[,3]==linecoord3[,4]))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))), lend=1)#
+}#
+dev.off()
+transfer[transfers$ID=="TMS",]
+transfers[transfers$ID=="TMS",]
+head(transfers)
+transfers[transfers$id=="TMS",]
+grDuration <- table(grCompWeek$GR)#
+grList2 <- names(grDuration)[which(table(grCompWeek$GR)>30)]#
+grcomp <- grCompWeek[grCompWeek$GR%in%grList2,]#
+##remove groups of size <=2#
+grcompT <- grcomp[0,]#
+for (i in unique(grcomp$date)){##remove groups of size <=2#
+	print(i)#
+	temp <- grcomp[grcomp$date==i,]#
+	keep <- names(table(temp$GR))[table(temp$GR)>2]#
+grcompT <- rbind(grcompT, temp[temp$GR%in%keep,])	#
+}#
+grcomp <- grcompT#
+grcomp$ID <- factor(grcomp$ID)#
+grcomp$GR <- factor(grcomp$GR, levels=c("HIM", "NTA", "SHI", "URU", "UGE", "GSH", "TIT","BEE", "KUY", "GIR",  "INS", "MAF", "BWE", "ISA", "PbSubgrp", "MSK", "IYA", "PAB"))#
+grcomp$date <- as.Date(grcomp$date, "%Y-%m-%d")#
+#
+##select only the first day of the month#
+grcomp2 <- grcomp[as.numeric(format(grcomp$date, "%d"))<21 & as.numeric(format(grcomp$date, "%d"))>13,]####change this line to reduce time intervals, monthly: <8#
+#####group compo from first week of june#
+grcomp2 <- grcomp2[as.numeric(format(grcomp2$date, "%m"))==6,]####change this line to reduce time intervals, monthly: <8#
+#
+grcomp2$date <- grcomp2$date#
+grcomp2$ID <- factor(grcomp2$ID)#
+grcomp2$GR <- factor(grcomp2$GR)#
+levels(grcomp2$GR)#
+#grcomp2#
+dim(grcomp2)#
+#grcomp2[as.numeric(format(grcomp2$date, "%Y"))==2016,]#
+#
+ans <- table(grcomp2$date, grcomp2$ID, grcomp2$GR)#
+#ans3 <- ans[,,rank(levels(grcomp2$GR))]#
+ans2 <- ans[,,1]#
+for (i in 2:length(levels(grcomp2$GR)))#
+{#
+	print(i)#
+	ans2 <- ans2+i*ans[,,i]#
+}#
+xdates <- as.Date(row.names(ans2), "%Y-%m-%d")#
+linecoord2 <- data.frame(x0=numeric(0), x1=numeric(0), y0=numeric(0), y1=numeric(0), thick=numeric(0))#
+for (i in 2:nrow(ans2))#
+{#
+	print(i/nrow(ans2))#
+	temp1 <- ans2[(i-1):i,]#
+	temp2 <- numeric(0)#
+	for (j in 1:length(levels(grcomp2$GR)))#
+	{#
+		for (k in 1:length(levels(grcomp2$GR)))#
+		{#
+			linecoord2 <- rbind(linecoord2, data.frame(x0=xdates[i-1], x1=xdates[i], y0=j, y1=k, thick=sum(apply(temp1, 2, function(v) ifelse(v[1]==j & v[2]==k, 1, 0)))))#
+		}#
+	}#
+}#
+linecoord2 <- linecoord2[linecoord2[,5]!=0,]#
+par(mar=c(3,5,1,1))#
+plot(as.Date(c("2000-06-01","2016-07-01"), "%Y-%m-%d"), c(1,length(levels(grcomp2$GR))), type="n", bty="l", ylab="", xlab="", yaxt="n", xaxt="n")#
+axis(1, at=seq(as.Date("2000-07-01", "%Y-%m-%d"), as.Date("2016-07-01", "%Y-%m-%d"),by="year"), labels=2000:2016, las=1, tick=F, cex.axis=1.2)#
+axis(1, at=seq(as.Date("2000-01-01", "%Y-%m-%d"), as.Date("2016-01-01", "%Y-%m-%d"),by="year"), labels=F)#
+#
+for (i in 1:length(levels(grcomp2$GR))) lines(range(xdates)-c(365/2,0), c(i,i), lty=3, col="grey")#
+axis(2, at=1:length(levels(grcomp2$GR)), labels=levels(grcomp2$GR), las=2 , cex.axis=1)#
+for (i in 1:length(levels(grcomp2$GR))) lines(c(1,nrow(linecoord2)), c(i,i), lty=3)#
+for (i in xdates)#
+{#
+	lines(c(i,i), c(1, length(levels(grcomp2$GR))), lwd=.5, col="grey", lty=3 )#
+}
+for (i in 1:nrow(linecoord3))#
+{#
+	lines(linecoord3[i,1:2], linecoord3[i,3:4], lwd=linecoord3[i,5]/1.5, col=ifelse(is.na(linecoord3[i,6]), 1, ifelse(linecoord3[i,6]==1, "blue", ifelse(linecoord3[i,6]==2, "green",ifelse(linecoord3[i,6]==3, "yellow", "red")))))#
+}
 fromJSON("~/Documents/GITHUB clones/temp/amy/behaviors.json")
 library(rjson)
 fromJSON("~/Documents/GITHUB clones/temp/amy/behaviors.json")
@@ -1332,2327 +2596,73 @@ for (i in 1:length(dat$data$sessions)){#
 backgroundTapsTable
 library(shiny)#
 runGitHub("FosseyFund/AOToolBox-public")
+install.packages("hSDM")
+library(hSDM)
+vignette(package="hSDM")
+library(raster)
+# Load altitudinal data and create rasterlibrary(raster)data(altitude,package="hSDM")alt.orig <- rasterFromXYZ(altitude) extent(alt.orig) <- c(0,50,0,50) plot(alt.orig)# Center and scale altitudinal dataalt <- scale(alt.orig,center=TRUE,scale=TRUE) plot(alt)
+# Load altitudinal data and create rasterlibrary(raster)data(altitude,package="hSDM")alt.orig <- rasterFromXYZ(altitude) #
+extent(alt.orig) <- c(0,50,0,50)#
+plot(alt.orig)# Center and scale altitudinal dataalt <- scale(alt.orig,center=TRUE,scale=TRUE) #
+plot(alt)
+alt
+hist(alt)
+mean(alt)
+c(alt)
+as.matrix(alt)
+mean(as.matrix(alt))
+sd(as.matrix(alt))
+library(hSDM)
+library(hSDM)# Target parametersbeta.target <- matrix(c(-1,1),ncol=1)# Matrix of covariates (including the intercept)ncells <- ncell(alt)X <- cbind(rep(1,ncells),values(alt))
+X
+as.raster(X)
+dim(X)
+library(hSDM)# Target parametersbeta.target <- matrix(c(-1,1),ncol=1)# Matrix of covariates (including the intercept)ncells <- ncell(alt)X <- cbind(rep(1,ncells),values(alt))# Probability of presence as a quadratic function of altitude#
+logit.theta <- X %*% beta.target#
+theta <- inv.logit(logit.theta)#
+# Coordinates of raster cells#
+coords <- coordinates(alt)# Transform the probability of presence into a raster
+theta <- rasterFromXYZ(cbind(coords,theta))# Color palette for probability plotscolRP <- colorRampPalette(c("white","yellow","orange","red","brown","black"))
+brks <- seq(0,1,length.out=100)arg <- list(at=seq(0,1,length.out=5), labels=c("0","0.25","0.5","0.75","1"))nb <- length(brks)-1plot(theta,main="Initial probabilities",col=colRP(nb),breaks=brks,axis.args=arg,zlim=c(0,1))
+install.packages("NetworkD3")
+install.packages("networkD3")
+library(networkD3)
+src <- c("A", "A", "A", "A",#
+        "B", "B", "C", "C", "D")#
+target <- c("B", "C", "D", "J",#
+            "E", "F", "G", "H", "I")#
+networkData <- data.frame(src, target)#
+#
+# Plot#
+simpleNetwork(networkData)
+data(MisLinks)#
+data(MisNodes)#
+#
+# Plot#
+forceNetwork(Links = MisLinks, Nodes = MisNodes,#
+            Source = "source", Target = "target",#
+            Value = "value", NodeID = "name",#
+            Group = "group", opacity = 0.8)
+MisLinks
+MisNodes
+? forceNetwork
+Group = "group", opacity = 0.8, zoom=T)
+forceNetwork(Links = MisLinks, Nodes = MisNodes,#
+            Source = "source", Target = "target",#
+            Value = "value", NodeID = "name",#
+            Group = "group", opacity = 0.8, zoom=T)
+source_gist("5734624")
+library(digest)#
+library(devtools)
+source_gist("5734624")
+d3SimpleNetwork(NetworkData, height = 300, width = 700)
+85300/12
+runApp("~/Downloads/FosseyFund-AOToolBox-463546d")
 library(shiny)
+runApp("~/Downloads/FosseyFund-AOToolBox-463546d")
+library(shiny)
+library(shiny)#
 runGitHub("FosseyFund/AOToolBox-public")
-dat <- read.csv("~/Documents/GITHUB clones/temp/files for behaviors/Scan data_Winnie2.csv")
-foods <- read.csv("~/Documents/GITHUB clones/temp/files for behaviors/Food_ID_from Winnie.csv")
-is.null(dat$X_FOOD)
-ncol(dat)==1
-dat <- data.frame(indices=1:nrow(dat), dat)
-dat
-dyadic_fee <- dat[dat$X_FOOD=="_FOOD" & !is.na(dat$X_FOOD),]
-dyadic_fee
-dyadic_nonfee <- dat[!(dat$X_FOOD=="_FOOD" & !is.na(dat$X_FOOD)),]
-dyadic_nonfee
-dyadic_fee2 <- dyadic_fee[rep(seq(1,nrow(dyadic_fee)), each=nrow(foods)),]#
-dim(dyadic_fee2)#
-indexx <- which(names(dyadic_fee2)=="X_FOOD")#returns # of column which contains FOOD #
-if(ncol(dyadic_fee2)==indexx){##last column is food#
-  dyadic_fee3 <- data.frame(dyadic_fee2[,1:(indexx-1)], foods[rep(1:nrow(foods), nrow(dyadic_fee)),])#
-  names(dyadic_fee3)[1:(indexx-1)]<-names(dyadic_fee2)[1:(indexx-1)]#
-}
-else {#
-dyadic_fee3 <- data.frame(dyadic_fee2[,1:(indexx-1)], foods[rep(1:nrow(foods), nrow(dyadic_fee)),],dyadic_fee2[,(indexx+1):ncol(dyadic_fee2)])#
-names(dyadic_fee3)[1:(indexx-1)]<-names(dyadic_fee2)[1:(indexx-1)]#
-names(dyadic_fee3)[(indexx+ncol(foods)):ncol(dyadic_fee3)]<-names(dyadic_fee2)[(indexx+1):ncol(dyadic_fee2)]#
-}#
-empty <- foods[1,]; empty[1,] <- NA#
-if(ncol(dyadic_nonfee)==indexx){#
-  dyadic_nonfee3 <- data.frame(dyadic_nonfee[,1:(indexx-1)], empty[rep(1, nrow(dyadic_nonfee)),])#
-} else {#
-dyadic_nonfee3 <- data.frame(dyadic_nonfee[,1:(indexx-1)], empty[rep(1, nrow(dyadic_nonfee)),], dyadic_nonfee[,(indexx+1):ncol(dyadic_nonfee)])#
-}#
-names(dyadic_nonfee3)<-names(dyadic_fee3)#
-dyadic2 <- rbind(dyadic_nonfee3, dyadic_fee3)#
-dyadic3 <- dyadic2[order(dyadic2[,1]),]
-dat <- read.csv("~/Documents/GITHUB clones/temp/files for behaviors/Scan data_Winnie2.csv")
-foods <- read.csv("~/Documents/GITHUB clones/temp/files for behaviors/Food_ID_from Winnie.csv")
-dat <- data.frame(indices=1:nrow(dat), dat)#
-dyadic_fee <- dat[dat$X_FOOD=="_FOOD" & !is.na(dat$X_FOOD),] # #
-dyadic_nonfee <- dat[!(dat$X_FOOD=="_FOOD" & !is.na(dat$X_FOOD)),]#
-### duplicate food_ rows with all possible foods rows (all plant species and items)#
-dyadic_fee2 <- dyadic_fee[rep(seq(1,nrow(dyadic_fee)), each=nrow(foods)),]#
-dim(dyadic_fee2)#
-indexx <- which(names(dyadic_fee2)=="X_FOOD")#returns # of column which contains FOOD #
-if(ncol(dyadic_fee2)==indexx){##last column is food#
-  dyadic_fee3 <- data.frame(dyadic_fee2[,1:(indexx-1)], foods[rep(1:nrow(foods), nrow(dyadic_fee)),])#
-  names(dyadic_fee3)[1:(indexx-1)]<-names(dyadic_fee2)[1:(indexx-1)]#
-} else {#
-dyadic_fee3 <- data.frame(dyadic_fee2[,1:(indexx-1)], foods[rep(1:nrow(foods), nrow(dyadic_fee)),],dyadic_fee2[,(indexx+1):ncol(dyadic_fee2)])#
-names(dyadic_fee3)[1:(indexx-1)]<-names(dyadic_fee2)[1:(indexx-1)]#
-names(dyadic_fee3)[(indexx+ncol(foods)):ncol(dyadic_fee3)]<-names(dyadic_fee2)[(indexx+1):ncol(dyadic_fee2)]#
-}#
-empty <- foods[1,]; empty[1,] <- NA#
-if(ncol(dyadic_nonfee)==indexx){#
-  dyadic_nonfee3 <- data.frame(dyadic_nonfee[,1:(indexx-1)], empty[rep(1, nrow(dyadic_nonfee)),])#
-} else {#
-dyadic_nonfee3 <- data.frame(dyadic_nonfee[,1:(indexx-1)], empty[rep(1, nrow(dyadic_nonfee)),], dyadic_nonfee[,(indexx+1):ncol(dyadic_nonfee)])#
-}#
-names(dyadic_nonfee3)<-names(dyadic_fee3)#
-dyadic2 <- rbind(dyadic_nonfee3, dyadic_fee3)#
-dyadic3 <- dyadic2[order(dyadic2[,1]),]
-dyadic3
-dat <- read.csv("~/Documents/GITHUB clones/temp/files for behaviors/Scan data_Winnie2.csv")#
-foods <- read.csv("~/Documents/GITHUB clones/temp/files for behaviors/Food_ID_from Winnie.csv")
-insert.foods <- function(dat, foods)#
-{	#
-### divide data into those with context FEE and those of other contexts#
-if(is.null(dat$X_FOOD)) return(dat)#
-if(ncol(dat)==1) return(foods)#
-dat <- data.frame(indices=1:nrow(dat), dat)#
-dyadic_fee <- dat[dat$X_FOOD=="_FOOD" & !is.na(dat$X_FOOD),] # #
-dyadic_nonfee <- dat[!(dat$X_FOOD=="_FOOD" & !is.na(dat$X_FOOD)),]#
-### duplicate food_ rows with all possible foods rows (all plant species and items)#
-dyadic_fee2 <- dyadic_fee[rep(seq(1,nrow(dyadic_fee)), each=nrow(foods)),]#
-dim(dyadic_fee2)#
-indexx <- which(names(dyadic_fee2)=="X_FOOD")#returns # of column which contains FOOD #
-if(ncol(dyadic_fee2)==indexx){##last column is food#
-  dyadic_fee3 <- data.frame(dyadic_fee2[,1:(indexx-1)], foods[rep(1:nrow(foods), nrow(dyadic_fee)),])#
-  names(dyadic_fee3)[1:(indexx-1)]<-names(dyadic_fee2)[1:(indexx-1)]#
-} else {#
-dyadic_fee3 <- data.frame(dyadic_fee2[,1:(indexx-1)], foods[rep(1:nrow(foods), nrow(dyadic_fee)),],dyadic_fee2[,(indexx+1):ncol(dyadic_fee2)])#
-names(dyadic_fee3)[1:(indexx-1)]<-names(dyadic_fee2)[1:(indexx-1)]#
-names(dyadic_fee3)[(indexx+ncol(foods)):ncol(dyadic_fee3)]<-names(dyadic_fee2)[(indexx+1):ncol(dyadic_fee2)]#
-}#
-empty <- foods[1,]; empty[1,] <- NA#
-if(ncol(dyadic_nonfee)==indexx){#
-  dyadic_nonfee3 <- data.frame(dyadic_nonfee[,1:(indexx-1)], empty[rep(1, nrow(dyadic_nonfee)),])#
-} else {#
-dyadic_nonfee3 <- data.frame(dyadic_nonfee[,1:(indexx-1)], empty[rep(1, nrow(dyadic_nonfee)),], dyadic_nonfee[,(indexx+1):ncol(dyadic_nonfee)])#
-}#
-names(dyadic_nonfee3)<-names(dyadic_fee3)#
-dyadic2 <- rbind(dyadic_nonfee3, dyadic_fee3)#
-dyadic3 <- dyadic2[order(dyadic2[,1]),]#
-return(dyadic3[,-1])#
-}
-dyadicScanSolo <- function(dyadic, scan, solo, foods){#
-dyadic2 <- insert.foods(dat=dyadic, foods=foods)#
-scans2 <- insert.foods(dat=scan, foods=foods)#
-self2 <- insert.foods(dat=solo, foods=foods)#
-return(list(dyadic.all=dyadic2, scan.all=scans2, solo.all=self2))#
-}
-dat
-foods
-insert.foods(dat=dat, foods=foods)
-insert.foods(dat=scan, foods=foods)
-###################recursive algorithm:#
-listFromCsv <- function(dat)#
-{#
-if(is.null(dat)) {#
-	return(NULL)#
-} else {#
-names(dat) <- gsub("[.]", "_", names(dat))##necessary due to use of unlist in jsonoutputconversion.R#
-allbehav <- dat[!duplicated(dat),]	#
-for(i in 1:ncol(allbehav)) allbehav[,i] <- factor(allbehav[,i], levels=as.character(unique(allbehav[,i])))#
-#
-for (i in ncol(allbehav):1){#
-	allbehav[allbehav[,i]=="" & !is.na(allbehav[,i]),i] <- NA#
-	allbehav <- allbehav[order(allbehav[,i]),]#
-}#
-row.names(allbehav) <- 1:nrow(allbehav)#
-#
-assignIndex <- function(dat){#
-	dat <- as.data.frame(dat)#
-	if (ncol(dat)==1) return(rep(1, nrow(dat))) else {#
-	dupvec <- duplicated(dat[,-ncol(dat)])#
-	ans <- rep(NA, length(dupvec))#
-	index <- 0#
-	for(i in 1:length(dupvec)){#
-		if(!dupvec[i]) index <- index+1#
-		ans[i] <- index#
-	}#
-	return(ans)#
-	}#
-}#
-#
-dupvec <- assignIndex(allbehav[,1:ncol(allbehav)])#
-twigs <- list()#
-index <- 0#
-add <- FALSE#
-for(i in 1:nrow(allbehav))#
-{#
-	#print(i)#
-	if(!is.na(allbehav[i,ncol(allbehav)]))#
-	{#
-		if(!add){#
-			index <- index+1#
-			addIndex <- 2#
-			twigs[[index]] <- list()#
-			twigs[[index]][[1]] <- list() #
-			twigs[[index]][[1]][[1]] <- list(name=as.character(allbehav[i,ncol(allbehav)]))#
-			names(twigs[[index]]) <- names(allbehav)[ncol(allbehav)]#
-		} else #
-		{#
-			twigs[[index]][[1]][[addIndex]] <- list(name=as.character(allbehav[i,ncol(allbehav)]))#
-			names(twigs[[index]]) <- names(allbehav)[ncol(allbehav)]#
-			addIndex <- addIndex+1#
-		}#
-	} else {#
-		index <- index+1#
-		twigs[[index]] <- NA#
-	}#
-	if(i<nrow(allbehav)) {#
-		add <- (dupvec[i+1]==dupvec[i])#
-		}#
-}#
-#twigs#
-dupvec2 <- dupvec#
-for(i in (ncol(allbehav)-1):1)#
-{#
-	#print(paste("i=", i))#
-	index <- 0#
-	twigs2 <- list()#
-	dupvec1 <- dupvec2#
-	dupvec2 <- assignIndex(allbehav[,1:i])#
-	add <- FALSE#
-	insert <- TRUE#
-	for (j in 1:nrow(allbehav)){#
-		#print(paste("j=", j))#
-		#print(paste("add = ", add))#
-		#print(paste("insert = ", insert))		#
-		if (insert){#
-		if (!add){#
-			index <- index+1#
-			addIndex <- 2#
-			 if (is.na(allbehav[j,i])) {#
-					twigs2[[index]] <- twigs[[dupvec1[j]]]#
-				} else {#
-					if (length(twigs[[dupvec1[j]]][[1]])==1) { #
-					if (is.na(twigs[[dupvec1[j]]][[1]])) {#
-					twigs2[[index]] <- list()#
-					twigs2[[index]][[1]] <- list() #
-					twigs2[[index]][[1]][[1]] <- list(name=as.character(allbehav[j,i]))#
-					names(twigs2[[index]]) <- names(allbehav)[i]	#
-				} else {#
-				twigs2[[index]] <- list()#
-				twigs2[[index]][[1]] <- list()#
-				twigs2[[index]][[1]][[1]] <- list(name=as.character(allbehav[j,i])[1], twigs[[dupvec1[j]]][[1]])#
-				names(twigs2[[index]]) <- names(allbehav)[i]#
-				names(twigs2[[index]][[1]][[1]]) <- c("name",names(twigs[[dupvec1[j]]]))#
-				}#
-				} else {#
-				twigs2[[index]] <- list()#
-				twigs2[[index]][[1]] <- list()#
-				twigs2[[index]][[1]][[1]] <- list(name=as.character(allbehav[j,i])[1], twigs[[dupvec1[j]]][[1]])#
-				names(twigs2[[index]]) <- names(allbehav)[i]#
-				names(twigs2[[index]][[1]][[1]]) <- c("name",names(twigs[[dupvec1[j]]]))#
-				}#
-				}#
-		} else#
-		{ ##add=T#
-			if (is.na(allbehav[j,i])) {#
-						twigs2[[index]][[1]][[addIndex]] <- twigs[[dupvec1[j]]][[1]][[1]]#
-			} else {#
-			if (length(twigs[[dupvec1[j]]][[1]])==1) { #
-					if (is.na(twigs[[dupvec1[j]]][[1]])) {#
-					twigs2[[index]][[1]][[addIndex]] <- list(name=as.character(allbehav[j,i]))#
-					names(twigs2[[index]][[1]][[addIndex]]) <- "name"	#
-				} else {#
-					twigs2[[index]][[1]][[addIndex]] <- list(name=as.character(allbehav[j,i]), twigs[[dupvec1[j]]][[1]])#
-					names(twigs2[[index]][[1]][[addIndex]]) <- c("name",names(twigs[[dupvec1[j]]]))#
-				}#
-				}	#
-			else {#
-			twigs2[[index]][[1]][[addIndex]] <- list(name=as.character(allbehav[j,i]), twigs[[dupvec1[j]]][[1]])#
-			names(twigs2[[index]][[1]][[addIndex]]) <- c("name",names(twigs[[dupvec1[j]]])) #
-			}#
-			}#
-			addIndex <- addIndex+1#
-		}#
-		} #end insert#
-		if (j<nrow(allbehav)){#
-		add <- (dupvec2[j+1]==dupvec2[j])#
-		insert <-  (dupvec1[j+1]!=dupvec1[j])#
-		}#
-	}#
-	twigs <- twigs2#
-}#
-return(twigs2)#
-}#
-}
-dyadicScanSolo(scan, scan, scan, foods)
-scan
-scans
-dyadicScanSolo(dat, dat, dat, foods)
-all.behav <- dyadicScanSolo(dat, dat, dat, foods)
-all.bahav
-all.behav
-prepareBehaviorsJson(allBehaviorsTables$dyadic.all, allBehaviorsTables$scan.all, allBehaviorsTables$solo.all, "v1")
-allBehaviorsTables <- dyadicScanSolo(dat, dat, dat, foods)
-prepareBehaviorsJson(allBehaviorsTables$dyadic.all, allBehaviorsTables$scan.all, allBehaviorsTables$solo.all, "v1")
-dat <- read.csv("~/Documents/GITHUB clones/temp/files for behaviors/Scan data_Winnie2.csv", check.names=F)
-dat
-dat$_FOOD
-names(dat)
-dat$'_FOOD'
-is.null(dat$'_FOOD')
-dat <- data.frame(indices=1:nrow(dat), dat)#
-dyadic_fee <- dat[dat$'_FOOD'=="_FOOD" & !is.na(dat$'_FOOD'),] # #
-dyadic_nonfee <- dat[!(dat$'_FOOD'=="_FOOD" & !is.na(dat$'_FOOD')),]#
-### duplicate food_ rows with all possible foods rows (all plant species and items)#
-dyadic_fee2 <- dyadic_fee[rep(seq(1,nrow(dyadic_fee)), each=nrow(foods)),]#
-dim(dyadic_fee2)
-dat <- read.csv("~/Documents/GITHUB clones/temp/files for behaviors/Scan data_Winnie2.csv", check.names=F)
-foods <- read.csv("~/Documents/GITHUB clones/temp/files for behaviors/Food_ID_from Winnie.csv", check.names=F)
-dat <- data.frame(indices=1:nrow(dat), dat)
-dat
-dat <- read.csv("~/Documents/GITHUB clones/temp/files for behaviors/Scan data_Winnie2.csv", check.names=F)
-dat
-dat <- data.frame(indices=1:nrow(dat), dat)
-dat
-dat <- data.frame(indices=1:nrow(dat), dat, check.names=F)
-dat <- read.csv("~/Documents/GITHUB clones/temp/files for behaviors/Scan data_Winnie2.csv", check.names=F)
-foods <- read.csv("~/Documents/GITHUB clones/temp/files for behaviors/Food_ID_from Winnie.csv", check.names=F)
-data.frame(indices=1:nrow(dat), dat, check.names=F)
-dat <- data.frame(indices=1:nrow(dat), dat, check.names=F)
-dyadic_fee <- dat[dat$'_FOOD'=="_FOOD" & !is.na(dat$'_FOOD'),]
-dyadic_nonfee <- dat[!(dat$'_FOOD'=="_FOOD" & !is.na(dat$'_FOOD')),]
-dyadic_fee
-dyadic_fee2 <- dyadic_fee[rep(seq(1,nrow(dyadic_fee)), each=nrow(foods)),]
-dim(dyadic_fee2)
-indexx <- which(names(dyadic_fee2)=="_FOOD")#returns # of column which contains FOOD
-indexx
-ncol(dyadic_fee2)==indexx
-dyadic_fee3 <- data.frame(dyadic_fee2[,1:(indexx-1)], foods[rep(1:nrow(foods), nrow(dyadic_fee)),])
-dyadic_fee3
+library(shiny)#
 runGitHub("FosseyFund/AOToolBox-public")
 runApp("~/Documents/GITHUB clones/AOToolBox")
-library(rjson)
-behav <- fromJSON("~/Documents/GITHUB clones/temp/amy/test Aug 29, 2016/behaviors.json")
-behav <- fromJSON(file="~/Documents/GITHUB clones/temp/amy/test Aug 29, 2016/behaviors.json")
-layout <- fromJSON(file="~/Documents/GITHUB clones/temp/amy/test Aug 29, 2016/layout_info.json")
-dat <- fromJSON(file="~/Documents/GITHUB clones/temp/amy/test Aug 29, 2016/Amy_2016-08-26_20h02m22s.dat")
-getListHeaders <- function(jsonList){#
-temp <- names(unlist(jsonList))#
-temp2 <- unlist(strsplit(temp, split="[.]name"))#
-unique(unlist(strsplit(temp2, split="[.]")))#
-}#
-#################get the list of behaviors and modifiers here:#
-behaviorHeaders <- getListHeaders(behav$dyadic)#
-#################same for scan:#
-scanHeaders <- getListHeaders(behav$scan)#
-#################same for self:#
-selfHeaders <- getListHeaders(behav$solo)#
-#################same for self:#
-continuousVars <- list()#
-continuousVars$continuousVars <- layout$continuous_focal_variables#
-continuousVarsHeaders <- getListHeaders(continuousVars)#
-#################same for scanvars:#
-scanVars <- list()#
-scanVars$scanVars <- layout$scan_variables#
-scanVarsHeaders <- getListHeaders(scanVars)#
-#################same for focalvars:#
-focalVars <- list()#
-focalVars$focalVars <- layout$focal_variables#
-focalVarsHeaders <- getListHeaders(focalVars)#
-#################same for dayvars:#
-dayVars <- list()#
-dayVars$dayVars <- layout$day_variables#
-dayVarsHeaders <- getListHeaders(dayVars)#
-NAcheck <- function(x){#
-	ifelse (is.null(x), NA,x)#
-}
-sessionsTable <- matrix(nrow=0, ncol=11)#
-colnames(sessionsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"session_end_timeStamp",#
-	"group_ID",#
-	"pin_code_name",#
-	"observer_name",#
-	"layout_info_json_version",#
-	"behaviors_json_version",#
-	"gps_on",#
-	"compass_on",#
-	"map_mode_on"#
-)
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	sessionsTable <- rbind(sessionsTable, as.character(c(#
-	NAcheck(session$device_ID),#
-	NAcheck(session$arrival_time),#
-	NAcheck(session$departure_time),#
-	NAcheck(session$group_id),#
-	NAcheck(session$pin_name),#
-	NAcheck(unlist(session$details$'Observer name')),#
-	NAcheck(session$layout_info_JSON_file_ID),#
-	NAcheck(session$behaviors_JSON_file_ID),#
-	NAcheck(session$gps_on),#
-	NAcheck(session$compass_on),	#
-	NAcheck(session$map_mode_on))))#
-	}#
-}
-sessionsTable
-dayVarsHeaders
-#################list_sessions#
-sessionsTable <- matrix(nrow=0, ncol=11)#
-colnames(sessionsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"session_end_timeStamp",#
-	"group_ID",#
-	"pin_code_name",#
-	"layout_info_json_version",#
-	"behaviors_json_version",#
-	"gps_on",#
-	"compass_on",#
-	"map_mode_on"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	sessionsTable <- rbind(sessionsTable, as.character(c(#
-	NAcheck(session$device_ID),#
-	NAcheck(session$arrival_time),#
-	NAcheck(session$departure_time),#
-	NAcheck(session$group_id),#
-	NAcheck(session$pin_name),#
-	NAcheck(session$layout_info_JSON_file_ID),#
-	NAcheck(session$behaviors_JSON_file_ID),#
-	NAcheck(session$gps_on),#
-	NAcheck(session$compass_on),	#
-	NAcheck(session$map_mode_on))))#
-	}#
-}
-sessionsTable <- matrix(nrow=0, ncol=10)#
-colnames(sessionsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"session_end_timeStamp",#
-	"group_ID",#
-	"pin_code_name",#
-	"layout_info_json_version",#
-	"behaviors_json_version",#
-	"gps_on",#
-	"compass_on",#
-	"map_mode_on"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	sessionsTable <- rbind(sessionsTable, as.character(c(#
-	NAcheck(session$device_ID),#
-	NAcheck(session$arrival_time),#
-	NAcheck(session$departure_time),#
-	NAcheck(session$group_id),#
-	NAcheck(session$pin_name),#
-	NAcheck(session$layout_info_JSON_file_ID),#
-	NAcheck(session$behaviors_JSON_file_ID),#
-	NAcheck(session$gps_on),#
-	NAcheck(session$compass_on),	#
-	NAcheck(session$map_mode_on))))#
-	}#
-}
-sessionsTable
-varMatrix <- function(observations, headers){#
-	newTable <- matrix(nrow=0, ncol=length(headers))#
-	if(length(observations)>0){#
-	for(j in 1:length(observations)){#
-		var <- observations[j]#
-		varNameTemp <- names(var)#
-		modifiers <- unlist(var)#
-		newnames <- unlist(lapply(strsplit(names(modifiers), split="[.]"), function(v) v[-1]))#
-		headers <- unlist(lapply(strsplit(headers, split="[*]"), function(v) v[1]))#
-		newRow <- rep(NA,length(headers))#
-		newRow[match(newnames, headers)] <- modifiers#
-		newRow[1] <- varNameTemp#
-		newTable <- rbind(newTable, newRow)#
-	}#
-	}#
-	return(newTable)#
-}
-dayVarsTable <- matrix(nrow=0, ncol=2+length(dayVarsHeaders))#
-colnames(dayVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	dayVarsHeaders#
-)
-dayVarsTable
-length(dayVarsTable)
-dim(dayVarsTable)
-dayVarsHeaders
-length(dat$data$sessions)>0
-length(dat$data$sessions)
-i
-session <- dat$data$sessions[[i]]
-dayVarsDetailsTemp <- session$details[grep("Observer name", names(session$details), invert=T)]
-dayVarsDetailsTemp
-newDayVarsTable <- varMatrix(dayVarsDetailsTemp, dayVarsHeaders)
-newDayVarsTable
-NAcheck(session$device_ID)#
-	NAcheck(session$arrival_time)
-dayVarsTable <- rbind(dayVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), newDayVarsTable))
-dayVarsTable
-dayVarsTable <- matrix(nrow=0, ncol=2+length(dayVarsHeaders))#
-colnames(dayVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	dayVarsHeaders#
-)#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	dayVarsDetailsTemp <- session$details[grep("Observer name", names(session$details), invert=T)]#
-	newDayVarsTable <- varMatrix(dayVarsDetailsTemp, dayVarsHeaders)#
-	NAcheck(session$device_ID)#
-	NAcheck(session$arrival_time)#
-	dayVarsTable <- rbind(dayVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), newDayVarsTable))#
-	}#
-}
-focalVarsTable <- matrix(nrow=0, ncol=3+length(focalVarsHeaders))#
-colnames(focalVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp",#
-	"focal_start_timeStamp",#
-	focalVarsHeaders#
-)
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focals)>0){#
-	for (j in 1:length(session$focals)){#
-		focal <- session$focals[[j]]#
-		focalVarsDetailsTemp <- focal$details#
-		newFocalVarsTable <- varMatrix(focalVarsDetailsTemp, focalVarsHeaders)#
-	focalVarsTable <- rbind(focalVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newFocalVarsTable))#
-	}#
-	}#
-	}#
-}
-focalVarsTable
-continuousVarsTable <- matrix(nrow=0, ncol=3+length(continuousVarsHeaders))#
-colnames(continuousVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp",#
-	"focal_start_timeStamp",#
-	continuousVarsHeaders#
-)
-continuousVarsHeaders
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focals)>0){#
-	for (j in 1:length(session$focals)){#
-		focal <- session$focals[[j]]#
-		continuousVarsDetailsTemp <- focal$continuous_focal_vars#
-		if(is.null(focal$continuous_focal_vars)) {#
-			next#
-			}#
-		newContinuousVarsTable <- varMatrix(continuousVarsDetailsTemp, continuousVarsHeaders)#
-	continuousVarsTable <- rbind(continuousVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newContinuousVarsTable))#
-	}#
-	}#
-	}#
-}
-continuousVarsTable
-continuousVarsHeaders
-scanVarsTable <- matrix(nrow=0, ncol=4+length(scanVarsHeaders))#
-colnames(scanVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp",#
-	"focal_start_timeStamp",#
-	"scan_timeStamp",#
-	scanVarsHeaders#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focals)>0){#
-	for (j in 1:length(session$focals)){#
-		focal <- session$focals[[j]]#
-		if(length(focal$scans)>0){#
-		for (k in 1:length(session$focals)){#
-		scan <- focal$scans[[k]]#
-		scanVarsDetailsTemp <- scan$details#
-		newscanVarsTable <- varMatrix(scanVarsDetailsTemp, scanVarsHeaders)#
-		scanVarsTable <- rbind(scanVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), NAcheck(scan$timestamp), newscanVarsTable))#
-		}#
-		}#
-		}#
-	}#
-	}#
-}
-scanVarsHeaders
-scanVarsTable <- matrix(nrow=0, ncol=4+length(scanVarsHeaders))#
-colnames(scanVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp",#
-	"focal_start_timeStamp",#
-	"scan_timeStamp",#
-	scanVarsHeaders#
-)
-scanVarsTable
-i
-length(session$focals)
-session <- dat$data$sessions[[i]]
-session
-j
-focal <- session$focals[[j]]
-focal
-length(focal$scans)
-k
-length(session$focals)
-scan <- focal$scans[[k]]
-length(focal$scans)
-k
-k <- 1
-scanVarsTable <- matrix(nrow=0, ncol=4+length(scanVarsHeaders))#
-colnames(scanVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp",#
-	"focal_start_timeStamp",#
-	"scan_timeStamp",#
-	scanVarsHeaders#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focals)>0){#
-	for (j in 1:length(session$focals)){#
-		focal <- session$focals[[j]]#
-		if(length(focal$scans)>0){#
-		for (k in 1:length(focal$scans)){#
-		scan <- focal$scans[[k]]#
-		scanVarsDetailsTemp <- scan$details#
-		newscanVarsTable <- varMatrix(scanVarsDetailsTemp, scanVarsHeaders)#
-		scanVarsTable <- rbind(scanVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), NAcheck(scan$timestamp), newscanVarsTable))#
-		}#
-		}#
-		}#
-	}#
-	}#
-}
-scanVarsTable
-behaviorsTable <- matrix(nrow=0, ncol=11+length(behaviorHeaders)+length(selfHeaders))#
-colnames(behaviorsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"behavior_timeStamp", #
-	"actor", #
-	"subject",#
-	 behaviorHeaders, selfHeaders,#
-	"comment",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude"#
-	)
-if(length(dat$data$sessions)>0){#
-behaviorHeaders2 <- unlist(lapply(strsplit(behaviorHeaders, split="[*]"), function(v) v[1]))#
-selfHeaders2 <- unlist(lapply(strsplit(selfHeaders, split="[*]"), function(v) v[1]))#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		if(length(focal$behaviors)>0){#
-			for (k in 1:length(focal$behaviors)){#
-				behavior <- focal$behaviors[[k]]#
-				behaviorDetailsTemp <- behavior$details#
-				behaviorDetailsTemp2 <- character(length(c(selfHeaders, behaviorHeaders)))#
-				if(behavior$actor==behavior$subject){#
-				behaviorDetailsTemp2[length(behaviorHeaders)+ match(names(unlist(behaviorDetailsTemp)), selfHeaders2)] <- unlist(behaviorDetailsTemp)#
-				} else {#
-				behaviorDetailsTemp2[match(names(unlist(behaviorDetailsTemp)), behaviorHeaders2)] <- unlist(behaviorDetailsTemp)#
-				}#
-				behaviorsTable <- rbind(behaviorsTable, as.character(c(#
-				NAcheck(session$device_ID),#
-				NAcheck(session$arrival_time),#
-				NAcheck(focal$start_time),	#
-				NAcheck(behavior$timestamp),#
-				NAcheck(behavior$actor),#
-				NAcheck(behavior$subject),#
-				behaviorDetailsTemp2,#
-				NAcheck(behavior$comment),#
-				NAcheck(behavior$lat),#
-				NAcheck(behavior$lon),#
-				NAcheck(behavior$gpsPrecision),#
-				NAcheck(behavior$alt)							#
-				)))#
-				}#
-			}#
-		}#
-	}#
-}#
-}
-behaviorsTable
-if(length(dat$data$sessions)>0){#
-behaviorHeaders2 <- unlist(lapply(strsplit(behaviorHeaders, split="[*]"), function(v) v[1]))#
-selfHeaders2 <- unlist(lapply(strsplit(selfHeaders, split="[*]"), function(v) v[1]))#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		if(length(focal$behaviors)>0){#
-			for (k in 1:length(focal$behaviors)){#
-				behavior <- focal$behaviors[[k]]#
-				behaviorDetailsTemp <- behavior$details#
-				behaviorDetailsTemp2 <- character(length(c(selfHeaders, behaviorHeaders)))#
-				if(behavior$actor==behavior$subject){#
-				behaviorDetailsTemp2[length(behaviorHeaders)+ match(names(unlist(behaviorDetailsTemp)), selfHeaders2)] <- unlist(behaviorDetailsTemp)#
-				} else {#
-				behaviorDetailsTemp2[match(names(unlist(behaviorDetailsTemp)), behaviorHeaders2)] <- unlist(behaviorDetailsTemp)#
-				}#
-				behaviorsTable <- rbind(behaviorsTable, as.character(c(#
-				NAcheck(session$device_ID),#
-				NAcheck(session$arrival_time),#
-				NAcheck(focal$start_time),	#
-				NAcheck(behavior$timestamp),#
-				NAcheck(behavior$actor),#
-				NAcheck(behavior$subject),#
-				behaviorDetailsTemp2,#
-				NAcheck(behavior$comment),#
-				NAcheck(behavior$lat),#
-				NAcheck(behavior$lon),#
-				NAcheck(behavior$gpsPrecision),#
-				NAcheck(behavior$alt)							#
-				)))#
-				}#
-			}#
-		}#
-	}#
-}#
-}
-scansTable <- matrix(nrow=0, ncol=13+length(scanHeaders))#
-colnames(scansTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"timeStamp",#
-	"scanned_individual_ID",#
-	scanHeaders,#
-	"x_position",#
-	"y_position",#
-	"physical_contact_threshold",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude",#
-	"compass_bearing"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-scanHeaders2 <- unlist(lapply(strsplit(scanHeaders, split="[*]"), function(v) v[1]))#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		if(length(focal$scans)>0){#
-			for (k in 1:length(focal$scans)){#
-				scan <- focal$scans[[k]]#
-				for(m in 1:length(focal$scans[[k]]$observations))#
-					{#
-					observation <- focal$scans[[k]]$observations[[m]]#
-					observationDetailsTemp <- observation$details	#
-					observationDetailsTemp2 <- character(length(scanHeaders))#
-					observationDetailsTemp2[match(names(unlist(observationDetailsTemp)), scanHeaders2)] <- unlist(observationDetailsTemp)#
-					scansTable <- rbind(scansTable, as.character(c(#
-					NAcheck(session$device_ID),#
-					NAcheck(session$arrival_time),#
-					NAcheck(focal$start_time),#
-					NAcheck(scan$timestamp),#
-					NAcheck(observation$actor),#
-					observationDetailsTemp2,#
-					NAcheck(observation$x_delta),#
-					NAcheck(observation$y_delta),#
-					layout$physical_contact_threshold,#
-					NAcheck(scan$lat),#
-					NAcheck(scan$lon),#
-					NAcheck(scan$gpsPrecision),#
-					NAcheck(scan$alt),#
-					NAcheck(scan$compassBearing))))#
-					}#
-				}#
-			}#
-		}#
-	}#
-}#
-}
-scansTable <- matrix(nrow=0, ncol=13+length(scanHeaders))#
-colnames(scansTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"timeStamp",#
-	"scanned_individual_ID",#
-	scanHeaders,#
-	"x_position",#
-	"y_position",#
-	"physical_contact_threshold",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude",#
-	"compass_bearing"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-scanHeaders2 <- unlist(lapply(strsplit(scanHeaders, split="[*]"), function(v) v[1]))#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		if(length(focal$scans)>0){#
-			for (k in 1:length(focal$scans)){#
-				scan <- focal$scans[[k]]#
-				if(length(scan$observations)>0){#
-				for(m in 1:length(scan$observations))#
-					{#
-					observation <- scan$observations[[m]]#
-					observationDetailsTemp <- observation$details	#
-					observationDetailsTemp2 <- character(length(scanHeaders))#
-					observationDetailsTemp2[match(names(unlist(observationDetailsTemp)), scanHeaders2)] <- unlist(observationDetailsTemp)#
-					scansTable <- rbind(scansTable, as.character(c(#
-					NAcheck(session$device_ID),#
-					NAcheck(session$arrival_time),#
-					NAcheck(focal$start_time),#
-					NAcheck(scan$timestamp),#
-					NAcheck(observation$actor),#
-					observationDetailsTemp2,#
-					NAcheck(observation$x_delta),#
-					NAcheck(observation$y_delta),#
-					layout$physical_contact_threshold,#
-					NAcheck(scan$lat),#
-					NAcheck(scan$lon),#
-					NAcheck(scan$gpsPrecision),#
-					NAcheck(scan$alt),#
-					NAcheck(scan$compassBearing))))#
-					}#
-				}#
-				}#
-			}#
-		}#
-	}#
-}#
-}
-focalsTable
-focalsTable <- matrix(nrow=0, ncol=7)#
-colnames(focalsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"focal_end_timeStamp", #
-	"focal_set_duration", #
-	"focal_set_scan_interval",#
-	"focal_individual_ID"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		focalsTable <- rbind(focalsTable, as.character(c(#
-		NAcheck(session$device_ID),#
-		NAcheck(session$arrival_time),#
-		NAcheck(focal$start_time),#
-		NAcheck(focal$end_time),#
-		NAcheck(focal$duration),#
-		NAcheck(focal$scan_interval),#
-		NAcheck(focal$animal_id))))#
-		}#
-	}#
-}
-}
-focalsTable
-behaviorsTable <- matrix(nrow=0, ncol=11+length(behaviorHeaders)+length(selfHeaders))#
-colnames(behaviorsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"behavior_timeStamp", #
-	"actor", #
-	"subject",#
-	 behaviorHeaders, selfHeaders,#
-	"comment",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude"#
-	)#
-#
-if(length(dat$data$sessions)>0){#
-behaviorHeaders2 <- unlist(lapply(strsplit(behaviorHeaders, split="[*]"), function(v) v[1]))#
-selfHeaders2 <- unlist(lapply(strsplit(selfHeaders, split="[*]"), function(v) v[1]))#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		if(length(focal$behaviors)>0){#
-			for (k in 1:length(focal$behaviors)){#
-				behavior <- focal$behaviors[[k]]#
-				behaviorDetailsTemp <- behavior$details#
-				behaviorDetailsTemp2 <- character(length(c(selfHeaders, behaviorHeaders)))#
-				if(behavior$actor==behavior$subject){#
-				behaviorDetailsTemp2[length(behaviorHeaders)+ match(names(unlist(behaviorDetailsTemp)), selfHeaders2)] <- unlist(behaviorDetailsTemp)#
-				} else {#
-				behaviorDetailsTemp2[match(names(unlist(behaviorDetailsTemp)), behaviorHeaders2)] <- unlist(behaviorDetailsTemp)#
-				}#
-				behaviorsTable <- rbind(behaviorsTable, as.character(c(#
-				NAcheck(session$device_ID),#
-				NAcheck(session$arrival_time),#
-				NAcheck(focal$start_time),	#
-				NAcheck(behavior$timestamp),#
-				NAcheck(behavior$actor),#
-				NAcheck(behavior$subject),#
-				behaviorDetailsTemp2,#
-				NAcheck(behavior$comment),#
-				NAcheck(behavior$lat),#
-				NAcheck(behavior$lon),#
-				NAcheck(behavior$gpsPrecision),#
-				NAcheck(behavior$alt)							#
-				)))#
-				}#
-			}#
-		}#
-	}#
-}#
-}
-behaviorsTable
-if(length(dat$data$sessions)>0){#
-behaviorHeaders2 <- unlist(lapply(strsplit(behaviorHeaders, split="[*]"), function(v) v[1]))#
-selfHeaders2 <- unlist(lapply(strsplit(selfHeaders, split="[*]"), function(v) v[1]))#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		if(length(focal$behaviors)>0){#
-			for (k in 1:length(focal$behaviors)){#
-				behavior <- focal$behaviors[[k]]#
-				behaviorDetailsTemp <- behavior$details#
-				behaviorDetailsTemp2 <- character(length(c(selfHeaders, behaviorHeaders)))#
-				if(behavior$actor==behavior$subject){#
-				behaviorDetailsTemp2[length(behaviorHeaders)+ match(names(unlist(behaviorDetailsTemp)), selfHeaders2)] <- unlist(behaviorDetailsTemp)#
-				} else {#
-				behaviorDetailsTemp2[match(names(unlist(behaviorDetailsTemp)), behaviorHeaders2)] <- unlist(behaviorDetailsTemp)#
-				}#
-				behaviorsTable <- rbind(behaviorsTable, as.character(c(#
-				NAcheck(session$device_ID),#
-				NAcheck(session$arrival_time),#
-				NAcheck(focal$start_time),	#
-				NAcheck(behavior$timestamp),#
-				NAcheck(behavior$actor),#
-				NAcheck(behavior$subject),#
-				behaviorDetailsTemp2,#
-				NAcheck(behavior$comment),#
-				NAcheck(behavior$lat),#
-				NAcheck(behavior$lon),#
-				NAcheck(behavior$gpsPrecision),#
-				NAcheck(behavior$alt)							#
-				)))#
-				}#
-			}#
-		}#
-	}#
-}#
-}
-scansTable <- matrix(nrow=0, ncol=13+length(scanHeaders))#
-colnames(scansTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"timeStamp",#
-	"scanned_individual_ID",#
-	scanHeaders,#
-	"x_position",#
-	"y_position",#
-	"physical_contact_threshold",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude",#
-	"compass_bearing"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-scanHeaders2 <- unlist(lapply(strsplit(scanHeaders, split="[*]"), function(v) v[1]))#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		if(length(focal$scans)>0){#
-			for (k in 1:length(focal$scans)){#
-				scan <- focal$scans[[k]]#
-				if(length(scan$observations)>0){#
-				for(m in 1:length(scan$observations))#
-					{#
-					observation <- scan$observations[[m]]#
-					observationDetailsTemp <- observation$details	#
-					observationDetailsTemp2 <- character(length(scanHeaders))#
-					observationDetailsTemp2[match(names(unlist(observationDetailsTemp)), scanHeaders2)] <- unlist(observationDetailsTemp)#
-					scansTable <- rbind(scansTable, as.character(c(#
-					NAcheck(session$device_ID),#
-					NAcheck(session$arrival_time),#
-					NAcheck(focal$start_time),#
-					NAcheck(scan$timestamp),#
-					NAcheck(observation$actor),#
-					observationDetailsTemp2,#
-					NAcheck(observation$x_delta),#
-					NAcheck(observation$y_delta),#
-					layout$physical_contact_threshold,#
-					NAcheck(scan$lat),#
-					NAcheck(scan$lon),#
-					NAcheck(scan$gpsPrecision),#
-					NAcheck(scan$alt),#
-					NAcheck(scan$compassBearing))))#
-					}#
-				}#
-				}#
-			}#
-		}#
-	}#
-}#
-}
-scansTable
-runApp("~/Documents/GITHUB clones/AOToolBox")
-library(shiny)
-runApp("~/Documents/GITHUB clones/AOToolBox")
-library(shiny)
-runApp("~/Documents/GITHUB clones/AOToolBox")
-runApp("~/Documents/git repositories/AOToolBox")
-library(rjson)#
-jsonOutputConversion <- function(json.output.file, behaviors.json, layout_info.json)#
-{#
-####path to behaviors.json#
-behav <- fromJSON(paste(behaviors.json, collapse=""))#
-####path to layout_info.json#
-layout <- fromJSON(paste(layout_info.json, collapse=""))#
-####path to sample output data file#
-dat <- fromJSON(paste(json.output.file, collapse=""))#
-#
-getListHeaders <- function(jsonList){#
-temp <- names(unlist(jsonList))#
-temp2 <- unlist(strsplit(temp, split="[.]name"))#
-unique(unlist(strsplit(temp2, split="[.]")))#
-}#
-#################get the list of behaviors and modifiers here:#
-behaviorHeaders <- getListHeaders(behav$dyadic)#
-#################same for scan:#
-scanHeaders <- getListHeaders(behav$scan)#
-#################same for self:#
-selfHeaders <- getListHeaders(behav$solo)#
-#################same for self:#
-continuousVars <- list()#
-continuousVars$continuousVars <- layout$continuous_focal_variables#
-continuousVarsHeaders <- getListHeaders(continuousVars)#
-#################same for scanvars:#
-scanVars <- list()#
-scanVars$scanVars <- layout$scan_variables#
-scanVarsHeaders <- getListHeaders(scanVars)#
-#################same for focalvars:#
-focalVars <- list()#
-focalVars$focalVars <- layout$focal_variables#
-focalVarsHeaders <- getListHeaders(focalVars)#
-#################same for dayvars:#
-dayVars <- list()#
-dayVars$dayVars <- layout$day_variables#
-dayVarsHeaders <- getListHeaders(dayVars)#
-NAcheck <- function(x){#
-	ifelse (is.null(x), NA,x)#
-}#
-#################list_sessions#
-sessionsTable <- matrix(nrow=0, ncol=10)#
-colnames(sessionsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"session_end_timeStamp",#
-	"group_ID",#
-	"pin_code_name",#
-	"layout_info_json_version",#
-	"behaviors_json_version",#
-	"gps_on",#
-	"compass_on",#
-	"map_mode_on"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	sessionsTable <- rbind(sessionsTable, as.character(c(#
-	NAcheck(session$device_ID),#
-	NAcheck(session$arrival_time),#
-	NAcheck(session$departure_time),#
-	NAcheck(session$group_id),#
-	NAcheck(session$pin_name),#
-	NAcheck(session$layout_info_JSON_file_ID),#
-	NAcheck(session$behaviors_JSON_file_ID),#
-	NAcheck(session$gps_on),#
-	NAcheck(session$compass_on),	#
-	NAcheck(session$map_mode_on))))#
-	}#
-}#
-#
-##########generic function helping parsing hierarchical data#
-varMatrix <- function(observations, headers){#
-	newTable <- matrix(nrow=0, ncol=length(headers))#
-	if(length(observations)>0){#
-	for(j in 1:length(observations)){#
-		var <- observations[j]#
-		varNameTemp <- names(var)#
-		modifiers <- unlist(var)#
-		newnames <- unlist(lapply(strsplit(names(modifiers), split="[.]"), function(v) v[-1]))#
-		headers <- unlist(lapply(strsplit(headers, split="[*]"), function(v) v[1]))#
-		newRow <- rep(NA,length(headers))#
-		newRow[match(newnames, headers)] <- modifiers#
-		newRow[1] <- varNameTemp#
-		newTable <- rbind(newTable, newRow)#
-	}#
-	}#
-	return(newTable)#
-}#
-#################list_dayVars#
-dayVarsTable <- matrix(nrow=0, ncol=2+length(dayVarsHeaders))#
-colnames(dayVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	dayVarsHeaders#
-)#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	dayVarsDetailsTemp <- session$details[grep("Observer name", names(session$details), invert=T)]#
-	newDayVarsTable <- varMatrix(dayVarsDetailsTemp, dayVarsHeaders)#
-	NAcheck(session$device_ID)#
-	NAcheck(session$arrival_time)#
-	dayVarsTable <- rbind(dayVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), newDayVarsTable))#
-	}#
-}#
-##################list_focalVars#
-focalVarsTable <- matrix(nrow=0, ncol=3+length(focalVarsHeaders))#
-colnames(focalVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp",#
-	"focal_start_timeStamp",#
-	focalVarsHeaders#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focals)>0){#
-	for (j in 1:length(session$focals)){#
-		focal <- session$focals[[j]]#
-		focalVarsDetailsTemp <- focal$details#
-		newFocalVarsTable <- varMatrix(focalVarsDetailsTemp, focalVarsHeaders)#
-	focalVarsTable <- rbind(focalVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newFocalVarsTable))#
-	}#
-	}#
-	}#
-}#
-#
-##################list_continuousVars#
-continuousVarsTable <- matrix(nrow=0, ncol=3+length(continuousVarsHeaders))#
-colnames(continuousVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp",#
-	"focal_start_timeStamp",#
-	continuousVarsHeaders#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focals)>0){#
-	for (j in 1:length(session$focals)){#
-		focal <- session$focals[[j]]#
-		continuousVarsDetailsTemp <- focal$continuous_focal_vars#
-		if(is.null(focal$continuous_focal_vars)) {#
-			next#
-			}#
-		newContinuousVarsTable <- varMatrix(continuousVarsDetailsTemp, continuousVarsHeaders)#
-	continuousVarsTable <- rbind(continuousVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newContinuousVarsTable))#
-	}#
-	}#
-	}#
-}#
-#
-##################list_scanVars#
-scanVarsTable <- matrix(nrow=0, ncol=4+length(scanVarsHeaders))#
-colnames(scanVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp",#
-	"focal_start_timeStamp",#
-	"scan_timeStamp",#
-	scanVarsHeaders#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focals)>0){#
-	for (j in 1:length(session$focals)){#
-		focal <- session$focals[[j]]#
-		if(length(focal$scans)>0){#
-		for (k in 1:length(focal$scans)){#
-		scan <- focal$scans[[k]]#
-		scanVarsDetailsTemp <- scan$details#
-		newscanVarsTable <- varMatrix(scanVarsDetailsTemp, scanVarsHeaders)#
-		scanVarsTable <- rbind(scanVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), NAcheck(scan$timestamp), newscanVarsTable))#
-		}#
-		}#
-		}#
-	}#
-	}#
-}#
-#
-#################list_focals#
-focalsTable <- matrix(nrow=0, ncol=7)#
-colnames(focalsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"focal_end_timeStamp", #
-	"focal_set_duration", #
-	"focal_set_scan_interval",#
-	"focal_individual_ID"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		focalsTable <- rbind(focalsTable, as.character(c(#
-		NAcheck(session$device_ID),#
-		NAcheck(session$arrival_time),#
-		NAcheck(focal$start_time),#
-		NAcheck(focal$end_time),#
-		NAcheck(focal$duration),#
-		NAcheck(focal$scan_interval),#
-		NAcheck(focal$animal_id))))#
-		}#
-	}#
-}#
-}#
-##################
-behaviorsTable <- matrix(nrow=0, ncol=11+length(behaviorHeaders)+length(selfHeaders))#
-colnames(behaviorsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"behavior_timeStamp", #
-	"actor", #
-	"subject",#
-	 behaviorHeaders, selfHeaders,#
-	"comment",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude"#
-	)#
-#
-if(length(dat$data$sessions)>0){#
-behaviorHeaders2 <- unlist(lapply(strsplit(behaviorHeaders, split="[*]"), function(v) v[1]))#
-selfHeaders2 <- unlist(lapply(strsplit(selfHeaders, split="[*]"), function(v) v[1]))#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		if(length(focal$behaviors)>0){#
-			for (k in 1:length(focal$behaviors)){#
-				behavior <- focal$behaviors[[k]]#
-				behaviorDetailsTemp <- behavior$details#
-				behaviorDetailsTemp2 <- character(length(c(selfHeaders, behaviorHeaders)))#
-				if(behavior$actor==behavior$subject){#
-				behaviorDetailsTemp2[length(behaviorHeaders)+ match(names(unlist(behaviorDetailsTemp)), selfHeaders2)] <- unlist(behaviorDetailsTemp)#
-				} else {#
-				behaviorDetailsTemp2[match(names(unlist(behaviorDetailsTemp)), behaviorHeaders2)] <- unlist(behaviorDetailsTemp)#
-				}#
-				behaviorsTable <- rbind(behaviorsTable, as.character(c(#
-				NAcheck(session$device_ID),#
-				NAcheck(session$arrival_time),#
-				NAcheck(focal$start_time),	#
-				NAcheck(behavior$timestamp),#
-				NAcheck(behavior$actor),#
-				NAcheck(behavior$subject),#
-				behaviorDetailsTemp2,#
-				NAcheck(behavior$comment),#
-				NAcheck(behavior$lat),#
-				NAcheck(behavior$lon),#
-				NAcheck(behavior$gpsPrecision),#
-				NAcheck(behavior$alt)							#
-				)))#
-				}#
-			}#
-		}#
-	}#
-}#
-}#
-#
-###############################
-scansTable <- matrix(nrow=0, ncol=13+length(scanHeaders))#
-colnames(scansTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"timeStamp",#
-	"scanned_individual_ID",#
-	scanHeaders,#
-	"x_position",#
-	"y_position",#
-	"physical_contact_threshold",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude",#
-	"compass_bearing"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-scanHeaders2 <- unlist(lapply(strsplit(scanHeaders, split="[*]"), function(v) v[1]))#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		if(length(focal$scans)>0){#
-			for (k in 1:length(focal$scans)){#
-				scan <- focal$scans[[k]]#
-				if(length(scan$observations)>0){#
-				for(m in 1:length(scan$observations))#
-					{#
-					observation <- scan$observations[[m]]#
-					observationDetailsTemp <- observation$details	#
-					observationDetailsTemp2 <- character(length(scanHeaders))#
-					observationDetailsTemp2[match(names(unlist(observationDetailsTemp)), scanHeaders2)] <- unlist(observationDetailsTemp)#
-					scansTable <- rbind(scansTable, as.character(c(#
-					NAcheck(session$device_ID),#
-					NAcheck(session$arrival_time),#
-					NAcheck(focal$start_time),#
-					NAcheck(scan$timestamp),#
-					NAcheck(observation$actor),#
-					observationDetailsTemp2,#
-					NAcheck(observation$x_delta),#
-					NAcheck(observation$y_delta),#
-					layout$physical_contact_threshold,#
-					NAcheck(scan$lat),#
-					NAcheck(scan$lon),#
-					NAcheck(scan$gpsPrecision),#
-					NAcheck(scan$alt),#
-					NAcheck(scan$compassBearing))))#
-					}#
-				}#
-				}#
-			}#
-		}#
-	}#
-}#
-}#
-#
-##out_of_viewData #background tap time and date, background tap action, background tap latitude, background tap longitude,#
-backgroundTapsTable <- matrix(nrow=0, ncol=9)#
-colnames(backgroundTapsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"timeStamp",#
-	"description",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude"#
-	)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-		for (j in 1:length(session$focal)){#
-			focal <- session$focal[[j]]#
-			if (length(focal$background_taps)>0){#
-				for (k in 1:length(focal$background_taps)){#
-					backgroundTap <- focal$background_taps[[k]]#
-					backgroundTapsTable <- rbind(backgroundTapsTable, as.character(c(#
-					NAcheck(session$device_ID),#
-					NAcheck(session$arrival_time),#
-					NAcheck(focal$start_time),#
-					NAcheck(backgroundTap$timestamp),#
-					NAcheck(backgroundTap$text),#
-					NAcheck(backgroundTap$lat),#
-					NAcheck(backgroundTap$lon),#
-					NAcheck(backgroundTap$gpsPrecision),#
-					NAcheck(backgroundTap$alt)#
-					)))#
-				}#
-			}#
-		}#
-	}#
-}#
-}#
-#
-#######commentsData#
-commentsTable <- matrix(nrow=0, ncol=9)#
-colnames(commentsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"comment_timeStamp",#
-	"comment_text",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude"#
-	)#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-		for (j in 1:length(session$focal)){#
-			focal <- session$focal[[j]]#
-			if (length(focal$text)>0){#
-				for (k in 1:length(focal$text)){#
-					text <- focal$text[[k]]#
-					commentsTable <- rbind(commentsTable, as.character(c(#
-					NAcheck(session$device_ID),#
-					NAcheck(session$arrival_time),#
-					NAcheck(focal$start_time),#
-					NAcheck(text$timestamp),#
-					NAcheck(text$text),#
-					NAcheck(text$lat),#
-					NAcheck(text$lon),#
-					NAcheck(text$gpsPrecision),#
-					NAcheck(text$alt)#
-					)))#
-				}#
-			}#
-		}#
-	}#
-}#
-}#
-sessionsTable <- data.frame(sessionsTable, row.names=NULL)#
-focalsTable <- data.frame(focalsTable, row.names=NULL)#
-behaviorsTable <- data.frame(behaviorsTable, row.names=NULL)#
-scansTable <- data.frame(scansTable, row.names=NULL)#
-backgroundTapsTable <- data.frame(backgroundTapsTable, row.names=NULL)#
-commentsTable <- data.frame(commentsTable, row.names=NULL)#
-dayVarsTable <- data.frame(dayVarsTable, row.names=NULL)#
-focalVarsTable <- data.frame(focalVarsTable, row.names=NULL)#
-continuousVarsTable <- data.frame(continuousVarsTable, row.names=NULL)#
-scanVarsTable <- data.frame(scanVarsTable, row.names=NULL)#
-return(list(sessionsTable= sessionsTable,#
-focalsTable= focalsTable,#
-behaviorsTable= behaviorsTable,#
-scansTable= scansTable,#
-backgroundTapsTable = backgroundTapsTable,#
-commentsTable = commentsTable,#
-dayVarsTable = dayVarsTable,#
-focalVarsTable = focalVarsTable,#
-continuousVarsTable = continuousVarsTable,#
-scanVarsTable = scanVarsTable))#
-}
-runApp("~/Documents/git repositories/AOToolBox")
-jsonOutputConversion(NULL, "~/Documents/git repositories/temp/behaviors.json", "~/Documents/git repositories/temp/layout_info.json")
-behaviors.json <- "~/Documents/git repositories/temp/behaviors.json"
-paste(behaviors.json, collapse="")
-fromJSON(paste(behaviors.json, collapse=""))
-?fromJSON
-library(rjson)#
-jsonOutputConversion <- function(json.output.file, behaviors.json, layout_info.json)#
-{#
-####path to behaviors.json#
-behav <- fromJSON(behaviors.json)#
-####path to layout_info.json#
-layout <- fromJSON(layout_info.json)#
-####path to sample output data file#
-dat <-  json.output.file#
-#
-getListHeaders <- function(jsonList){#
-temp <- names(unlist(jsonList))#
-temp2 <- unlist(strsplit(temp, split="[.]name"))#
-unique(unlist(strsplit(temp2, split="[.]")))#
-}#
-#################get the list of behaviors and modifiers here:#
-behaviorHeaders <- getListHeaders(behav$dyadic)#
-#################same for scan:#
-scanHeaders <- getListHeaders(behav$scan)#
-#################same for self:#
-selfHeaders <- getListHeaders(behav$solo)#
-#################same for self:#
-continuousVars <- list()#
-continuousVars$continuousVars <- layout$continuous_focal_variables#
-continuousVarsHeaders <- getListHeaders(continuousVars)#
-#################same for scanvars:#
-scanVars <- list()#
-scanVars$scanVars <- layout$scan_variables#
-scanVarsHeaders <- getListHeaders(scanVars)#
-#################same for focalvars:#
-focalVars <- list()#
-focalVars$focalVars <- layout$focal_variables#
-focalVarsHeaders <- getListHeaders(focalVars)#
-#################same for dayvars:#
-dayVars <- list()#
-dayVars$dayVars <- layout$day_variables#
-dayVarsHeaders <- getListHeaders(dayVars)#
-NAcheck <- function(x){#
-	ifelse (is.null(x), NA,x)#
-}#
-#################list_sessions#
-sessionsTable <- matrix(nrow=0, ncol=10)#
-colnames(sessionsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"session_end_timeStamp",#
-	"group_ID",#
-	"pin_code_name",#
-	"layout_info_json_version",#
-	"behaviors_json_version",#
-	"gps_on",#
-	"compass_on",#
-	"map_mode_on"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	sessionsTable <- rbind(sessionsTable, as.character(c(#
-	NAcheck(session$device_ID),#
-	NAcheck(session$arrival_time),#
-	NAcheck(session$departure_time),#
-	NAcheck(session$group_id),#
-	NAcheck(session$pin_name),#
-	NAcheck(session$layout_info_JSON_file_ID),#
-	NAcheck(session$behaviors_JSON_file_ID),#
-	NAcheck(session$gps_on),#
-	NAcheck(session$compass_on),	#
-	NAcheck(session$map_mode_on))))#
-	}#
-}#
-#
-##########generic function helping parsing hierarchical data#
-varMatrix <- function(observations, headers){#
-	newTable <- matrix(nrow=0, ncol=length(headers))#
-	if(length(observations)>0){#
-	for(j in 1:length(observations)){#
-		var <- observations[j]#
-		varNameTemp <- names(var)#
-		modifiers <- unlist(var)#
-		newnames <- unlist(lapply(strsplit(names(modifiers), split="[.]"), function(v) v[-1]))#
-		headers <- unlist(lapply(strsplit(headers, split="[*]"), function(v) v[1]))#
-		newRow <- rep(NA,length(headers))#
-		newRow[match(newnames, headers)] <- modifiers#
-		newRow[1] <- varNameTemp#
-		newTable <- rbind(newTable, newRow)#
-	}#
-	}#
-	return(newTable)#
-}#
-#################list_dayVars#
-dayVarsTable <- matrix(nrow=0, ncol=2+length(dayVarsHeaders))#
-colnames(dayVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	dayVarsHeaders#
-)#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	dayVarsDetailsTemp <- session$details[grep("Observer name", names(session$details), invert=T)]#
-	newDayVarsTable <- varMatrix(dayVarsDetailsTemp, dayVarsHeaders)#
-	NAcheck(session$device_ID)#
-	NAcheck(session$arrival_time)#
-	dayVarsTable <- rbind(dayVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), newDayVarsTable))#
-	}#
-}#
-##################list_focalVars#
-focalVarsTable <- matrix(nrow=0, ncol=3+length(focalVarsHeaders))#
-colnames(focalVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp",#
-	"focal_start_timeStamp",#
-	focalVarsHeaders#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focals)>0){#
-	for (j in 1:length(session$focals)){#
-		focal <- session$focals[[j]]#
-		focalVarsDetailsTemp <- focal$details#
-		newFocalVarsTable <- varMatrix(focalVarsDetailsTemp, focalVarsHeaders)#
-	focalVarsTable <- rbind(focalVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newFocalVarsTable))#
-	}#
-	}#
-	}#
-}#
-#
-##################list_continuousVars#
-continuousVarsTable <- matrix(nrow=0, ncol=3+length(continuousVarsHeaders))#
-colnames(continuousVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp",#
-	"focal_start_timeStamp",#
-	continuousVarsHeaders#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focals)>0){#
-	for (j in 1:length(session$focals)){#
-		focal <- session$focals[[j]]#
-		continuousVarsDetailsTemp <- focal$continuous_focal_vars#
-		if(is.null(focal$continuous_focal_vars)) {#
-			next#
-			}#
-		newContinuousVarsTable <- varMatrix(continuousVarsDetailsTemp, continuousVarsHeaders)#
-	continuousVarsTable <- rbind(continuousVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newContinuousVarsTable))#
-	}#
-	}#
-	}#
-}#
-#
-##################list_scanVars#
-scanVarsTable <- matrix(nrow=0, ncol=4+length(scanVarsHeaders))#
-colnames(scanVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp",#
-	"focal_start_timeStamp",#
-	"scan_timeStamp",#
-	scanVarsHeaders#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focals)>0){#
-	for (j in 1:length(session$focals)){#
-		focal <- session$focals[[j]]#
-		if(length(focal$scans)>0){#
-		for (k in 1:length(focal$scans)){#
-		scan <- focal$scans[[k]]#
-		scanVarsDetailsTemp <- scan$details#
-		newscanVarsTable <- varMatrix(scanVarsDetailsTemp, scanVarsHeaders)#
-		scanVarsTable <- rbind(scanVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), NAcheck(scan$timestamp), newscanVarsTable))#
-		}#
-		}#
-		}#
-	}#
-	}#
-}#
-#
-#################list_focals#
-focalsTable <- matrix(nrow=0, ncol=7)#
-colnames(focalsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"focal_end_timeStamp", #
-	"focal_set_duration", #
-	"focal_set_scan_interval",#
-	"focal_individual_ID"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		focalsTable <- rbind(focalsTable, as.character(c(#
-		NAcheck(session$device_ID),#
-		NAcheck(session$arrival_time),#
-		NAcheck(focal$start_time),#
-		NAcheck(focal$end_time),#
-		NAcheck(focal$duration),#
-		NAcheck(focal$scan_interval),#
-		NAcheck(focal$animal_id))))#
-		}#
-	}#
-}#
-}#
-##################
-behaviorsTable <- matrix(nrow=0, ncol=11+length(behaviorHeaders)+length(selfHeaders))#
-colnames(behaviorsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"behavior_timeStamp", #
-	"actor", #
-	"subject",#
-	 behaviorHeaders, selfHeaders,#
-	"comment",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude"#
-	)#
-#
-if(length(dat$data$sessions)>0){#
-behaviorHeaders2 <- unlist(lapply(strsplit(behaviorHeaders, split="[*]"), function(v) v[1]))#
-selfHeaders2 <- unlist(lapply(strsplit(selfHeaders, split="[*]"), function(v) v[1]))#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		if(length(focal$behaviors)>0){#
-			for (k in 1:length(focal$behaviors)){#
-				behavior <- focal$behaviors[[k]]#
-				behaviorDetailsTemp <- behavior$details#
-				behaviorDetailsTemp2 <- character(length(c(selfHeaders, behaviorHeaders)))#
-				if(behavior$actor==behavior$subject){#
-				behaviorDetailsTemp2[length(behaviorHeaders)+ match(names(unlist(behaviorDetailsTemp)), selfHeaders2)] <- unlist(behaviorDetailsTemp)#
-				} else {#
-				behaviorDetailsTemp2[match(names(unlist(behaviorDetailsTemp)), behaviorHeaders2)] <- unlist(behaviorDetailsTemp)#
-				}#
-				behaviorsTable <- rbind(behaviorsTable, as.character(c(#
-				NAcheck(session$device_ID),#
-				NAcheck(session$arrival_time),#
-				NAcheck(focal$start_time),	#
-				NAcheck(behavior$timestamp),#
-				NAcheck(behavior$actor),#
-				NAcheck(behavior$subject),#
-				behaviorDetailsTemp2,#
-				NAcheck(behavior$comment),#
-				NAcheck(behavior$lat),#
-				NAcheck(behavior$lon),#
-				NAcheck(behavior$gpsPrecision),#
-				NAcheck(behavior$alt)							#
-				)))#
-				}#
-			}#
-		}#
-	}#
-}#
-}#
-#
-###############################
-scansTable <- matrix(nrow=0, ncol=13+length(scanHeaders))#
-colnames(scansTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"timeStamp",#
-	"scanned_individual_ID",#
-	scanHeaders,#
-	"x_position",#
-	"y_position",#
-	"physical_contact_threshold",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude",#
-	"compass_bearing"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-scanHeaders2 <- unlist(lapply(strsplit(scanHeaders, split="[*]"), function(v) v[1]))#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		if(length(focal$scans)>0){#
-			for (k in 1:length(focal$scans)){#
-				scan <- focal$scans[[k]]#
-				if(length(scan$observations)>0){#
-				for(m in 1:length(scan$observations))#
-					{#
-					observation <- scan$observations[[m]]#
-					observationDetailsTemp <- observation$details	#
-					observationDetailsTemp2 <- character(length(scanHeaders))#
-					observationDetailsTemp2[match(names(unlist(observationDetailsTemp)), scanHeaders2)] <- unlist(observationDetailsTemp)#
-					scansTable <- rbind(scansTable, as.character(c(#
-					NAcheck(session$device_ID),#
-					NAcheck(session$arrival_time),#
-					NAcheck(focal$start_time),#
-					NAcheck(scan$timestamp),#
-					NAcheck(observation$actor),#
-					observationDetailsTemp2,#
-					NAcheck(observation$x_delta),#
-					NAcheck(observation$y_delta),#
-					layout$physical_contact_threshold,#
-					NAcheck(scan$lat),#
-					NAcheck(scan$lon),#
-					NAcheck(scan$gpsPrecision),#
-					NAcheck(scan$alt),#
-					NAcheck(scan$compassBearing))))#
-					}#
-				}#
-				}#
-			}#
-		}#
-	}#
-}#
-}#
-#
-##out_of_viewData #background tap time and date, background tap action, background tap latitude, background tap longitude,#
-backgroundTapsTable <- matrix(nrow=0, ncol=9)#
-colnames(backgroundTapsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"timeStamp",#
-	"description",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude"#
-	)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-		for (j in 1:length(session$focal)){#
-			focal <- session$focal[[j]]#
-			if (length(focal$background_taps)>0){#
-				for (k in 1:length(focal$background_taps)){#
-					backgroundTap <- focal$background_taps[[k]]#
-					backgroundTapsTable <- rbind(backgroundTapsTable, as.character(c(#
-					NAcheck(session$device_ID),#
-					NAcheck(session$arrival_time),#
-					NAcheck(focal$start_time),#
-					NAcheck(backgroundTap$timestamp),#
-					NAcheck(backgroundTap$text),#
-					NAcheck(backgroundTap$lat),#
-					NAcheck(backgroundTap$lon),#
-					NAcheck(backgroundTap$gpsPrecision),#
-					NAcheck(backgroundTap$alt)#
-					)))#
-				}#
-			}#
-		}#
-	}#
-}#
-}#
-#
-#######commentsData#
-commentsTable <- matrix(nrow=0, ncol=9)#
-colnames(commentsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"comment_timeStamp",#
-	"comment_text",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude"#
-	)#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-		for (j in 1:length(session$focal)){#
-			focal <- session$focal[[j]]#
-			if (length(focal$text)>0){#
-				for (k in 1:length(focal$text)){#
-					text <- focal$text[[k]]#
-					commentsTable <- rbind(commentsTable, as.character(c(#
-					NAcheck(session$device_ID),#
-					NAcheck(session$arrival_time),#
-					NAcheck(focal$start_time),#
-					NAcheck(text$timestamp),#
-					NAcheck(text$text),#
-					NAcheck(text$lat),#
-					NAcheck(text$lon),#
-					NAcheck(text$gpsPrecision),#
-					NAcheck(text$alt)#
-					)))#
-				}#
-			}#
-		}#
-	}#
-}#
-}#
-sessionsTable <- data.frame(sessionsTable, row.names=NULL)#
-focalsTable <- data.frame(focalsTable, row.names=NULL)#
-behaviorsTable <- data.frame(behaviorsTable, row.names=NULL)#
-scansTable <- data.frame(scansTable, row.names=NULL)#
-backgroundTapsTable <- data.frame(backgroundTapsTable, row.names=NULL)#
-commentsTable <- data.frame(commentsTable, row.names=NULL)#
-dayVarsTable <- data.frame(dayVarsTable, row.names=NULL)#
-focalVarsTable <- data.frame(focalVarsTable, row.names=NULL)#
-continuousVarsTable <- data.frame(continuousVarsTable, row.names=NULL)#
-scanVarsTable <- data.frame(scanVarsTable, row.names=NULL)#
-return(list(sessionsTable= sessionsTable,#
-focalsTable= focalsTable,#
-behaviorsTable= behaviorsTable,#
-scansTable= scansTable,#
-backgroundTapsTable = backgroundTapsTable,#
-commentsTable = commentsTable,#
-dayVarsTable = dayVarsTable,#
-focalVarsTable = focalVarsTable,#
-continuousVarsTable = continuousVarsTable,#
-scanVarsTable = scanVarsTable))#
-}
-jsonOutputConversion(NULL, "~/Documents/git repositories/temp/behaviors.json", "~/Documents/git repositories/temp/layout_info.json")
-behaviors.json <- "~/Documents/git repositories/temp/behaviors.json"
-fromJSON(behaviors.json)
-library(rjson)#
-jsonOutputConversion <- function(json.output.file, behaviors.json, layout_info.json)#
-{#
-####path to behaviors.json#
-behav <- fromJSON(file=behaviors.json)#
-####path to layout_info.json#
-layout <- fromJSON(file=layout_info.json)#
-####path to sample output data file#
-dat <-  json.output.file#
-#
-getListHeaders <- function(jsonList){#
-temp <- names(unlist(jsonList))#
-temp2 <- unlist(strsplit(temp, split="[.]name"))#
-unique(unlist(strsplit(temp2, split="[.]")))#
-}#
-#################get the list of behaviors and modifiers here:#
-behaviorHeaders <- getListHeaders(behav$dyadic)#
-#################same for scan:#
-scanHeaders <- getListHeaders(behav$scan)#
-#################same for self:#
-selfHeaders <- getListHeaders(behav$solo)#
-#################same for self:#
-continuousVars <- list()#
-continuousVars$continuousVars <- layout$continuous_focal_variables#
-continuousVarsHeaders <- getListHeaders(continuousVars)#
-#################same for scanvars:#
-scanVars <- list()#
-scanVars$scanVars <- layout$scan_variables#
-scanVarsHeaders <- getListHeaders(scanVars)#
-#################same for focalvars:#
-focalVars <- list()#
-focalVars$focalVars <- layout$focal_variables#
-focalVarsHeaders <- getListHeaders(focalVars)#
-#################same for dayvars:#
-dayVars <- list()#
-dayVars$dayVars <- layout$day_variables#
-dayVarsHeaders <- getListHeaders(dayVars)#
-NAcheck <- function(x){#
-	ifelse (is.null(x), NA,x)#
-}#
-#################list_sessions#
-sessionsTable <- matrix(nrow=0, ncol=10)#
-colnames(sessionsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"session_end_timeStamp",#
-	"group_ID",#
-	"pin_code_name",#
-	"layout_info_json_version",#
-	"behaviors_json_version",#
-	"gps_on",#
-	"compass_on",#
-	"map_mode_on"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	sessionsTable <- rbind(sessionsTable, as.character(c(#
-	NAcheck(session$device_ID),#
-	NAcheck(session$arrival_time),#
-	NAcheck(session$departure_time),#
-	NAcheck(session$group_id),#
-	NAcheck(session$pin_name),#
-	NAcheck(session$layout_info_JSON_file_ID),#
-	NAcheck(session$behaviors_JSON_file_ID),#
-	NAcheck(session$gps_on),#
-	NAcheck(session$compass_on),	#
-	NAcheck(session$map_mode_on))))#
-	}#
-}#
-#
-##########generic function helping parsing hierarchical data#
-varMatrix <- function(observations, headers){#
-	newTable <- matrix(nrow=0, ncol=length(headers))#
-	if(length(observations)>0){#
-	for(j in 1:length(observations)){#
-		var <- observations[j]#
-		varNameTemp <- names(var)#
-		modifiers <- unlist(var)#
-		newnames <- unlist(lapply(strsplit(names(modifiers), split="[.]"), function(v) v[-1]))#
-		headers <- unlist(lapply(strsplit(headers, split="[*]"), function(v) v[1]))#
-		newRow <- rep(NA,length(headers))#
-		newRow[match(newnames, headers)] <- modifiers#
-		newRow[1] <- varNameTemp#
-		newTable <- rbind(newTable, newRow)#
-	}#
-	}#
-	return(newTable)#
-}#
-#################list_dayVars#
-dayVarsTable <- matrix(nrow=0, ncol=2+length(dayVarsHeaders))#
-colnames(dayVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	dayVarsHeaders#
-)#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	dayVarsDetailsTemp <- session$details[grep("Observer name", names(session$details), invert=T)]#
-	newDayVarsTable <- varMatrix(dayVarsDetailsTemp, dayVarsHeaders)#
-	NAcheck(session$device_ID)#
-	NAcheck(session$arrival_time)#
-	dayVarsTable <- rbind(dayVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), newDayVarsTable))#
-	}#
-}#
-##################list_focalVars#
-focalVarsTable <- matrix(nrow=0, ncol=3+length(focalVarsHeaders))#
-colnames(focalVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp",#
-	"focal_start_timeStamp",#
-	focalVarsHeaders#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focals)>0){#
-	for (j in 1:length(session$focals)){#
-		focal <- session$focals[[j]]#
-		focalVarsDetailsTemp <- focal$details#
-		newFocalVarsTable <- varMatrix(focalVarsDetailsTemp, focalVarsHeaders)#
-	focalVarsTable <- rbind(focalVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newFocalVarsTable))#
-	}#
-	}#
-	}#
-}#
-#
-##################list_continuousVars#
-continuousVarsTable <- matrix(nrow=0, ncol=3+length(continuousVarsHeaders))#
-colnames(continuousVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp",#
-	"focal_start_timeStamp",#
-	continuousVarsHeaders#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focals)>0){#
-	for (j in 1:length(session$focals)){#
-		focal <- session$focals[[j]]#
-		continuousVarsDetailsTemp <- focal$continuous_focal_vars#
-		if(is.null(focal$continuous_focal_vars)) {#
-			next#
-			}#
-		newContinuousVarsTable <- varMatrix(continuousVarsDetailsTemp, continuousVarsHeaders)#
-	continuousVarsTable <- rbind(continuousVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newContinuousVarsTable))#
-	}#
-	}#
-	}#
-}#
-#
-##################list_scanVars#
-scanVarsTable <- matrix(nrow=0, ncol=4+length(scanVarsHeaders))#
-colnames(scanVarsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp",#
-	"focal_start_timeStamp",#
-	"scan_timeStamp",#
-	scanVarsHeaders#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focals)>0){#
-	for (j in 1:length(session$focals)){#
-		focal <- session$focals[[j]]#
-		if(length(focal$scans)>0){#
-		for (k in 1:length(focal$scans)){#
-		scan <- focal$scans[[k]]#
-		scanVarsDetailsTemp <- scan$details#
-		newscanVarsTable <- varMatrix(scanVarsDetailsTemp, scanVarsHeaders)#
-		scanVarsTable <- rbind(scanVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), NAcheck(scan$timestamp), newscanVarsTable))#
-		}#
-		}#
-		}#
-	}#
-	}#
-}#
-#
-#################list_focals#
-focalsTable <- matrix(nrow=0, ncol=7)#
-colnames(focalsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"focal_end_timeStamp", #
-	"focal_set_duration", #
-	"focal_set_scan_interval",#
-	"focal_individual_ID"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		focalsTable <- rbind(focalsTable, as.character(c(#
-		NAcheck(session$device_ID),#
-		NAcheck(session$arrival_time),#
-		NAcheck(focal$start_time),#
-		NAcheck(focal$end_time),#
-		NAcheck(focal$duration),#
-		NAcheck(focal$scan_interval),#
-		NAcheck(focal$animal_id))))#
-		}#
-	}#
-}#
-}#
-##################
-behaviorsTable <- matrix(nrow=0, ncol=11+length(behaviorHeaders)+length(selfHeaders))#
-colnames(behaviorsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"behavior_timeStamp", #
-	"actor", #
-	"subject",#
-	 behaviorHeaders, selfHeaders,#
-	"comment",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude"#
-	)#
-#
-if(length(dat$data$sessions)>0){#
-behaviorHeaders2 <- unlist(lapply(strsplit(behaviorHeaders, split="[*]"), function(v) v[1]))#
-selfHeaders2 <- unlist(lapply(strsplit(selfHeaders, split="[*]"), function(v) v[1]))#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		if(length(focal$behaviors)>0){#
-			for (k in 1:length(focal$behaviors)){#
-				behavior <- focal$behaviors[[k]]#
-				behaviorDetailsTemp <- behavior$details#
-				behaviorDetailsTemp2 <- character(length(c(selfHeaders, behaviorHeaders)))#
-				if(behavior$actor==behavior$subject){#
-				behaviorDetailsTemp2[length(behaviorHeaders)+ match(names(unlist(behaviorDetailsTemp)), selfHeaders2)] <- unlist(behaviorDetailsTemp)#
-				} else {#
-				behaviorDetailsTemp2[match(names(unlist(behaviorDetailsTemp)), behaviorHeaders2)] <- unlist(behaviorDetailsTemp)#
-				}#
-				behaviorsTable <- rbind(behaviorsTable, as.character(c(#
-				NAcheck(session$device_ID),#
-				NAcheck(session$arrival_time),#
-				NAcheck(focal$start_time),	#
-				NAcheck(behavior$timestamp),#
-				NAcheck(behavior$actor),#
-				NAcheck(behavior$subject),#
-				behaviorDetailsTemp2,#
-				NAcheck(behavior$comment),#
-				NAcheck(behavior$lat),#
-				NAcheck(behavior$lon),#
-				NAcheck(behavior$gpsPrecision),#
-				NAcheck(behavior$alt)							#
-				)))#
-				}#
-			}#
-		}#
-	}#
-}#
-}#
-#
-###############################
-scansTable <- matrix(nrow=0, ncol=13+length(scanHeaders))#
-colnames(scansTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"timeStamp",#
-	"scanned_individual_ID",#
-	scanHeaders,#
-	"x_position",#
-	"y_position",#
-	"physical_contact_threshold",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude",#
-	"compass_bearing"#
-)#
-#
-if(length(dat$data$sessions)>0){#
-scanHeaders2 <- unlist(lapply(strsplit(scanHeaders, split="[*]"), function(v) v[1]))#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-	for (j in 1:length(session$focal)){#
-		focal <- session$focal[[j]]#
-		if(length(focal$scans)>0){#
-			for (k in 1:length(focal$scans)){#
-				scan <- focal$scans[[k]]#
-				if(length(scan$observations)>0){#
-				for(m in 1:length(scan$observations))#
-					{#
-					observation <- scan$observations[[m]]#
-					observationDetailsTemp <- observation$details	#
-					observationDetailsTemp2 <- character(length(scanHeaders))#
-					observationDetailsTemp2[match(names(unlist(observationDetailsTemp)), scanHeaders2)] <- unlist(observationDetailsTemp)#
-					scansTable <- rbind(scansTable, as.character(c(#
-					NAcheck(session$device_ID),#
-					NAcheck(session$arrival_time),#
-					NAcheck(focal$start_time),#
-					NAcheck(scan$timestamp),#
-					NAcheck(observation$actor),#
-					observationDetailsTemp2,#
-					NAcheck(observation$x_delta),#
-					NAcheck(observation$y_delta),#
-					layout$physical_contact_threshold,#
-					NAcheck(scan$lat),#
-					NAcheck(scan$lon),#
-					NAcheck(scan$gpsPrecision),#
-					NAcheck(scan$alt),#
-					NAcheck(scan$compassBearing))))#
-					}#
-				}#
-				}#
-			}#
-		}#
-	}#
-}#
-}#
-#
-##out_of_viewData #background tap time and date, background tap action, background tap latitude, background tap longitude,#
-backgroundTapsTable <- matrix(nrow=0, ncol=9)#
-colnames(backgroundTapsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"timeStamp",#
-	"description",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude"#
-	)#
-#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-		for (j in 1:length(session$focal)){#
-			focal <- session$focal[[j]]#
-			if (length(focal$background_taps)>0){#
-				for (k in 1:length(focal$background_taps)){#
-					backgroundTap <- focal$background_taps[[k]]#
-					backgroundTapsTable <- rbind(backgroundTapsTable, as.character(c(#
-					NAcheck(session$device_ID),#
-					NAcheck(session$arrival_time),#
-					NAcheck(focal$start_time),#
-					NAcheck(backgroundTap$timestamp),#
-					NAcheck(backgroundTap$text),#
-					NAcheck(backgroundTap$lat),#
-					NAcheck(backgroundTap$lon),#
-					NAcheck(backgroundTap$gpsPrecision),#
-					NAcheck(backgroundTap$alt)#
-					)))#
-				}#
-			}#
-		}#
-	}#
-}#
-}#
-#
-#######commentsData#
-commentsTable <- matrix(nrow=0, ncol=9)#
-colnames(commentsTable) <- c(#
-	"device_ID",#
-	"session_start_timeStamp", #
-	"focal_start_timeStamp",#
-	"comment_timeStamp",#
-	"comment_text",#
-	"latitude", #
-	"longitude",#
-	"gps_horizontal_precision",#
-	"altitude"#
-	)#
-if(length(dat$data$sessions)>0){#
-for (i in 1:length(dat$data$sessions)){#
-	session <- dat$data$sessions[[i]]#
-	if(length(session$focal)>0){#
-		for (j in 1:length(session$focal)){#
-			focal <- session$focal[[j]]#
-			if (length(focal$text)>0){#
-				for (k in 1:length(focal$text)){#
-					text <- focal$text[[k]]#
-					commentsTable <- rbind(commentsTable, as.character(c(#
-					NAcheck(session$device_ID),#
-					NAcheck(session$arrival_time),#
-					NAcheck(focal$start_time),#
-					NAcheck(text$timestamp),#
-					NAcheck(text$text),#
-					NAcheck(text$lat),#
-					NAcheck(text$lon),#
-					NAcheck(text$gpsPrecision),#
-					NAcheck(text$alt)#
-					)))#
-				}#
-			}#
-		}#
-	}#
-}#
-}#
-sessionsTable <- data.frame(sessionsTable, row.names=NULL)#
-focalsTable <- data.frame(focalsTable, row.names=NULL)#
-behaviorsTable <- data.frame(behaviorsTable, row.names=NULL)#
-scansTable <- data.frame(scansTable, row.names=NULL)#
-backgroundTapsTable <- data.frame(backgroundTapsTable, row.names=NULL)#
-commentsTable <- data.frame(commentsTable, row.names=NULL)#
-dayVarsTable <- data.frame(dayVarsTable, row.names=NULL)#
-focalVarsTable <- data.frame(focalVarsTable, row.names=NULL)#
-continuousVarsTable <- data.frame(continuousVarsTable, row.names=NULL)#
-scanVarsTable <- data.frame(scanVarsTable, row.names=NULL)#
-return(list(sessionsTable= sessionsTable,#
-focalsTable= focalsTable,#
-behaviorsTable= behaviorsTable,#
-scansTable= scansTable,#
-backgroundTapsTable = backgroundTapsTable,#
-commentsTable = commentsTable,#
-dayVarsTable = dayVarsTable,#
-focalVarsTable = focalVarsTable,#
-continuousVarsTable = continuousVarsTable,#
-scanVarsTable = scanVarsTable))#
-}
-listTables <- jsonOutputConversion(NULL, "~/Documents/git repositories/temp/behaviors.json", "~/Documents/git repositories/temp/layout_info.json")
-listTables
-tableHeaders <- list()#
-	tableHeaders[[1]] <- names(listTables$sessionsTable)#
-	tableHeaders[[2]] <- names(listTables$focalsTable)#
-	tableHeaders[[3]] <- names(listTables$behaviorsTable)#
-	tableHeaders[[4]] <- names(listTables$scansTable)#
-	tableHeaders[[5]] <- names(listTables$backgroundTapsTable)#
-	tableHeaders[[6]] <- names(listTables$commentsTable)#
-	tableHeaders[[7]] <- names(listTables$dayVarsTable)#
-	tableHeaders[[8]] <- names(listTables$focalVarsTable)#
-	tableHeaders[[9]] <- names(listTables$continuousVarsTable)#
-	tableHeaders[[10]] <- names(listTables$scanVarsTable)
-tableHeaders
-sqlCode <- list()
-sqlCode <- c(sqlCode, paste("create schema animal_observer;"))
-sqlCode
-sqlCode <- c(sqlCode, paste("create schema animal_observer;"))
-sqlCode
-install.packages(c("caTools", "bitops"))
-install.packages(c("shiny", "lme4", "ggplot2", "raster", "igraph", "maptools", "spatstat", "devtools", "rmarkdown", "knitr", "rhandsontable", "RPostgreSQL", "visNetwork", "evaluate", "formatR", "highr", "caTools", "bitops"))
-?render
-library(rmarkdown)
-?render
-render("~/Downloads/knitr_example.Rmd")
-?rmarkdown::pandoc_available
-Sys.setenv(RSTUDIO_PANDOC="/Applications/RStudio.app/Contents/MacOS/pandoc")
-render("~/Downloads/knitr_example.Rmd")

@@ -243,3 +243,10 @@ createListSQLTables <- function(listTables, con, newdbname, username, hostname, 
 	#write(unlist(sqlCode), file="~/Downloads/test.txt")
 	
 }
+
+
+
+
+
+
+

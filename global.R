@@ -15,6 +15,7 @@ source("jsonOutputConversion.R")
 source("prepare_animalsJSON.R")
 source("prepare_layoutInfoJSON.R")
 source("postgres_connection.R")
+source("postgres_upload.R")
 includesFOOD <- function(dat)
 {
 	temp <- dat=="_FOOD"
