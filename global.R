@@ -16,6 +16,7 @@ source("prepare_animalsJSON.R")
 source("prepare_layoutInfoJSON.R")
 source("postgres_connection.R")
 source("postgres_upload.R")
+options(shiny.maxRequestSize=20*1024^2)
 includesFOOD <- function(dat)
 {
 	temp <- dat=="_FOOD"
