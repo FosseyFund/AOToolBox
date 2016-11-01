@@ -84,12 +84,12 @@ observeEvent(input$link_to_animals, {
 })
 
 observeEvent(input$link_to_welcome, {
-  newvalue <- "What is Animal Observer?"
+  newvalue <- "What is AO Toolbox?"
   updateTabsetPanel(session,"panels",newvalue)
 })
 
 observeEvent(input$link_to_welcome2, {
-  newvalue <- "What is Animal Observer?"
+  newvalue <- "What is AO Toolbox?"
   updateTabsetPanel(session,"panels",newvalue)
 })
 
@@ -113,6 +113,25 @@ observeEvent(input$link_to_sessionSetup, {
   updateTabsetPanel(session,"panels4",newvalue)
 })
   
+observeEvent(input$link_to_structure3, {
+  newvalue <- "Create behavioral protocol file"
+  updateTabsetPanel(session,"panels",newvalue)
+})
+
+observeEvent(input$link_to_globalvar4, {
+  newvalue <- "Create global variables file"
+  updateTabsetPanel(session,"panels",newvalue)
+})
+
+observeEvent(input$link_to_pSQL, {
+  newvalue <- "PostgreSQL Database"
+  updateTabsetPanel(session,"panels6",newvalue)
+})
+
+observeEvent(input$link_to_pSQL2, {
+  newvalue <- "PostgreSQL Database"
+  updateTabsetPanel(session,"panels6",newvalue)
+})
   
   
 dataOutput1 <- eventReactive(input$run, {
@@ -785,7 +804,7 @@ output$dataUploaded <- renderText({
 })
 })
 
-# con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = "animal_observer3", host = "localhost", port = 5432, user = "postgres", password = "postgres")
+# con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = "animal_observer", host = "localhost", port = 5432, user = "postgres", password = "postgres")
 # dbConnect(drv=dbDriver("PostgreSQL"), dbname = "postgres", host = "localhost", port = 5432, user = "postgres", password = "postgres")
 # dbGetQuery(con, "select *  from pg_tables where schemaname!='pg_catalog' AND schemaname!='information_schema';")##table list
 # dbGetQuery(con, "select count(*) from information_schema.columns where table_name='list_food_items';")##number of columns
