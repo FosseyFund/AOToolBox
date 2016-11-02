@@ -23,7 +23,7 @@ uploadSessionsTable <- function(sessionsTable, con){
     '", as.character(sessionsTable[i,]$physical_contact_threshold),"'
 	WHERE NOT EXISTS (SELECT 1 from main_tables.list_sessions WHERE device_ID='",as.character(sessionsTable[i,]$device_ID),"' AND session_start_time='",timeFormat(as.character(sessionsTable[i,]$session_start_timeStamp)),"');", sep="")
 	command <- gsub("''", "NULL", command)
-	command <- gsub("NA", "NULL", command)
+	#command <- gsub("NA", "NULL", command)
 	command <- gsub("'NULL'", "NULL", command)
 	command <- gsub("'NA'", "NULL", command)
 	dbGetQuery(con, command)
@@ -44,7 +44,7 @@ uploadFocalsTable <- function(focalsTable, con){
     '", as.character(focalsTable[i,]$focal_individual_ID),"'
 	WHERE NOT EXISTS (SELECT 1 from main_tables.list_focals WHERE device_ID='",as.character(focalsTable[i,]$device_ID),"' AND focal_start_time='",timeFormat(as.character(focalsTable[i,]$focal_start_timeStamp)),"');", sep="")
 	command <- gsub("''", "NULL", command)
-	command <- gsub("NA", "NULL", command)
+	#command <- gsub("NA", "NULL", command)
 	command <- gsub("'NULL'", "NULL", command)
 	command <- gsub("'NA'", "NULL", command)	
 	dbGetQuery(con, command)
@@ -72,7 +72,7 @@ uploadBehaviorsTable <- function(behaviorsTable, con){
     ", naFormat(as.character(behaviorsTable[i,]$altitude)),"
 	WHERE NOT EXISTS (SELECT 1 from main_tables.list_behaviors WHERE device_ID='",as.character(behaviorsTable[i,]$device_ID),"' AND behavior_time='",timeFormat(as.character(behaviorsTable[i,]$behavior_timeStamp)),"' AND actor='",as.character(behaviorsTable[i,]$actor),"' AND	subject='",as.character(behaviorsTable[i,]$subject),"');", sep="")
 		command <- gsub("''", "NULL", command)
-		command <- gsub("NA", "NULL", command)
+		#command <- gsub("NA", "NULL", command)
 		command <- gsub("'NULL'", "NULL", command)
 		command <- gsub("'NA'", "NULL", command)
 		dbGetQuery(con, command)
@@ -93,7 +93,7 @@ uploadScansTable <- function(scansTable, con){
     ", naFormat(as.character(scansTable[i,]$altitude)),"
 	WHERE NOT EXISTS (SELECT 1 from main_tables.list_scans WHERE device_ID='",as.character(scansTable[i,]$device_ID),"' AND scan_time ='",timeFormat(as.character(scansTable[i,]$scan_timeStamp)),"');", sep="")
 		command <- gsub("''", "NULL", command)
-		command <- gsub("NA", "NULL", command)
+		#command <- gsub("NA", "NULL", command)
 		command <- gsub("'NULL'", "NULL", command)
 		command <- gsub("'NA'", "NULL", command)
 		dbGetQuery(con, command)
@@ -115,7 +115,7 @@ uploadScanData <- function(scansTable, con){
     ", as.character(scansTable[i,]$y_position),"
 	WHERE NOT EXISTS (SELECT 1 from main_tables.scan_data WHERE device_ID='",as.character(scansTable[i,]$device_ID),"' AND scan_time='",timeFormat(as.character(scansTable[i,]$scan_timeStamp)),"' AND scanned_individual_ID ='",as.character(scansTable[i,]$scanned_individual_ID),"');", sep="")
 		command <- gsub("''", "NULL", command)
-		command <- gsub("NA", "NULL", command)
+		#command <- gsub("NA", "NULL", command)
 		command <- gsub("'NULL'", "NULL", command)
 		command <- gsub("'NA'", "NULL", command)
 		dbGetQuery(con, command)
@@ -135,7 +135,7 @@ uploadScanVariables <- function(scanVarsTable, con){
     '",paste(as.character(unlist(as.list(scanVarsTable[i,5:(length(tableHeaders))]))), collapse="', '"),"'
 	WHERE NOT EXISTS (SELECT 1 from main_tables.scan_variables WHERE device_ID='",as.character(scanVarsTable[i,]$device_ID),"' AND scan_time='",timeFormat(as.character(scanVarsTable[i,]$scan_timeStamp)),"' AND scanVars ='", as.character(scanVarsTable[i,5]),"');", sep="")
 		command <- gsub("''", "NULL", command)
-		command <- gsub("NA", "NULL", command)
+		#command <- gsub("NA", "NULL", command)
 		command <- gsub("'NULL'", "NULL", command)
 		command <- gsub("'NA'", "NULL", command)
 		dbGetQuery(con, command)
@@ -154,7 +154,7 @@ uploadContinuousVariables <- function(continuousVarsTable, con){
     '",paste(as.character(unlist(as.list(continuousVarsTable[i,4:(length(tableHeaders))]))), collapse="', '"),"'
 	WHERE NOT EXISTS (SELECT 1 from main_tables.continuous_focal_variables WHERE device_ID='",as.character(continuousVarsTable[i,]$device_ID),"' AND focal_start_time ='",timeFormat(as.character(continuousVarsTable[i,]$focal_start_timeStamp)),"' AND continuousVars ='", as.character(continuousVarsTable[i,4]),"');", sep="")
 		command <- gsub("''", "NULL", command)
-		command <- gsub("NA", "NULL", command)
+		#command <- gsub("NA", "NULL", command)
 		command <- gsub("'NULL'", "NULL", command)
 		command <- gsub("'NA'", "NULL", command)
 		dbGetQuery(con, command)
@@ -173,7 +173,7 @@ uploadFocalVariables <- function(focalVarsTable, con){
     '", paste(as.character(unlist(as.list(focalVarsTable[i,4:(length(tableHeaders))]))), collapse="', '"),"'
 	WHERE NOT EXISTS (SELECT 1 from main_tables.focal_variables WHERE device_ID='",as.character(focalVarsTable[i,]$device_ID),"' AND focal_start_time ='",timeFormat(as.character(focalVarsTable[i,]$focal_start_timeStamp)),"' AND focalVars ='", as.character(focalVarsTable[i,4]),"');", sep="")
 		command <- gsub("''", "NULL", command)
-		command <- gsub("NA", "NULL", command)
+		#command <- gsub("NA", "NULL", command)
 		command <- gsub("'NULL'", "NULL", command)
 		command <- gsub("'NA'", "NULL", command)
 		dbGetQuery(con, command)
@@ -192,7 +192,7 @@ uploadSessionVariables <- function(sessionVarsTable, con){
     '", paste(as.character(unlist(as.list(sessionVarsTable[i,3:(length(tableHeaders))]))), collapse="', '"),"'
 	WHERE NOT EXISTS (SELECT 1 from main_tables.session_variables WHERE device_ID='",as.character(sessionVarsTable[i,]$device_ID),"' AND session_start_time ='",timeFormat(as.character(sessionVarsTable[i,]$session_start_timeStamp)),"' AND dayVars ='", as.character(sessionVarsTable[i,3]),"');", sep="")
 		command <- gsub("''", "NULL", command)
-		command <- gsub("NA", "NULL", command)
+		#command <- gsub("NA", "NULL", command)
 		command <- gsub("'NULL'", "NULL", command)
 		command <- gsub("'NA'", "NULL", command)
 		dbGetQuery(con, command)
@@ -215,7 +215,7 @@ uploadBackgroundTapsTable <- function(backgroundTapsTable, con){
 
 	WHERE NOT EXISTS (SELECT 1 from main_tables.list_background_taps WHERE device_ID='",as.character(backgroundTapsTable[i,]$device_ID),"' AND focal_start_time ='",timeFormat(as.character(backgroundTapsTable[i,]$focal_start_timeStamp)),"' AND tap_time ='",timeFormat(as.character(backgroundTapsTable[i,]$backgroundTap_timeStamp)),"');", sep="")
 		command <- gsub("''", "NULL", command)
-		command <- gsub("NA", "NULL", command)
+		#command <- gsub("NA", "NULL", command)
 		command <- gsub("'NULL'", "NULL", command)
 		command <- gsub("'NA'", "NULL", command)
 		dbGetQuery(con, command)
@@ -235,7 +235,7 @@ uploadCommentTable <- function(commentsTable, con){
     '", temp,"'
 	WHERE NOT EXISTS (SELECT 1 from main_tables.list_comments WHERE device_ID='",as.character(commentsTable[i,]$device_ID),"' AND focal_start_time ='",timeFormat(as.character(commentsTable[i,]$focal_start_timeStamp)),"' AND comment_time ='",timeFormat(as.character(commentsTable[i,]$comment_timeStamp)),"');", sep="")
 		command <- gsub("''", "NULL", command)
-		command <- gsub("NA", "NULL", command)
+		#command <- gsub("NA", "NULL", command)
 		command <- gsub("'NULL'", "NULL", command)
 		command <- gsub("'NA'", "NULL", command)
 		dbGetQuery(con, command)
