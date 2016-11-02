@@ -1,7 +1,6 @@
 library(rjson)
 
-
-jsonOutputConversion <- function(json.output.file, behaviors.json, layout_info.json)
+jsonOutputConversion <- function(json.output.file, behaviors.json, layout_info.json, colmerge=F)
 {
 ####path to behaviors.json
 behav <- fromJSON(paste(behaviors.json, collapse=""))
@@ -39,7 +38,6 @@ focalVarsHeaders <- getListHeaders(focalVars)
 dayVars <- list()
 dayVars$dayVars <- layout$day_variables
 dayVarsHeaders <- getListHeaders(dayVars)
-
 
 NAcheck <- function(x){
 	ifelse (is.null(x), NA,x)
@@ -282,6 +280,20 @@ for (i in 1:length(dat$data$sessions)){
 }
 }
 
+if(colmerge){
+temp <- behaviorsTable[,7:(6+length(c(selfHeaders, behaviorHeaders)))]
+identicals <- colnames(temp)[duplicated(colnames(temp))]
+if(length(identicals)>0){
+for(i in identicals)
+{
+	mergure <- apply(temp[,colnames(temp)==i], 1, function(v) paste(v[v!=""], sep=";"))
+	if(class(mergure)=="list") mergure <- unlist(lapply(mergure, function(v) ifelse(length(v)==0, "",v)))
+	temp[,colnames(temp)==i][,1] <- mergure
+	temp <- temp[,-(which(colnames(temp)==i)[-1])]
+}
+behaviorsTable <- cbind(behaviorsTable[,1:6], temp, behaviorsTable[,(ncol(behaviorsTable)-4):ncol(behaviorsTable)])
+}
+}
 ##############################
 scansTable <- matrix(nrow=0, ncol=13+length(scanHeaders))
 colnames(scansTable) <- c(
@@ -423,6 +435,7 @@ for (i in 1:length(dat$data$sessions)){
 	}
 }
 }
+
 sessionsTable <- data.frame(sessionsTable, row.names=NULL, check.names=F)
 focalsTable <- data.frame(focalsTable, row.names=NULL, check.names=F)
 behaviorsTable <- data.frame(behaviorsTable, row.names=NULL, check.names=F)

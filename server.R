@@ -367,7 +367,7 @@ layout_info.json.input <- reactive({
 
 dataOutput <- reactive({
 		if(is.null(json.output.file.input()) | is.null(behaviors.json.input()) | is.null(layout_info.json.input())) {return(NULL)} else 
-		jsonOutputConversion(json.output.file.input(), behaviors.json.input(), layout_info.json.input())
+		jsonOutputConversion(json.output.file.input(), behaviors.json.input(), layout_info.json.input(), colmerge=input$colmerge)
 })
 		
 	output$sessionsTable.csv <- renderText({
@@ -711,7 +711,7 @@ createDB <- eventReactive(input$createEmptyDB, {
 		return(NULL)
 		}
 	 cat(file=stderr(), "Creating empty database...\n")
-    listTables1 <- jsonOutputConversion(json.output.file =NULL, behaviors.json.input2(), layout_info.json.input2())
+    listTables1 <- jsonOutputConversion(json.output.file =NULL, behaviors.json.input2(), layout_info.json.input2(), colmerge=input$colmerge2)
     con <- dbConnect(dbDriver("PostgreSQL"), dbname = DBname(),
                  host = DBhost(), port = DBport(),
                  user = DBuser(), password = DBpwd())
@@ -773,7 +773,7 @@ dataOutput5 <- reactive({
 		if(is.null(json.output.file.input3()) | is.null(behaviors.json.input3()) | is.null(layout_info.json.input3()) | is.null(outputblah())) {return(NULL)} else 
 		   #cat(file=stderr(), "jsonOutputConversion")
 		
-	outputTables <- jsonOutputConversion(json.output.file.input3(), behaviors.json.input3(), layout_info.json.input3())
+	outputTables <- jsonOutputConversion(json.output.file.input3(), behaviors.json.input3(), layout_info.json.input3(), colmerge=input$colmerge3)
     cat(file=stderr(), "Uploading file...\n")
 	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = DBname(),
            host = DBhost(), port = DBport(),
