@@ -1,3 +1,4 @@
+
 install.load <- function(package.name)
 {
 if (!require(package.name, character.only=T)) install.packages(package.name)
@@ -14,6 +15,7 @@ source("prepare_foodsDyadicScanSolo.R")
 source("jsonOutputConversion.R")
 source("prepare_animalsJSON.R")
 source("prepare_layoutInfoJSON.R")
+source("small_tables_upload.R")
 source("postgres_connection.R")
 source("postgres_upload.R")
 options(shiny.maxRequestSize=20*1024^2)

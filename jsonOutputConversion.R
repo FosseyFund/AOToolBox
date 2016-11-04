@@ -1,5 +1,3 @@
-library(rjson)
-
 jsonOutputConversion <- function(json.output.file, behaviors.json, layout_info.json, colmerge=F)
 {
 ####path to behaviors.json
@@ -458,4 +456,9 @@ focalVarsTable = focalVarsTable,
 continuousVarsTable = continuousVarsTable,
 scanVarsTable = scanVarsTable))
 }
+
+
+
+
+
 

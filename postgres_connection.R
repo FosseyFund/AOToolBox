@@ -14,7 +14,36 @@ fixHeader <- function(v)
 		unlist(lapply(strsplit(make.names(tolower(v), unique=T), "[.]"), function(x) paste(x, collapse="_")))
 	}
 	
-createListSQLTables <- function(listTables, con, newdbname, username, hostname, pwd){
+sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_behaviors"){
+	ans <- list()
+	for(i in 1:length(lsvars)){
+	#tableName <- gsub("[.]","_",gsub("[.][.]",".",make.names(names(lsvars[i]))))
+	tableName <- fixHeader(names(lsvars[i]))
+	ans <- c(ans, paste0("create table accessory_tables.", tableName," (
+	value text PRIMARY KEY,
+	description text,
+	created_by text DEFAULT CURRENT_USER,
+	created_on timestamp DEFAULT CURRENT_TIMESTAMP,
+	last_modif_by text DEFAULT CURRENT_USER,
+	last_modif_on timestamp DEFAULT CURRENT_TIMESTAMP
+	);",
+	"CREATE TRIGGER row_modif_stamp BEFORE INSERT OR UPDATE ON accessory_tables.", tableName," FOR EACH ROW EXECUTE PROCEDURE main_tables.row_modif_stamp();
+	ALTER TABLE ", largeTable," ADD FOREIGN KEY (", fixHeader(names(lsvars[i])),") REFERENCES accessory_tables.", tableName,"(value) ON UPDATE CASCADE;")
+	)
+	for (j in lsvars[[i]]){
+	command <- paste0("INSERT INTO accessory_tables.", tableName,"(value)
+	SELECT
+	'",j,"';")
+	ans <- c(ans, command)
+	}
+}
+	return(ans)
+
+}
+
+
+createListSQLTables <- function(behav, layout, colmerge, con, newdbname, username, hostname, pwd){
+	listTables <- jsonOutputConversion(json.output.file =NULL, behav, layout, colmerge=colmerge)
 	#list of headers
 	tableHeaders <- list()
 	tableHeaders[[1]] <- names(listTables$sessionsTable)
@@ -47,7 +76,7 @@ createListSQLTables <- function(listTables, con, newdbname, username, hostname, 
     for(con in all_cons) dbDisconnect(con)
 	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname =  newdbname, host = hostname, port = 5432, user = username, password = pwd)
 	sqlCode <- list()
-	sqlCode <- c(sqlCode, "create schema main_tables;")
+	sqlCode <- c(sqlCode, "create schema main_tables; create schema accessory_tables;")
 	sqlCode <- c(sqlCode, "drop schema public;")
 	#sqlCode <- c(sqlCode, "create schema accessory_tables;")
 	
@@ -223,6 +252,35 @@ createListSQLTables <- function(listTables, con, newdbname, username, hostname, 
 	PRIMARY KEY (device_ID, focal_start_time, comment_time),
 	FOREIGN KEY (device_ID, focal_start_time) REFERENCES main_tables.list_focals(device_ID, focal_start_time) ON UPDATE CASCADE
 	);"))
+	
+	#################primary keys
+	smallTables <- small_tables(behav, layout)
+	####behaviors
+	# sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scan, largeTable="main_tables.scan_data"))
+	# sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$sessionVars, largeTable="main_tables.session_variables"))
+	# sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$focalVars, largeTable="main_tables.focal_variables"))
+	# sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scanVars, largeTable="main_tables.scan_variables"))	
+	# sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$continuousVars, largeTable="main_tables.continuous_focal_variables"))	
+	
+	###case of solo when headers ar merged
+if(colmerge)
+{
+	overlapping <- intersect(names(smallTables$dyadic),names(smallTables$solo))
+	clade <- c(smallTables$dyadic[!names(smallTables$dyadic)%in%overlapping],smallTables$solo[!names(smallTables$solo)%in%overlapping]) 
+	for (i in overlapping){
+		clade <- c(clade, list(union(smallTables$dyadic[names(smallTables$dyadic)==i][[1]], smallTables$solo[names(smallTables$solo)==i][[1]])))
+		names(clade)[length(clade)] <- i
+	}
+} else {
+	clade <- c(smallTables$dyadic, smallTables$solo)
+	names(clade) <- fixHeader(names(clade))
+}
+	sqlCode <- c(sqlCode, sqlCodeSmallTable(clade, largeTable="main_tables.list_behaviors"))
+	
+	
+	
+	
+	##################
 	for(i in c(na.omit(c(
 	"main_tables.list_sessions",
 	"main_tables.list_focals",

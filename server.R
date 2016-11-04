@@ -711,11 +711,11 @@ createDB <- eventReactive(input$createEmptyDB, {
 		return(NULL)
 		}
 	 cat(file=stderr(), "Creating empty database...\n")
-    listTables1 <- jsonOutputConversion(json.output.file =NULL, behaviors.json.input2(), layout_info.json.input2(), colmerge=input$colmerge2)
+    #listTables1 <- jsonOutputConversion(json.output.file =NULL, behaviors.json.input2(), layout_info.json.input2(), colmerge=input$colmerge2)
     con <- dbConnect(dbDriver("PostgreSQL"), dbname = DBname(),
                  host = DBhost(), port = DBport(),
                  user = DBuser(), password = DBpwd())
-ans <- createListSQLTables(listTables1, con=con, newdbname= newDBname(), username= DBuser(), hostname= DBhost(), pwd= DBpwd())
+ans <- createListSQLTables(behav = behaviors.json.input2(), layout=layout_info.json.input2(), colmerge=input$colmerge2, con=con, newdbname= newDBname(), username= DBuser(), hostname= DBhost(), pwd= DBpwd())
 all_cons <- dbListConnections(dbDriver("PostgreSQL"))
     for(con in all_cons) dbDisconnect(con)
     return(ans)
