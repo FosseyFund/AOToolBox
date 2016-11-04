@@ -19,7 +19,7 @@ sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_behaviors"){
 	for(i in 1:length(lsvars)){
 	#tableName <- gsub("[.]","_",gsub("[.][.]",".",make.names(names(lsvars[i]))))
 	tableName <- fixHeader(names(lsvars[i]))
-	ans <- c(ans, paste0("create table accessory_tables.", tableName," (
+	ans <- c(ans, paste0("create table IF NOT EXISTS accessory_tables.", tableName," (
 	value text PRIMARY KEY,
 	description text,
 	created_by text DEFAULT CURRENT_USER,
@@ -27,13 +27,14 @@ sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_behaviors"){
 	last_modif_by text DEFAULT CURRENT_USER,
 	last_modif_on timestamp DEFAULT CURRENT_TIMESTAMP
 	);",
+	"DROP TRIGGER IF EXISTS row_modif_stamp ON accessory_tables.", tableName,";",
 	"CREATE TRIGGER row_modif_stamp BEFORE INSERT OR UPDATE ON accessory_tables.", tableName," FOR EACH ROW EXECUTE PROCEDURE main_tables.row_modif_stamp();
 	ALTER TABLE ", largeTable," ADD FOREIGN KEY (", fixHeader(names(lsvars[i])),") REFERENCES accessory_tables.", tableName,"(value) ON UPDATE CASCADE;")
 	)
 	for (j in lsvars[[i]]){
 	command <- paste0("INSERT INTO accessory_tables.", tableName,"(value)
 	SELECT
-	'",j,"';")
+	'",j,"' WHERE NOT EXISTS (SELECT 1 from accessory_tables.",tableName," WHERE value='",j,"');")
 	ans <- c(ans, command)
 	}
 }
@@ -76,7 +77,7 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
     for(con in all_cons) dbDisconnect(con)
 	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname =  newdbname, host = hostname, port = 5432, user = username, password = pwd)
 	sqlCode <- list()
-	sqlCode <- c(sqlCode, "create schema main_tables; create schema accessory_tables;")
+	sqlCode <- c(sqlCode, "create schema main_tables; create schema accessory_tables;SET client_min_messages = error;")
 	sqlCode <- c(sqlCode, "drop schema public;")
 	#sqlCode <- c(sqlCode, "create schema accessory_tables;")
 	
@@ -256,11 +257,11 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 	#################primary keys
 	smallTables <- small_tables(behav, layout)
 	####behaviors
-	# sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scan, largeTable="main_tables.scan_data"))
-	# sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$sessionVars, largeTable="main_tables.session_variables"))
-	# sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$focalVars, largeTable="main_tables.focal_variables"))
-	# sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scanVars, largeTable="main_tables.scan_variables"))	
-	# sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$continuousVars, largeTable="main_tables.continuous_focal_variables"))	
+	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scan, largeTable="main_tables.scan_data"))
+	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$sessionVars, largeTable="main_tables.session_variables"))
+	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$focalVars, largeTable="main_tables.focal_variables"))
+	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scanVars, largeTable="main_tables.scan_variables"))	
+	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$continuousVars, largeTable="main_tables.continuous_focal_variables"))	
 	
 	###case of solo when headers ar merged
 if(colmerge)
