@@ -77,7 +77,7 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
     for(con in all_cons) dbDisconnect(con)
 	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname =  newdbname, host = hostname, port = 5432, user = username, password = pwd)
 	sqlCode <- list()
-	sqlCode <- c(sqlCode, "create schema main_tables; create schema accessory_tables;SET client_min_messages = error;")
+	sqlCode <- c(sqlCode, "create schema main_tables; create schema accessory_tables; SET client_min_messages = error;")
 	sqlCode <- c(sqlCode, "drop schema public;")
 	#sqlCode <- c(sqlCode, "create schema accessory_tables;")
 	
@@ -261,7 +261,7 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$sessionVars, largeTable="main_tables.session_variables"))
 	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$focalVars, largeTable="main_tables.focal_variables"))
 	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scanVars, largeTable="main_tables.scan_variables"))	
-	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$continuousVars, largeTable="main_tables.continuous_focal_variables"))	
+	if(!is.null(smallTables$continuousVars)) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$continuousVars, largeTable="main_tables.continuous_focal_variables"))	
 	
 	###case of solo when headers ar merged
 if(colmerge)
