@@ -286,6 +286,7 @@ for(i in identicals)
 {
 	mergure <- apply(temp[,colnames(temp)==i], 1, function(v) paste(v[v!=""], sep=";"))
 	if(class(mergure)=="list") mergure <- unlist(lapply(mergure, function(v) ifelse(length(v)==0, "",v)))
+	if(length(mergure)==0) mergure <- rep("", nrow(temp))
 	temp[,colnames(temp)==i][,1] <- mergure
 	temp <- temp[,-(which(colnames(temp)==i)[-1])]
 }
