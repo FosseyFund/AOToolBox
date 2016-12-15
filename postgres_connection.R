@@ -39,9 +39,7 @@ sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_behaviors"){
 	}
 }
 	return(ans)
-
 }
-
 
 createListSQLTables <- function(behav, layout, colmerge, con, newdbname, username, hostname, pwd){
 	listTables <- jsonOutputConversion(json.output.file =NULL, behav, layout, colmerge=colmerge)
@@ -58,22 +56,29 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 	tableHeaders[[9]] <- names(listTables$continuousVarsTable)
 	tableHeaders[[10]] <- names(listTables$scanVarsTable)
 	
+	multipleSelectionCols <- tableHeaders
+	multipleSelectionCols2 <- lapply(multipleSelectionCols, function(temp) which(nchar(temp)==regexpr("[*]", temp)))
+	tableHeadersAll <- tableHeaders
+	#all_cons <- dbListConnections(dbDriver("PostgreSQL"))
+    #for(con in all_cons) dbDisconnect(con)
 	
 	for(i in 1:length(tableHeaders)){
-		tableHeaders[[i]] <- fixHeader(tableHeaders[[i]])
+		if(length(multipleSelectionCols2[[i]])==0) tableHeaders[[i]] <- fixHeader(tableHeaders[[i]]) else
+		tableHeaders[[i]] <- fixHeader(tableHeaders[[i]][-multipleSelectionCols2[[i]]])
 	}
 	
 	if(newdbname %in% dbGetQuery(con, "SELECT datname FROM pg_database WHERE datistemplate = false;")[,1]) {
 		cat(file=stderr(), paste0("Database ", newdbname," already exists!\n"))
 		return(NULL)
 		}
-
+		
+	
 
 	#con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname =  "postgres", host = "localhost", port = 5432, user = "postgres", password = "postgres")
 	#dbGetQuery(con, paste0("select pg_terminate_backend(pid) from pg_stat_activity where datname=", newdbname,"'animal_observer';"))##disconnect all users of animal_observer
 	#dbGetQuery(con, "drop database if exists animal_observer;")	
 	dbGetQuery(con, paste0("create database ",newdbname,";"))
-		all_cons <- dbListConnections(dbDriver("PostgreSQL"))
+	all_cons <- dbListConnections(dbDriver("PostgreSQL"))
     for(con in all_cons) dbDisconnect(con)
 	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname =  newdbname, host = hostname, port = 5432, user = username, password = pwd)
 	sqlCode <- list()
@@ -95,7 +100,7 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 	session_end_time timestamp,
 	group_ID text NOT NULL,
 	pin_code_name text NOT NULL,
-	layout_info_json_version	 text NOT NULL,
+	layout_info_json_version text NOT NULL,
 	behaviors_json_version text NOT NULL,
 	gps_on boolean NOT NULL,
 	compass_on	boolean NOT NULL,
@@ -254,30 +259,101 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 	FOREIGN KEY (device_ID, focal_start_time) REFERENCES main_tables.list_focals(device_ID, focal_start_time) ON UPDATE CASCADE
 	);"))
 	
-	#################primary keys
+		
+	#################primary key tables
 	smallTables <- small_tables(behav, layout)
-	####behaviors
-	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scan, largeTable="main_tables.scan_data"))
-	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$sessionVars, largeTable="main_tables.session_variables"))
-	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$focalVars, largeTable="main_tables.focal_variables"))
-	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scanVars, largeTable="main_tables.scan_variables"))	
-	if(!is.null(smallTables$continuousVars)) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$continuousVars, largeTable="main_tables.continuous_focal_variables"))	
-	
 	###case of solo when headers ar merged
-if(colmerge)
-{
-	overlapping <- intersect(names(smallTables$dyadic),names(smallTables$solo))
-	clade <- c(smallTables$dyadic[!names(smallTables$dyadic)%in%overlapping],smallTables$solo[!names(smallTables$solo)%in%overlapping]) 
-	for (i in overlapping){
-		clade <- c(clade, list(union(smallTables$dyadic[names(smallTables$dyadic)==i][[1]], smallTables$solo[names(smallTables$solo)==i][[1]])))
-		names(clade)[length(clade)] <- i
+	if(colmerge)
+	{
+		overlapping <- intersect(names(smallTables$dyadic),names(smallTables$solo))
+		clade <- c(smallTables$dyadic[!names(smallTables$dyadic)%in%overlapping],smallTables$solo[!names(smallTables$solo)%in%overlapping]) 
+		for (i in overlapping){
+			clade <- c(clade, list(union(smallTables$dyadic[names(smallTables$dyadic)==i][[1]], smallTables$solo[names(smallTables$solo)==i][[1]])))
+			names(clade)[length(clade)] <- i
+		}
+		finalNames <- names(c(smallTables$dyadic, smallTables$solo))
+		finalNames <- finalNames[!duplicated(finalNames)]
+		clade <- clade[match(finalNames,names(clade))]
+	} else {
+		clade <- c(smallTables$dyadic, smallTables$solo)
+		#names(clade) <- fixHeader(names(clade))
 	}
-} else {
-	clade <- c(smallTables$dyadic, smallTables$solo)
-	names(clade) <- fixHeader(names(clade))
-}
-	sqlCode <- c(sqlCode, sqlCodeSmallTable(clade, largeTable="main_tables.list_behaviors"))
+
+	isStar <- function(v){
+			nchar(names(v))==regexpr("[*]", names(v))
+	}
+	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scan[!isStar(smallTables$scan)], largeTable="main_tables.scan_data"))
+	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$sessionVars[!isStar(smallTables$sessionVars)], largeTable="main_tables.session_variables"))
+	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$focalVars[!isStar(smallTables$focalVars)], largeTable="main_tables.focal_variables"))
+	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scanVars[!isStar(smallTables$scanVars)], largeTable="main_tables.scan_variables"))	
+	if(!is.null(smallTables$continuousVars)) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$continuousVars[!isStar(smallTables$continuousVars)], largeTable="main_tables.continuous_focal_variables"))
 	
+	sqlCode <- c(sqlCode, sqlCodeSmallTable(clade[!isStar(clade)], largeTable="main_tables.list_behaviors"))
+	
+#######normalization of multiple selection columns
+	tabList <- data.frame(index=c(3,4,7:10), tabName=c("list_behaviors", "list_scans", "session_variables", "focal_variables", "continuous_focal_variables","scan_variables"),
+	pK=c("device_ID, behavior_time, actor, subject",
+	"device_ID, scan_time, scanned_individual_ID",
+	"device_ID, session_start_time, dayVars",
+	"device_ID, focal_start_time, focalVars",
+	"device_ID, focal_start_time, continuousVars",
+	"device_ID, scan_time, scanVars"), pkVars=c("device_ID text,
+	behavior_time timestamp,
+	actor text,
+	subject text",
+	"device_ID text,
+	scan_time timestamp,
+	scanned_individual_ID text",
+	"device_ID text,
+	session_start_time timestamp,
+	dayVars text",
+	"device_ID text,
+	focal_start_time  timestamp, 
+	focalVars text",
+	"device_ID text,
+	focal_start_time  timestamp,
+	continuousVars text",
+	"device_ID text,
+	scan_time timestamp, 
+	scanVars text"))
+	
+	
+	for(i in tabList[-1,1]){
+		if(length(multipleSelectionCols2[[i]])!=0){
+			for (j in multipleSelectionCols2[[i]]){
+			varName <- fixHeader(tableHeadersAll[[i]][j])
+			sqlCode <- c(sqlCode, paste0("create table IF NOT EXISTS accessory_tables.",tabList[tabList[,1]==i,2],"_", varName, " (
+			", tabList[tabList[,1]==i,4], ",
+			", varName," text,
+			PRIMARY KEY (",paste(tabList[tabList[,1]==i,3],",",varName),"),
+			FOREIGN KEY (",tabList[tabList[,1]==i,3],") REFERENCES main_tables.",tabList[tabList[,1]==i,2],"(",tabList[tabList[,1]==i,3],") ON UPDATE CASCADE,
+			FOREIGN KEY (",varName,") REFERENCES accessory_tables.",varName,"(value) ON UPDATE CASCADE
+			)"
+			))
+			}
+		}
+	}
+	##case of list_behaviors
+	if(colmerge){
+		
+	multipleSelected <- which(nchar(names(clade))==regexpr("[*]",names(clade)))
+	if(length(multipleSelected)!=0){
+			for (j in multipleSelected){
+			varName <- fixHeader(names(clade)[j])
+			sqlCode <- c(sqlCode, paste0("create table IF NOT EXISTS accessory_tables.",tabList[tabList[,1]==i,2],"_", varName, " (
+			", tabList[tabList[,1]==i,4], ",
+			", varName," text,
+			PRIMARY KEY (",paste(tabList[tabList[,1]==i,3],",",varName),"),
+			FOREIGN KEY (",tabList[tabList[,1]==i,3],") REFERENCES main_tables.",tabList[tabList[,1]==i,2],"(",tabList[tabList[,1]==i,3],") ON UPDATE CASCADE,
+			FOREIGN KEY (",varName,") REFERENCES accessory_tables.",varName,"(value) ON UPDATE CASCADE
+			)"
+			))
+			}
+		}
+	}
+	
+	multipleSelectionCols <- tableHeadersAll
+	multipleSelectionCols2 <- lapply(multipleSelectionCols, function(temp) which(nchar(temp)==regexpr("[*]", temp)))
 	
 	
 	
