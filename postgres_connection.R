@@ -11,14 +11,15 @@ return(temp)
 
 fixHeader <- function(v)
 	{
-		unlist(lapply(strsplit(make.names(tolower(v), unique=T), "[.]"), function(x) paste(x, collapse="_")))
+		temp <- gsub("[.][.]",".", make.names(tolower(v), unique=T))
+		make.names(unlist(lapply(strsplit(temp, "[.]"), function(x) paste(x, collapse="_"))), unique=T )
 	}
 	
-sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_behaviors"){
+sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_scans", addFKey=TRUE){
 	ans <- list()
 	for(i in 1:length(lsvars)){
 	#tableName <- gsub("[.]","_",gsub("[.][.]",".",make.names(names(lsvars[i]))))
-	tableName <- fixHeader(names(lsvars[i]))
+	tableName <- fixHeader(names(lsvars))[i]
 	ans <- c(ans, paste0("create table IF NOT EXISTS accessory_tables.", tableName," (
 	value text PRIMARY KEY,
 	description text,
@@ -28,9 +29,10 @@ sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_behaviors"){
 	last_modif_on timestamp DEFAULT CURRENT_TIMESTAMP
 	);",
 	"DROP TRIGGER IF EXISTS row_modif_stamp ON accessory_tables.", tableName,";",
-	"CREATE TRIGGER row_modif_stamp BEFORE INSERT OR UPDATE ON accessory_tables.", tableName," FOR EACH ROW EXECUTE PROCEDURE main_tables.row_modif_stamp();
-	ALTER TABLE ", largeTable," ADD FOREIGN KEY (", fixHeader(names(lsvars[i])),") REFERENCES accessory_tables.", tableName,"(value) ON UPDATE CASCADE;")
+	"CREATE TRIGGER row_modif_stamp BEFORE INSERT OR UPDATE ON accessory_tables.", tableName," FOR EACH ROW EXECUTE PROCEDURE main_tables.row_modif_stamp();")
 	)
+	if(addFKey) ans <- c(ans, paste0("ALTER TABLE ", largeTable," ADD FOREIGN KEY (", tableName,") REFERENCES accessory_tables.", tableName,"(value) ON UPDATE CASCADE ON DELETE CASCADE;"))
+	
 	for (j in lsvars[[i]]){
 	command <- paste0("INSERT INTO accessory_tables.", tableName,"(value)
 	SELECT
@@ -64,7 +66,7 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 	
 	for(i in 1:length(tableHeaders)){
 		if(length(multipleSelectionCols2[[i]])==0) tableHeaders[[i]] <- fixHeader(tableHeaders[[i]]) else
-		tableHeaders[[i]] <- fixHeader(tableHeaders[[i]][-multipleSelectionCols2[[i]]])
+		tableHeaders[[i]] <- fixHeader(tableHeaders[[i]])[-multipleSelectionCols2[[i]]]
 	}
 	
 	if(newdbname %in% dbGetQuery(con, "SELECT datname FROM pg_database WHERE datistemplate = false;")[,1]) {
@@ -260,7 +262,7 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 	);"))
 	
 		
-	#################primary key tables
+	#################primary key tables for non-multiple-selectable columns
 	smallTables <- small_tables(behav, layout)
 	###case of solo when headers ar merged
 	if(colmerge)
@@ -282,16 +284,23 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 	isStar <- function(v){
 			nchar(names(v))==regexpr("[*]", names(v))
 	}
-	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scan[!isStar(smallTables$scan)], largeTable="main_tables.scan_data"))
-	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$sessionVars[!isStar(smallTables$sessionVars)], largeTable="main_tables.session_variables"))
-	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$focalVars[!isStar(smallTables$focalVars)], largeTable="main_tables.focal_variables"))
-	sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scanVars[!isStar(smallTables$scanVars)], largeTable="main_tables.scan_variables"))	
-	if(!is.null(smallTables$continuousVars)) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$continuousVars[!isStar(smallTables$continuousVars)], largeTable="main_tables.continuous_focal_variables"))
+	if(sum(!isStar(smallTables$scan))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scan[!isStar(smallTables$scan)], largeTable="main_tables.scan_data"))
+	if(sum(!isStar(smallTables$sessionVars))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$sessionVars[!isStar(smallTables$sessionVars)], largeTable="main_tables.session_variables"))
+	if(sum(!isStar(smallTables$focalVars))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$focalVars[!isStar(smallTables$focalVars)], largeTable="main_tables.focal_variables"))
+	if(sum(!isStar(smallTables$scanVars))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scanVars[!isStar(smallTables$scanVars)], largeTable="main_tables.scan_variables"))	
+	if(!is.null(smallTables$continuousVars) & sum(!isStar(smallTables$continuousVars))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$continuousVars[!isStar(smallTables$continuousVars)], largeTable="main_tables.continuous_focal_variables"))
+	if(sum(!isStar(clade))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(clade[!isStar(clade)], largeTable="main_tables.list_behaviors"))
 	
-	sqlCode <- c(sqlCode, sqlCodeSmallTable(clade[!isStar(clade)], largeTable="main_tables.list_behaviors"))
+	if(sum(isStar(smallTables$scan))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scan[isStar(smallTables$scan)], largeTable="main_tables.scan_data", addFKey=FALSE))
+	if(sum(isStar(smallTables$sessionVars))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$sessionVars[isStar(smallTables$sessionVars)], largeTable="main_tables.session_variables", addFKey=FALSE))
+	if(sum(isStar(smallTables$focalVars))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$focalVars[isStar(smallTables$focalVars)], largeTable="main_tables.focal_variables", addFKey=FALSE))
+	if(sum(isStar(smallTables$scanVars))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scanVars[isStar(smallTables$scanVars)], largeTable="main_tables.scan_variables", addFKey=FALSE))
+	if(sum(isStar(smallTables$continuousVars))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$continuousVars[isStar(smallTables$continuousVars)], largeTable="main_tables.continuous_focal_variables", addFKey=FALSE))
+	if(sum(isStar(clade))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(clade[isStar(clade)], largeTable="main_tables.list_behaviors", addFKey=FALSE))
+
 	
 #######normalization of multiple selection columns
-	tabList <- data.frame(index=c(3,4,7:10), tabName=c("list_behaviors", "list_scans", "session_variables", "focal_variables", "continuous_focal_variables","scan_variables"),
+	tabList <- data.frame(index=c(3,4,7:10), tabName=c("list_behaviors", "scan_data", "session_variables", "focal_variables", "continuous_focal_variables","scan_variables"),
 	pK=c("device_ID, behavior_time, actor, subject",
 	"device_ID, scan_time, scanned_individual_ID",
 	"device_ID, session_start_time, dayVars",
@@ -318,43 +327,39 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 	scanVars text"))
 	
 	
-	for(i in tabList[-1,1]){
-		if(length(multipleSelectionCols2[[i]])!=0){
+	for(i in tabList[-1,1]){##exclude list_behaviors due to colmerge
+		if(length(multipleSelectionCols2[[i]])>0){
 			for (j in multipleSelectionCols2[[i]]){
-			varName <- fixHeader(tableHeadersAll[[i]][j])
+			varName <- fixHeader(tableHeadersAll[[i]])[j]
 			sqlCode <- c(sqlCode, paste0("create table IF NOT EXISTS accessory_tables.",tabList[tabList[,1]==i,2],"_", varName, " (
 			", tabList[tabList[,1]==i,4], ",
 			", varName," text,
 			PRIMARY KEY (",paste(tabList[tabList[,1]==i,3],",",varName),"),
-			FOREIGN KEY (",tabList[tabList[,1]==i,3],") REFERENCES main_tables.",tabList[tabList[,1]==i,2],"(",tabList[tabList[,1]==i,3],") ON UPDATE CASCADE,
-			FOREIGN KEY (",varName,") REFERENCES accessory_tables.",varName,"(value) ON UPDATE CASCADE
-			)"
+			FOREIGN KEY (",tabList[tabList[,1]==i,3],") REFERENCES main_tables.",tabList[tabList[,1]==i,2],"(",tabList[tabList[,1]==i,3],") ON UPDATE CASCADE ON DELETE CASCADE,
+			FOREIGN KEY (",varName,") REFERENCES accessory_tables.",varName,"(value) ON UPDATE CASCADE ON DELETE CASCADE
+			);"
 			))
 			}
 		}
 	}
-	##case of list_behaviors
-	if(colmerge){
-		
+
+	##handle list_behaviors case
 	multipleSelected <- which(nchar(names(clade))==regexpr("[*]",names(clade)))
 	if(length(multipleSelected)!=0){
 			for (j in multipleSelected){
-			varName <- fixHeader(names(clade)[j])
-			sqlCode <- c(sqlCode, paste0("create table IF NOT EXISTS accessory_tables.",tabList[tabList[,1]==i,2],"_", varName, " (
-			", tabList[tabList[,1]==i,4], ",
+			varName <- fixHeader(names(clade))[j]
+			sqlCode <- c(sqlCode, paste0("create table IF NOT EXISTS accessory_tables.",tabList[tabList[,1]==3,2],"_", varName, " (
+			", tabList[tabList[,1]==3,4], ",
 			", varName," text,
-			PRIMARY KEY (",paste(tabList[tabList[,1]==i,3],",",varName),"),
-			FOREIGN KEY (",tabList[tabList[,1]==i,3],") REFERENCES main_tables.",tabList[tabList[,1]==i,2],"(",tabList[tabList[,1]==i,3],") ON UPDATE CASCADE,
-			FOREIGN KEY (",varName,") REFERENCES accessory_tables.",varName,"(value) ON UPDATE CASCADE
-			)"
+			PRIMARY KEY (",paste(tabList[tabList[,1]==3,3],",",varName),"),
+			FOREIGN KEY (",tabList[tabList[,1]==3,3],") REFERENCES main_tables.",tabList[tabList[,1]==3,2],"(",tabList[tabList[,1]==3,3],") ON UPDATE CASCADE ON DELETE CASCADE,
+			FOREIGN KEY (",varName,") REFERENCES accessory_tables.",varName,"(value) ON UPDATE CASCADE ON DELETE CASCADE
+			);"
 			))
 			}
 		}
-	}
-	
-	multipleSelectionCols <- tableHeadersAll
-	multipleSelectionCols2 <- lapply(multipleSelectionCols, function(temp) which(nchar(temp)==regexpr("[*]", temp)))
-	
+
+######at this stage all intermediate tables have been created	
 	
 	
 	##################
