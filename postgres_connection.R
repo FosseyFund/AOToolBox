@@ -334,10 +334,16 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 			sqlCode <- c(sqlCode, paste0("create table IF NOT EXISTS accessory_tables.",tabList[tabList[,1]==i,2],"_", varName, " (
 			", tabList[tabList[,1]==i,4], ",
 			", varName," text,
+			created_by text DEFAULT CURRENT_USER,
+			created_on timestamp DEFAULT CURRENT_TIMESTAMP,
+			last_modif_by text DEFAULT CURRENT_USER,
+			last_modif_on timestamp DEFAULT CURRENT_TIMESTAMP,
 			PRIMARY KEY (",paste(tabList[tabList[,1]==i,3],",",varName),"),
 			FOREIGN KEY (",tabList[tabList[,1]==i,3],") REFERENCES main_tables.",tabList[tabList[,1]==i,2],"(",tabList[tabList[,1]==i,3],") ON UPDATE CASCADE ON DELETE CASCADE,
 			FOREIGN KEY (",varName,") REFERENCES accessory_tables.",varName,"(value) ON UPDATE CASCADE ON DELETE CASCADE
-			);"
+			);
+			DROP TRIGGER IF EXISTS row_modif_stamp ON accessory_tables.", tabList[tabList[,1]==i,2],"_", varName,";
+			CREATE TRIGGER row_modif_stamp BEFORE INSERT OR UPDATE ON accessory_tables.", tabList[tabList[,1]==i,2],"_", varName," FOR EACH ROW EXECUTE PROCEDURE main_tables.row_modif_stamp();"
 			))
 			}
 		}
@@ -351,10 +357,16 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 			sqlCode <- c(sqlCode, paste0("create table IF NOT EXISTS accessory_tables.",tabList[tabList[,1]==3,2],"_", varName, " (
 			", tabList[tabList[,1]==3,4], ",
 			", varName," text,
+			created_by text DEFAULT CURRENT_USER,
+			created_on timestamp DEFAULT CURRENT_TIMESTAMP,
+			last_modif_by text DEFAULT CURRENT_USER,
+			last_modif_on timestamp DEFAULT CURRENT_TIMESTAMP,
 			PRIMARY KEY (",paste(tabList[tabList[,1]==3,3],",",varName),"),
 			FOREIGN KEY (",tabList[tabList[,1]==3,3],") REFERENCES main_tables.",tabList[tabList[,1]==3,2],"(",tabList[tabList[,1]==3,3],") ON UPDATE CASCADE ON DELETE CASCADE,
 			FOREIGN KEY (",varName,") REFERENCES accessory_tables.",varName,"(value) ON UPDATE CASCADE ON DELETE CASCADE
-			);"
+			);
+			DROP TRIGGER IF EXISTS row_modif_stamp ON accessory_tables.", tabList[tabList[,1]==3,2],"_", varName,";
+			CREATE TRIGGER row_modif_stamp BEFORE INSERT OR UPDATE ON accessory_tables.", tabList[tabList[,1]==3,2],"_", varName," FOR EACH ROW EXECUTE PROCEDURE main_tables.row_modif_stamp();"
 			))
 			}
 		}
