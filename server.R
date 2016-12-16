@@ -783,12 +783,19 @@ if(nrow(outputTables$focalsTable)>0) uploadFocalsTable(outputTables$focalsTable,
 if(nrow(outputTables$behaviorsTable)>0) uploadBehaviorsTable(outputTables$behaviorsTable, con)
 if(nrow(outputTables$scansTable)>0) uploadScansTable(outputTables$scansTable, con)
 if(nrow(outputTables$scansTable)>0) uploadScanData(outputTables$scansTable, con)
+if(nrow(outputTables$scansTable)>0) uploadScansIntermediateTables(outputTables$scansTable, con)
+if(nrow(outputTables$behaviorsTable)>0) uploadBehaviorsIntermediateTables(outputTables$behaviorsTable, con)
 if(nrow(outputTables$scanVarsTable)>0) uploadScanVariables(outputTables$scanVarsTable, con)
+if(nrow(outputTables$scanVarsTable)>0) uploadscanVarsIntermediateTables(outputTables$scanVarsTable, con)
+
 if("continuous_focal_variables" %in% dbListTables(con) & nrow(outputTables$continuousVarsTable)>0) {
 uploadContinuousVariables(outputTables$continuousVarsTable, con)
+uploadContinuousVarsIntermediateTables(outputTables$continuousVarsTable, con)
 }
 if(nrow(outputTables$scanVarsTable)>0) uploadFocalVariables(outputTables$focalVarsTable, con)
+if(nrow(outputTables$scanVarsTable)>0) uploadfocalVarsIntermediateTables(outputTables$focalVarsTable, con)
 if(nrow(outputTables$dayVarsTable)>0) uploadSessionVariables(outputTables$dayVarsTable, con)
+if(nrow(outputTables$dayVarsTable)>0) uploadSessionVarsIntermediateTables(outputTables$dayVarsTable, con)
 if(nrow(outputTables$backgroundTapsTable)>0) uploadBackgroundTapsTable(outputTables$backgroundTapsTable, con)
 if(nrow(outputTables$commentsTable)>0) uploadCommentTable(outputTables$commentsTable, con)
 
