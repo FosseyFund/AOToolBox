@@ -47,6 +47,7 @@ sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_scans", addFK
 
 
 createListSQLTables <- function(behav, layout, colmerge, con, newdbname, username, hostname, pwd){
+	newdbname <- tolower(newdbname)
 	listTables <- jsonOutputConversion(json.output.file =NULL, behav, layout, colmerge=colmerge)
 	#list of headers
 	tableHeaders <- list()

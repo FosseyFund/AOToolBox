@@ -654,7 +654,7 @@ database <- eventReactive(input$postgresConnect, {
     	all_cons <- dbListConnections(drv)
     for(con in all_cons) dbDisconnect(con)
 
-    con <- dbConnect(dbDriver("PostgreSQL"), dbname = DBname(),
+    con <- dbConnect(dbDriver("PostgreSQL"), dbname = tolower(DBname()),
                  host = DBhost(), port = DBport(),
                  user = DBuser(), password = DBpwd())
 #cat(file=stderr(), paste(DBname(), DBhost(), DBport(),DBuser(), DBpwd(), collapse=", "))
@@ -712,7 +712,7 @@ createDB <- eventReactive(input$createEmptyDB, {
 		}
 	 cat(file=stderr(), "Creating empty database...\n")
     #listTables1 <- jsonOutputConversion(json.output.file =NULL, behaviors.json.input2(), layout_info.json.input2(), colmerge=input$colmerge2)
-    con <- dbConnect(dbDriver("PostgreSQL"), dbname = DBname(),
+    con <- dbConnect(dbDriver("PostgreSQL"), dbname = tolower(DBname()),
                  host = DBhost(), port = DBport(),
                  user = DBuser(), password = DBpwd())
 ans <- createListSQLTables(behav = behaviors.json.input2(), layout=layout_info.json.input2(), colmerge=input$colmerge2, con=con, newdbname= newDBname(), username= DBuser(), hostname= DBhost(), pwd= DBpwd())
@@ -728,7 +728,7 @@ output$newDBcreated <- renderText({
       value = newDBname())
         output$table11 <- renderTable({
 				#cat(file=stderr(), "test")
-		con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = DBname(),
+		con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = tolower(DBname()),
                  host = DBhost(), port = DBport(),
                  user = DBuser(), password = DBpwd())
 		return(getTableList(con, DBname()))
@@ -775,7 +775,7 @@ dataOutput5 <- reactive({
 		
 	outputTables <- jsonOutputConversion(json.output.file.input3(), behaviors.json.input3(), layout_info.json.input3(), colmerge=input$colmerge3)
     cat(file=stderr(), "Uploading file...\n")
-	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = DBname(),
+	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = tolower(DBname()),
            host = DBhost(), port = DBport(),
            user = DBuser(), password = DBpwd())
 if(nrow(outputTables$sessionsTable)>0) uploadSessionsTable(outputTables$sessionsTable, con)
