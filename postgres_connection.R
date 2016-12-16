@@ -57,7 +57,6 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 	tableHeaders[[8]] <- names(listTables$focalVarsTable)
 	tableHeaders[[9]] <- names(listTables$continuousVarsTable)
 	tableHeaders[[10]] <- names(listTables$scanVarsTable)
-	
 	multipleSelectionCols <- tableHeaders
 	multipleSelectionCols2 <- lapply(multipleSelectionCols, function(temp) which(nchar(temp)==regexpr("[*]", temp)))
 	tableHeadersAll <- tableHeaders
