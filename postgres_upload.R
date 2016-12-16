@@ -288,5 +288,205 @@ uploadCommentTable <- function(commentsTable, con){
 	}
 }
 
+uploadScansIntermediateTables <- function(scansTable, con){
+	temp1 <- names(scansTable)[-c(1:5, (ncol(scansTable)-7):ncol(scansTable))]
+	temp2 <- fixHeader(temp1)
+	
+	if(length(which(nchar(temp1)==regexpr("[*]", temp1)))>0){
+	
+	tableHeaders <- temp2[which(nchar(temp1)==regexpr("[*]", temp1))]
 
+
+	for (i in 1:nrow(scansTable)){
+		temp3 <- unlist(as.list(scansTable[i,6:(ncol(scansTable)-8)]))[match(tableHeaders, temp2)]
+		for(j in 1:length(tableHeaders)){
+		vecValues <- unlist(strsplit(as.character(temp3[j]), ";"))
+		if(length(vecValues)>0){
+			for(k in 1:length(vecValues)){
+			command <- paste0("INSERT INTO accessory_tables.scan_data_", tableHeaders[j],"(device_ID, scan_time, scanned_individual_ID, ", tableHeaders[j],")
+   			 SELECT 
+   			 '",as.character(scansTable[i,]$device_ID),"',
+   			 '", timeFormat(as.character(scansTable[i,]$scan_timeStamp)),"',
+ 			 '", as.character(scansTable[i,]$scanned_individual_ID),"',
+			 '", vecValues[k],"'	
+			WHERE NOT EXISTS (SELECT 1 from accessory_tables.scan_data_",tableHeaders[j]," WHERE device_ID='",as.character(scansTable[i,]$device_ID),"' AND 	scan_time='",timeFormat(as.character(scansTable[i,]$scan_timeStamp)),"' AND scanned_individual_ID ='",as.character(scansTable[i,]$scanned_individual_ID),"' AND ",tableHeaders[j]," ='",vecValues[k],"');")
+			command <- gsub("''", "NULL", command)
+			#command <- gsub("NA", "NULL", command)
+			command <- gsub("'NULL'", "NULL", command)
+			command <- gsub("'NA'", "NULL", command)
+			dbGetQuery(con, command)
+		}
+		}
+	}
+	}
+}
+}
+
+uploadBehaviorsIntermediateTables <- function(behaviorsTable, con){
+	temp1 <- names(behaviorsTable)[-c(1:6, (ncol(behaviorsTable)-4):ncol(behaviorsTable))]
+	temp2 <- fixHeader(temp1)
+	
+	if(length(which(nchar(temp1)==regexpr("[*]", temp1)))>0){
+	
+	tableHeaders <- temp2[which(nchar(temp1)==regexpr("[*]", temp1))]
+
+
+	for (i in 1:nrow(behaviorsTable)){
+		temp3 <- unlist(as.list(behaviorsTable[i,7:(ncol(behaviorsTable)-5)]))[match(tableHeaders, temp2)]
+		for(j in 1:length(tableHeaders)){
+		vecValues <- unlist(strsplit(as.character(temp3[j]), ";"))
+		if(length(vecValues)>0){
+			for(k in 1:length(vecValues)){
+			command <- paste0("INSERT INTO accessory_tables.list_behaviors_", tableHeaders[j],"(device_ID, behavior_time, actor, subject, ", tableHeaders[j],")
+   			 SELECT 
+   			 '",as.character(behaviorsTable[i,]$device_ID),"',
+   			 '", timeFormat(as.character(behaviorsTable[i,]$behavior_timeStamp)),"',
+   			 '", as.character(behaviorsTable[i,]$actor),"',
+   			 '", as.character(behaviorsTable[i,]$subject),"',
+			 '", vecValues[k],"'	
+			WHERE NOT EXISTS (SELECT 1 from accessory_tables.list_behaviors_",tableHeaders[j]," WHERE device_ID='",as.character(behaviorsTable[i,]$device_ID),"' AND behavior_time='",timeFormat(as.character(behaviorsTable[i,]$behavior_timeStamp)),"' AND actor='",as.character(behaviorsTable[i,]$actor),"' AND	subject='",as.character(behaviorsTable[i,]$subject),"' AND ",tableHeaders[j]," ='",vecValues[k],"');")
+			command <- gsub("''", "NULL", command)
+			#command <- gsub("NA", "NULL", command)
+			command <- gsub("'NULL'", "NULL", command)
+			command <- gsub("'NA'", "NULL", command)
+			dbGetQuery(con, command)
+		}
+		}
+	}
+	}
+}
+}
+
+uploadscanVarsIntermediateTables <- function(scanVarsTable, con){
+	temp1 <- names(scanVarsTable)[-(1:4)]
+	temp2 <- fixHeader(temp1)
+	
+	if(length(which(nchar(temp1)==regexpr("[*]", temp1)))>0){
+	
+	tableHeaders <- temp2[which(nchar(temp1)==regexpr("[*]", temp1))]
+
+	for (i in 1:nrow(scanVarsTable)){
+		temp3 <- unlist(as.list(scanVarsTable[i,5:ncol(scanVarsTable)]))[match(tableHeaders, temp2)]
+		for(j in 1:length(tableHeaders)){
+		vecValues <- unlist(strsplit(as.character(temp3[j]), ";"))
+		if(length(vecValues)>0){
+			for(k in 1:length(vecValues)){
+			command <- paste0("INSERT INTO accessory_tables.scan_variables_", tableHeaders[j],"(device_ID, scan_time, scanVars, ", tableHeaders[j],")
+   			SELECT 
+			'",as.character(scanVarsTable[i,]$device_ID),"',
+ 			'", timeFormat(as.character(scanVarsTable[i,]$scan_timeStamp)),"',
+ 			'",as.character(scanVarsTable[i,]$scanVars),"',
+			'", vecValues[k],"'	
+			WHERE NOT EXISTS (SELECT 1 from accessory_tables.scan_variables_",tableHeaders[j]," WHERE device_ID='",as.character(scanVarsTable[i,]$device_ID),"' AND scan_time='",timeFormat(as.character(scanVarsTable[i,]$scan_timeStamp)),"' AND scanVars='",as.character(scanVarsTable[i,]$scanVars),"' AND ",tableHeaders[j]," ='",vecValues[k],"');")
+			command <- gsub("''", "NULL", command)
+			#command <- gsub("NA", "NULL", command)
+			command <- gsub("'NULL'", "NULL", command)
+			command <- gsub("'NA'", "NULL", command)
+			dbGetQuery(con, command)
+		}
+		}
+	}
+	}
+}
+}
+
+uploadfocalVarsIntermediateTables <- function(focalVarsTable, con){
+	temp1 <- names(focalVarsTable)[-(1:3)]
+	temp2 <- fixHeader(temp1)
+	
+	if(length(which(nchar(temp1)==regexpr("[*]", temp1)))>0){
+	
+	tableHeaders <- temp2[which(nchar(temp1)==regexpr("[*]", temp1))]
+
+	for (i in 1:nrow(focalVarsTable)){
+		temp3 <- unlist(as.list(focalVarsTable[i,4:ncol(focalVarsTable)]))[match(tableHeaders, temp2)]
+		for(j in 1:length(tableHeaders)){
+		vecValues <- unlist(strsplit(as.character(temp3[j]), ";"))
+		if(length(vecValues)>0){
+			for(k in 1:length(vecValues)){
+			command <- paste0("INSERT INTO accessory_tables.focal_variables_", tableHeaders[j],"(device_ID, focal_start_time, focalVars, ", tableHeaders[j],")
+   			SELECT 
+			'", as.character(focalVarsTable[i,]$device_ID),"',
+   			'", timeFormat(as.character(focalVarsTable[i,]$focal_start_timeStamp)),"',
+     		'", as.character(focalVarsTable[i,]$focalVars),"',
+			'", vecValues[k],"'	
+			WHERE NOT EXISTS (SELECT 1 from accessory_tables.focal_variables_",tableHeaders[j]," WHERE device_ID='",as.character(focalVarsTable[i,]$device_ID),"' AND focal_start_time='",timeFormat(as.character(focalVarsTable[i,]$focal_start_timeStamp)),"' AND focalVars='",as.character(focalVarsTable[i,]$focalVars),"' AND ",tableHeaders[j]," ='",vecValues[k],"');")
+			command <- gsub("''", "NULL", command)
+			#command <- gsub("NA", "NULL", command)
+			command <- gsub("'NULL'", "NULL", command)
+			command <- gsub("'NA'", "NULL", command)
+			dbGetQuery(con, command)
+		}
+		}
+	}
+	}
+}
+}
+
+uploadContinuousVarsIntermediateTables <- function(continuousVarsTable, con){
+	temp1 <- names(continuousVarsTable)[-(1:3)]
+	temp2 <- fixHeader(temp1)
+	
+	if(length(which(nchar(temp1)==regexpr("[*]", temp1)))>0){
+	
+	tableHeaders <- temp2[which(nchar(temp1)==regexpr("[*]", temp1))]
+
+	for (i in 1:nrow(continuousVarsTable)){
+		temp3 <- unlist(as.list(continuousVarsTable[i,4:ncol(continuousVarsTable)]))[match(tableHeaders, temp2)]
+		for(j in 1:length(tableHeaders)){
+		vecValues <- unlist(strsplit(as.character(temp3[j]), ";"))
+		if(length(vecValues)>0){
+			for(k in 1:length(vecValues)){
+			command <- paste0("INSERT INTO accessory_tables.continuous_variables_", tableHeaders[j],"(device_ID, focal_start_time, continuousVars, ", tableHeaders[j],")
+   			SELECT 
+			'", as.character(continuousVarsTable[i,]$device_ID),"',
+   			'", timeFormat(as.character(continuousVarsTable[i,]$focal_start_timeStamp)),"',
+     		'", as.character(continuousVarsTable[i,]$continuousVars),"',
+			'", vecValues[k],"'	
+			WHERE NOT EXISTS (SELECT 1 from accessory_tables.continuous_variables_",tableHeaders[j]," WHERE device_ID='",as.character(continuousVarsTable[i,]$device_ID),"' AND focal_start_time='",timeFormat(as.character(continuousVarsTable[i,]$focal_start_timeStamp)),"' AND continuousVars ='",as.character(continuousVarsTable[i,]$continuousVars),"' AND ",tableHeaders[j]," ='",vecValues[k],"');")
+			command <- gsub("''", "NULL", command)
+			#command <- gsub("NA", "NULL", command)
+			command <- gsub("'NULL'", "NULL", command)
+			command <- gsub("'NA'", "NULL", command)
+			dbGetQuery(con, command)
+		}
+		}
+	}
+	}
+}
+}
+
+
+uploadSessionVarsIntermediateTables <- function(sessionVarsTable, con){
+	temp1 <- names(sessionVarsTable)[-(1:2)]
+	temp2 <- fixHeader(temp1)
+	
+	if(length(which(nchar(temp1)==regexpr("[*]", temp1)))>0){
+	
+	tableHeaders <- temp2[which(nchar(temp1)==regexpr("[*]", temp1))]
+
+	for (i in 1:nrow(sessionVarsTable)){
+		temp3 <- unlist(as.list(sessionVarsTable[i,3:ncol(sessionVarsTable)]))[match(tableHeaders, temp2)]
+		for(j in 1:length(tableHeaders)){
+		vecValues <- unlist(strsplit(as.character(temp3[j]), ";"))
+		if(length(vecValues)>0){
+			for(k in 1:length(vecValues)){
+			command <- paste0("INSERT INTO accessory_tables.session_variables_", tableHeaders[j],"(device_ID, session_start_time, dayVars, ", tableHeaders[j],")
+   			SELECT 
+			'",as.character(sessionVarsTable[i,]$device_ID),"',
+   			'", timeFormat(as.character(sessionVarsTable[i,]$session_start_timeStamp)),"',
+     		'", as.character(sessionVarsTable[i,]$dayVars),"',
+			'", vecValues[k],"'	
+			WHERE NOT EXISTS (SELECT 1 from accessory_tables.session_variables_",tableHeaders[j]," WHERE device_ID='",as.character(sessionVarsTable[i,]$device_ID),"' AND session_start_time='",timeFormat(as.character(sessionVarsTable[i,]$session_start_timeStamp)),"' AND dayVars ='",as.character(sessionVarsTable[i,]$dayVars),"' AND ",tableHeaders[j]," ='",vecValues[k],"');")
+			command <- gsub("''", "NULL", command)
+			#command <- gsub("NA", "NULL", command)
+			command <- gsub("'NULL'", "NULL", command)
+			command <- gsub("'NA'", "NULL", command)
+			dbGetQuery(con, command)
+		}
+		}
+	}
+	}
+}
+}
 
