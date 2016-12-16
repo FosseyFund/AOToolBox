@@ -812,6 +812,7 @@ output$dataUploaded <- renderText({
 })
 
 # con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = "animal_observer", host = "localhost", port = 5432, user = "postgres", password = "postgres")
+# con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = "postgres", host = "localhost", port = 5432, user = "postgres", password = "postgres")
 # con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = "animal_observer5notmerged", host = "localhost", port = 5432, user = "postgres", password = "postgres")
 # dbGetQuery(con, "select *  from pg_tables where schemaname!='pg_catalog' AND schemaname!='information_schema';")##table list
 # dbGetQuery(con, "select count(*) from information_schema.columns where table_name='list_food_items';")##number of columns

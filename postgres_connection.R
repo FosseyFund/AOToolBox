@@ -18,6 +18,7 @@ fixHeader <- function(v)
 sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_scans", addFKey=TRUE){
 	ans <- list()
 	for(i in 1:length(lsvars)){
+	if(lsvars[[i]][1] != "_ID") {
 	#tableName <- gsub("[.]","_",gsub("[.][.]",".",make.names(names(lsvars[i]))))
 	tableName <- fixHeader(names(lsvars))[i]
 	ans <- c(ans, paste0("create table IF NOT EXISTS accessory_tables.", tableName," (
@@ -39,9 +40,11 @@ sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_scans", addFK
 	'",j,"' WHERE NOT EXISTS (SELECT 1 from accessory_tables.",tableName," WHERE value='",j,"');")
 	ans <- c(ans, command)
 	}
+	}
 }
 	return(ans)
 }
+
 
 createListSQLTables <- function(behav, layout, colmerge, con, newdbname, username, hostname, pwd){
 	listTables <- jsonOutputConversion(json.output.file =NULL, behav, layout, colmerge=colmerge)
