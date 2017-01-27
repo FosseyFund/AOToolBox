@@ -24,7 +24,7 @@ dyadic_fee3 <- data.frame(dyadic_fee2[,1:(indexx-1)], foods[rep(1:nrow(foods), n
 names(dyadic_fee3)[1:(indexx-1)]<-names(dyadic_fee2)[1:(indexx-1)]
 names(dyadic_fee3)[(indexx+ncol(foods)):ncol(dyadic_fee3)]<-names(dyadic_fee2)[(indexx+1):ncol(dyadic_fee2)]
 }
-empty <- foods[1,]; empty[1,] <- NA
+empty <- data.frame(foods[1,]); empty[1,] <- NA
 if(ncol(dyadic_nonfee)==indexx){
   dyadic_nonfee3 <- data.frame(dyadic_nonfee[,1:(indexx-1)], empty[rep(1, nrow(dyadic_nonfee)),], check.names=F)
 } else {
