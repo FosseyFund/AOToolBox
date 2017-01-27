@@ -24,11 +24,11 @@ dyadic_fee3 <- data.frame(dyadic_fee2[,1:(indexx-1)], foods[rep(1:nrow(foods), n
 names(dyadic_fee3)[1:(indexx-1)]<-names(dyadic_fee2)[1:(indexx-1)]
 names(dyadic_fee3)[(indexx+ncol(foods)):ncol(dyadic_fee3)]<-names(dyadic_fee2)[(indexx+1):ncol(dyadic_fee2)]
 }
-empty <- data.frame(foods[1,]); names(empty) <- names(foods);empty[1,] <- NA
+empty <- foods[1,, drop=FALSE];empty[1,] <- NA
 if(ncol(dyadic_nonfee)==indexx){
-  dyadic_nonfee3 <- data.frame(dyadic_nonfee[,1:(indexx-1)], empty[rep(1, nrow(dyadic_nonfee)),], check.names=F)
+  dyadic_nonfee3 <- data.frame(dyadic_nonfee[,1:(indexx-1)], empty[rep(1, nrow(dyadic_nonfee)),, drop=FALSE], check.names=F)
 } else {
-dyadic_nonfee3 <- data.frame(dyadic_nonfee[,1:(indexx-1)], empty[rep(1, nrow(dyadic_nonfee)),], dyadic_nonfee[,(indexx+1):ncol(dyadic_nonfee)], check.names=F)
+dyadic_nonfee3 <- data.frame(dyadic_nonfee[,1:(indexx-1)], empty[rep(1, nrow(dyadic_nonfee)),, drop=FALSE], dyadic_nonfee[,(indexx+1):ncol(dyadic_nonfee)], check.names=F)
 }
 names(dyadic_nonfee3)<-names(dyadic_fee3)
 
