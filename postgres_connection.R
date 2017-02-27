@@ -35,6 +35,7 @@ sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_scans", addFK
 	if(addFKey) ans <- c(ans, paste0("ALTER TABLE ", largeTable," ADD FOREIGN KEY (", tableName,") REFERENCES accessory_tables.", tableName,"(value) ON UPDATE CASCADE ON DELETE CASCADE;"))
 	
 	for (j in lsvars[[i]]){
+	j <- gsub("'","''",j)##add escape apostrophe when needed
 	command <- paste0("INSERT INTO accessory_tables.", tableName,"(value)
 	SELECT
 	'",j,"' WHERE NOT EXISTS (SELECT 1 from accessory_tables.",tableName," WHERE value='",j,"');")
@@ -48,7 +49,7 @@ sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_scans", addFK
 
 createListSQLTables <- function(behav, layout, colmerge, con, newdbname, username, hostname, pwd){
 	newdbname <- tolower(newdbname)
-	listTables <- jsonOutputConversion(json.output.file =NULL, behav, layout, colmerge=colmerge)
+	listTables <- jsonOutputConversion(json.output.file = NULL, behaviors.json=behav, layout_info.json=layout, colmerge=colmerge)
 	#list of headers
 	tableHeaders <- list()
 	tableHeaders[[1]] <- names(listTables$sessionsTable)
