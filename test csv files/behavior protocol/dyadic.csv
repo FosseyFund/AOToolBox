@@ -1,0 +1,9 @@
+BEHAVIOR,CONTEXT,MUTUAL,_FOOD
+Aggresses,Feeding,,_FOOD
+Aggresses,Moving,,
+Aggresses,Resting,,
+Grooms,,Yes,
+Grooms,,No,
+Displaces,Feeding,,_FOOD
+Displaces,Moving,,
+Displaces,Resting,,
