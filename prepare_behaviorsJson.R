@@ -5,10 +5,17 @@ if(is.null(dat)) {
 	return(NULL)
 } else {
 names(dat) <- gsub("[.]", "_", names(dat))##necessary due to use of unlist in jsonoutputconversion.R
+names(dat) <- gsub("'", "`", names(dat))##necessary due to use of apostrophe 
 allbehav <- dat[!duplicated(dat),]	
 
 
-for(i in 1:ncol(allbehav)) allbehav[,i] <- factor(allbehav[,i], levels=as.character(unique(allbehav[,i])))
+for(i in 1:ncol(allbehav)) {
+	allbehav[,i] <- as.character(allbehav[,i])
+	allbehav[,i] <- gsub("'", "`", allbehav[,i])
+	allbehav[,i] <- factor(allbehav[,i], levels=as.character(unique(allbehav[,i])))
+	}
+
+
 
 for (i in ncol(allbehav):1){
 	allbehav[allbehav[,i]=="" & !is.na(allbehav[,i]),i] <- NA
