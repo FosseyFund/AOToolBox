@@ -301,7 +301,7 @@ uploadScansIntermediateTables <- function(scansTable, con){
 		temp3 <- unlist(as.list(scansTable[i,6:(ncol(scansTable)-8)]))[match(tableHeaders, temp2)]
 		for(j in 1:length(tableHeaders)){
 		vecValues <- unlist(strsplit(as.character(temp3[j]), ";"))
-		if(length(vecValues)>0){
+		if(length(na.omit(vecValues))>0){
 			for(k in 1:length(vecValues)){
 			command <- paste0("INSERT INTO accessory_tables.scan_data_", tableHeaders[j],"(device_ID, scan_time, scanned_individual_ID, ", tableHeaders[j],")
    			 SELECT 
@@ -335,7 +335,7 @@ uploadBehaviorsIntermediateTables <- function(behaviorsTable, con){
 		temp3 <- unlist(as.list(behaviorsTable[i,7:(ncol(behaviorsTable)-5)]))[match(tableHeaders, temp2)]
 		for(j in 1:length(tableHeaders)){
 		vecValues <- unlist(strsplit(as.character(temp3[j]), ";"))
-		if(length(vecValues)>0){
+		if(length(na.omit(vecValues))>0){
 			for(k in 1:length(vecValues)){
 			command <- paste0("INSERT INTO accessory_tables.list_behaviors_", tableHeaders[j],"(device_ID, behavior_time, actor, subject, ", tableHeaders[j],")
    			 SELECT 
@@ -369,7 +369,7 @@ uploadscanVarsIntermediateTables <- function(scanVarsTable, con){
 		temp3 <- unlist(as.list(scanVarsTable[i,5:ncol(scanVarsTable)]))[match(tableHeaders, temp2)]
 		for(j in 1:length(tableHeaders)){
 		vecValues <- unlist(strsplit(as.character(temp3[j]), ";"))
-		if(length(vecValues)>0){
+		if(length(na.omit(vecValues))>0){
 			for(k in 1:length(vecValues)){
 			command <- paste0("INSERT INTO accessory_tables.scan_variables_", tableHeaders[j],"(device_ID, scan_time, scanVars, ", tableHeaders[j],")
    			SELECT 
@@ -402,7 +402,7 @@ uploadfocalVarsIntermediateTables <- function(focalVarsTable, con){
 		temp3 <- unlist(as.list(focalVarsTable[i,4:ncol(focalVarsTable)]))[match(tableHeaders, temp2)]
 		for(j in 1:length(tableHeaders)){
 		vecValues <- unlist(strsplit(as.character(temp3[j]), ";"))
-		if(length(vecValues)>0){
+		if(length(na.omit(vecValues))>0){
 			for(k in 1:length(vecValues)){
 			command <- paste0("INSERT INTO accessory_tables.focal_variables_", tableHeaders[j],"(device_ID, focal_start_time, focalVars, ", tableHeaders[j],")
    			SELECT 
@@ -435,7 +435,7 @@ uploadContinuousVarsIntermediateTables <- function(continuousVarsTable, con){
 		temp3 <- unlist(as.list(continuousVarsTable[i,4:ncol(continuousVarsTable)]))[match(tableHeaders, temp2)]
 		for(j in 1:length(tableHeaders)){
 		vecValues <- unlist(strsplit(as.character(temp3[j]), ";"))
-		if(length(vecValues)>0){
+		if(length(na.omit(vecValues))>0){
 			for(k in 1:length(vecValues)){
 			command <- paste0("INSERT INTO accessory_tables.continuous_focal_variables_", tableHeaders[j],"(device_ID, focal_start_time, continuousVars, ", tableHeaders[j],")
    			SELECT 
@@ -469,7 +469,7 @@ uploadSessionVarsIntermediateTables <- function(sessionVarsTable, con){
 		temp3 <- unlist(as.list(sessionVarsTable[i,3:ncol(sessionVarsTable)]))[match(tableHeaders, temp2)]
 		for(j in 1:length(tableHeaders)){
 		vecValues <- unlist(strsplit(as.character(temp3[j]), ";"))
-		if(length(vecValues)>0){
+		if(length(na.omit(vecValues))>0){
 			for(k in 1:length(vecValues)){
 			command <- paste0("INSERT INTO accessory_tables.session_variables_", tableHeaders[j],"(device_ID, session_start_time, dayVars, ", tableHeaders[j],")
    			SELECT 
