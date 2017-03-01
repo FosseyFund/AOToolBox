@@ -5,7 +5,7 @@ if(is.null(dat)) {
 	return(NULL)
 } else {
 names(dat) <- gsub("[.]", "_", names(dat))##necessary due to use of unlist in jsonoutputconversion.R
-names(dat) <- gsub("'", "`", names(dat))##necessary due to use of apostrophe 
+names(dat) <- gsub("'", "_", names(dat))##necessary due to use of apostrophe 
 allbehav <- dat[!duplicated(dat),]	
 
 
