@@ -466,7 +466,7 @@ dataOutput <- reactive({
 		 paste('sessionsTable.csv', sep='') 
 	 },
     content = function(file) {
-     write.csv(dataOutput()$sessionsTable, file, row.names=F)
+     write.csv(dataOutput()$sessionsTable, file, row.names=F, na="")
     }
   )
 	output$downloadFocalsTable <- downloadHandler(
@@ -474,7 +474,7 @@ dataOutput <- reactive({
 		 paste('focalsTable.csv', sep='') 
 	 },
     content = function(file) {
-     write.csv(dataOutput()$focalsTable, file, row.names=F)
+     write.csv(dataOutput()$focalsTable, file, row.names=F, na="")
     }
   )
 	output$downloadBehaviorsTable <- downloadHandler(
@@ -482,7 +482,7 @@ dataOutput <- reactive({
 		 paste('behaviorsTable.csv', sep='') 
 	 },
     content = function(file) {
-     write.csv(dataOutput()$behaviorsTable, file, row.names=F)
+     write.csv(dataOutput()$behaviorsTable, file, row.names=F, na="")
     }
   )
 	output$downloadScansTable <- downloadHandler(
@@ -490,7 +490,7 @@ dataOutput <- reactive({
 		 paste('scansTable.csv', sep='') 
 	 },
     content = function(file) {
-     write.csv(dataOutput()$scansTable, file, row.names=F)
+     write.csv(dataOutput()$scansTable, file, row.names=F, na="")
     }
   )
   	output$downloadBackgroundTapsTable <- downloadHandler(
@@ -498,7 +498,7 @@ dataOutput <- reactive({
 		 paste('backgroundTapsTable.csv', sep='') 
 	 },
     content = function(file) {
-     write.csv(dataOutput()$backgroundTapsTable, file, row.names=F)
+     write.csv(dataOutput()$backgroundTapsTable, file, row.names=F, na="")
     }
   )
    	output$downloadCommentsTable <- downloadHandler(
@@ -506,7 +506,7 @@ dataOutput <- reactive({
 		 paste('commentsTable.csv', sep='') 
 	 },
     content = function(file) {
-     write.csv(dataOutput()$commentsTable, file, row.names=F)
+     write.csv(dataOutput()$commentsTable, file, row.names=F, na="")
     }
   )
   output$downloadDayVarsTable <- downloadHandler(
@@ -514,7 +514,7 @@ dataOutput <- reactive({
 		 paste('dayVarsTable.csv', sep='') 
 	 },
     content = function(file) {
-     write.csv(dataOutput()$dayVarsTable, file, row.names=F)
+     write.csv(dataOutput()$dayVarsTable, file, row.names=F, na="")
     }
   )
   output$downloadFocalVarsTable <- downloadHandler(
@@ -522,7 +522,7 @@ dataOutput <- reactive({
 		 paste('focalVarsTable.csv', sep='') 
 	 },
     content = function(file) {
-     write.csv(dataOutput()$focalVarsTable, file, row.names=F)
+     write.csv(dataOutput()$focalVarsTable, file, row.names=F, na="")
     }
   )
   output$downloadContinuousVarsTable <- downloadHandler(
@@ -530,7 +530,7 @@ dataOutput <- reactive({
 		 paste('continuousVarsTable.csv', sep='') 
 	 },
     content = function(file) {
-     write.csv(dataOutput()$continuousVarsTable, file, row.names=F)
+     write.csv(dataOutput()$continuousVarsTable, file, row.names=F, na="")
     }
   )
   output$downloadScanVarsTable <- downloadHandler(
@@ -538,7 +538,7 @@ dataOutput <- reactive({
 		 paste('scanVarsTable.csv', sep='') 
 	 },
     content = function(file) {
-     write.csv(dataOutput()$scanVarsTable, file, row.names=F)
+     write.csv(dataOutput()$scanVarsTable, file, row.names=F, na="")
     }
   )
   
@@ -554,7 +554,7 @@ dataOutput <- reactive({
          
          for (i in 1:length(dataOutput())){
          	#cat(file=stderr(), paste0(names(dataOutput())[i], ".csv"))
-         	write.csv(dataOutput()[[i]], file=paste0(names(dataOutput())[i], ".csv"), row.names=F)
+         	write.csv(dataOutput()[[i]], file=paste0(names(dataOutput())[i], ".csv"), row.names=F, na="")
          	
          }
                   
