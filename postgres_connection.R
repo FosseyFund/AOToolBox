@@ -89,9 +89,7 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname =  newdbname, host = hostname, port = 5432, user = username, password = pwd)
 	sqlCode <- list()
 	sqlCode <- c(sqlCode, "create schema main_tables; create schema accessory_tables; SET client_min_messages = error;")
-	sqlCode <- c(sqlCode, "drop schema IF EXISTS public;")
-	#sqlCode <- c(sqlCode, "create schema accessory_tables;")
-	
+	sqlCode <- c(sqlCode, "drop schema IF EXISTS public;")	
 	sqlCode <- c(sqlCode, "CREATE OR REPLACE FUNCTION main_tables.row_modif_stamp() RETURNS trigger AS $BODY$
    	BEGIN
        NEW.last_modif_on := current_timestamp;
@@ -350,7 +348,7 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 			PRIMARY KEY (",paste(tabList[tabList[,1]==i,3],",",varName),"),
 			FOREIGN KEY (",tabList[tabList[,1]==i,3],") REFERENCES main_tables.",tabList[tabList[,1]==i,2],"(",tabList[tabList[,1]==i,3],") ON UPDATE CASCADE ON DELETE CASCADE
 			);
-			IF EXISTS (SELECT 1 FROM pg_tables WHERE  schemaname = 'accessory_tables' AND tablename = 'varName') THEN
+			IF EXISTS (SELECT 1 FROM pg_tables WHERE  schemaname = 'accessory_tables' AND tablename = '",varName,"') THEN
 			ALTER TABLE accessory_tables.",tabList[tabList[,1]==i,2],"_", varName, " ADD FOREIGN KEY (",varName,") REFERENCES accessory_tables.",varName,"(value) ON UPDATE CASCADE ON DELETE CASCADE;
 			END IF;
 			END IF;
@@ -368,7 +366,11 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 	if(length(multipleSelected)!=0){
 			for (j in multipleSelected){
 			varName <- fixHeader(names(clade))[j]
-			sqlCode <- c(sqlCode, paste0("create table IF NOT EXISTS accessory_tables.",tabList[tabList[,1]==3,2],"_", varName, " (
+			sqlCode <- c(sqlCode, paste0("
+			DO $$
+			BEGIN
+			IF NOT EXISTS (SELECT 1 FROM pg_tables WHERE  schemaname = 'accessory_tables' AND tablename = '",tabList[tabList[,1]==3,2],"_", varName,"') THEN 
+			create table accessory_tables.",tabList[tabList[,1]==3,2],"_", varName, " (
 			", tabList[tabList[,1]==3,4], ",
 			", varName," text,
 			created_by text DEFAULT CURRENT_USER,
@@ -376,9 +378,14 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 			last_modif_by text DEFAULT CURRENT_USER,
 			last_modif_on timestamp DEFAULT CURRENT_TIMESTAMP,
 			PRIMARY KEY (",paste(tabList[tabList[,1]==3,3],",",varName),"),
-			FOREIGN KEY (",tabList[tabList[,1]==3,3],") REFERENCES main_tables.",tabList[tabList[,1]==3,2],"(",tabList[tabList[,1]==3,3],") ON UPDATE CASCADE ON DELETE CASCADE,
-			FOREIGN KEY (",varName,") REFERENCES accessory_tables.",varName,"(value) ON UPDATE CASCADE ON DELETE CASCADE
+			FOREIGN KEY (",tabList[tabList[,1]==3,3],") REFERENCES main_tables.",tabList[tabList[,1]==3,2],"(",tabList[tabList[,1]==3,3],") ON UPDATE CASCADE ON DELETE CASCADE
 			);
+			IF EXISTS (SELECT 1 FROM pg_tables WHERE  schemaname = 'accessory_tables' AND tablename = '",varName,"') THEN
+			ALTER TABLE accessory_tables.",tabList[tabList[,1]==3,2],"_", varName, " ADD FOREIGN KEY (",varName,") REFERENCES accessory_tables.",varName,"(value) ON UPDATE CASCADE ON DELETE CASCADE;
+			END IF;
+			END IF;
+			END;
+			$$;
 			DROP TRIGGER IF EXISTS row_modif_stamp ON accessory_tables.", tabList[tabList[,1]==3,2],"_", varName,";
 			CREATE TRIGGER row_modif_stamp BEFORE INSERT OR UPDATE ON accessory_tables.", tabList[tabList[,1]==3,2],"_", varName," FOR EACH ROW EXECUTE PROCEDURE main_tables.row_modif_stamp();"
 			))
