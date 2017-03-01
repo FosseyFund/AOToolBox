@@ -437,13 +437,13 @@ uploadContinuousVarsIntermediateTables <- function(continuousVarsTable, con){
 		vecValues <- unlist(strsplit(as.character(temp3[j]), ";"))
 		if(length(vecValues)>0){
 			for(k in 1:length(vecValues)){
-			command <- paste0("INSERT INTO accessory_tables.continuous_variables_", tableHeaders[j],"(device_ID, focal_start_time, continuousVars, ", tableHeaders[j],")
+			command <- paste0("INSERT INTO accessory_tables.continuous_focal_variables_", tableHeaders[j],"(device_ID, focal_start_time, continuousVars, ", tableHeaders[j],")
    			SELECT 
 			'", as.character(continuousVarsTable[i,]$device_ID),"',
    			'", timeFormat(as.character(continuousVarsTable[i,]$focal_start_timeStamp)),"',
      		'", as.character(continuousVarsTable[i,]$continuousVars),"',
 			'", vecValues[k],"'	
-			WHERE NOT EXISTS (SELECT 1 from accessory_tables.continuous_variables_",tableHeaders[j]," WHERE device_ID='",as.character(continuousVarsTable[i,]$device_ID),"' AND focal_start_time='",timeFormat(as.character(continuousVarsTable[i,]$focal_start_timeStamp)),"' AND continuousVars ='",as.character(continuousVarsTable[i,]$continuousVars),"' AND ",tableHeaders[j]," ='",vecValues[k],"');")
+			WHERE NOT EXISTS (SELECT 1 from accessory_tables.continuous_focal_variables_",tableHeaders[j]," WHERE device_ID='",as.character(continuousVarsTable[i,]$device_ID),"' AND focal_start_time='",timeFormat(as.character(continuousVarsTable[i,]$focal_start_timeStamp)),"' AND continuousVars ='",as.character(continuousVarsTable[i,]$continuousVars),"' AND ",tableHeaders[j]," ='",vecValues[k],"');")
 			command <- gsub("''", "NULL", command)
 			#command <- gsub("NA", "NULL", command)
 			command <- gsub("'NULL'", "NULL", command)
