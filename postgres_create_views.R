@@ -154,3 +154,180 @@ paste(leftOuterJoin(nVars=length(aggVars)), collapse="\n "),
 );"))
 }
 }
+
+######################################
+#########################trigger function
+######################################
+
+behaviorsViewTriggerCreate <- function(){
+	mainTablesList <- lsTables[lsTables$schemaname=="main_tables",]$tablename
+if(prod(c("list_sessions", "list_focals", "list_behaviors")%in%mainTablesList)==0) stop("list_sessions, list_focals and/or list_behaviors are missing in this database!")
+lsBehaviorsCols <- dbGetQuery(con, "SELECT *
+FROM information_schema.columns
+WHERE table_schema = 'main_tables'
+  AND table_name   = 'list_behaviors'")$column_name
+lsBehaviorsCols <- lsBehaviorsCols[!lsBehaviorsCols%in%c("device_id","focal_start_time","behavior_time","actor","subject","comment","latitude","longitude","gps_horizontal_precision","altitude","created_by","created_on","last_modif_by","last_modif_on")]
+  
+accessoryTablesList <- lsTables[lsTables$schemaname=="accessory_tables",]$tablename
+normalizedTables <- accessoryTablesList[regexpr("list_behaviors_", accessoryTablesList)==1]
+if(length(normalizedTables)!=0) {
+	
+insertNewNormalizedTableItem <- function(agg='food_item'){
+	paste0("IF NEW.",agg," IS NOT NULL THEN
+FOR i in SELECT unnest(string_to_array(NEW.",agg,", ';'))
+LOOP
+INSERT INTO accessory_tables.list_behaviors_",agg," (device_id, 
+		behavior_time, 
+		actor,
+		subject,
+		",agg,") 
+	VALUES(NEW.device_id, 
+		NEW.behavior_time, 
+		NEW.actor,
+		NEW.subject,
+		i
+		)
+	ON CONFLICT DO NOTHING;
+END LOOP;
+END IF;"
+)
+}
+aggVars <- gsub("list_behaviors_", "", normalizedTables) 
+
+temp <- paste(unlist(lapply(aggVars, insertNewNormalizedTableItem)), collapse="\n")
+} else temp <- "" 
+
+
+	return(paste0("
+	CREATE OR REPLACE FUNCTION main_tables.all_focal_data_view_insert()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $function$
+DECLARE i text;
+BEGIN
+	IF (NEW.device_id IS NOT NULL AND 
+	NEW.session_start_time IS NOT NULL) THEN
+        INSERT INTO  main_tables.list_sessions (device_id,
+		session_start_time,
+		session_end_time,
+		group_id,
+		pin_code_name,
+		layout_info_json_version,
+		behaviors_json_version,
+		gps_on,
+		compass_on, 
+		map_mode_on,
+		physical_contact_threshold)
+	VALUES(NEW.device_id,
+		NEW.session_start_time,
+		NEW.session_end_time,
+		NEW.group_id,
+		NEW.pin_code_name,
+		NEW.layout_info_json_version,
+		NEW.behaviors_json_version,
+		NEW.gps_on,
+		NEW.compass_on,
+		NEW.map_mode_on,
+		NEW.physical_contact_threshold) 
+	ON CONFLICT DO NOTHING;
+	IF (NEW.focal_start_time IS NOT NULL) THEN
+	
+
+INSERT INTO  main_tables.list_focals (device_id, 
+		session_start_time, 
+		focal_start_time, 
+		focal_end_time, 
+		set_duration, 
+		set_scan_interval,
+		focal_individual_id) 
+	VALUES(NEW.device_id,
+		NEW.session_start_time, 
+		NEW.focal_start_time,
+		NEW.focal_end_time, 
+		NEW.set_duration, 
+		NEW.set_scan_interval, 
+		NEW.focal_individual_id)
+	ON CONFLICT DO NOTHING;
+
+	IF (NEW.behavior_time IS NOT NULL AND
+		NEW.actor IS NOT NULL AND
+		NEW.subject IS NOT NULL) THEN
+	INSERT INTO  main_tables.list_behaviors (device_id, 
+		focal_start_time, 
+		behavior_time, 
+		actor,
+		subject,
+		", paste(lsBehaviorsCols, collapse=', '),",		
+		comment,
+		latitude,
+		longitude,
+		gps_horizontal_precision,
+		altitude) 
+	VALUES(NEW.device_id, 
+		NEW.focal_start_time, 
+		NEW.behavior_time, 
+		NEW.actor,
+		NEW.subject,
+		", paste(paste('NEW', lsBehaviorsCols, sep="."), collapse=', '), ",
+		NEW.comment,
+		NEW.latitude,
+		NEW.longitude,
+		NEW.gps_horizontal_precision,
+		NEW.altitude)
+	ON CONFLICT DO NOTHING;",
+	temp,"
+END IF;
+END IF;
+END IF;
+
+    RETURN NEW;
+ 
+    END;
+$function$;
+
+DROP TRIGGER IF EXISTS all_focal_data_view_insert_trig ON main_tables.all_focal_data_view;
+CREATE TRIGGER all_focal_data_view_insert_trig
+    INSTEAD OF INSERT ON
+      main_tables.all_focal_data_view FOR EACH ROW EXECUTE PROCEDURE main_tables.all_focal_data_view_insert();
+"))
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
