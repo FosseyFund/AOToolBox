@@ -16,8 +16,8 @@ lsBehaviorsCols <- lsBehaviorsCols[!lsBehaviorsCols%in%c("device_id","focal_star
 accessoryTablesList <- lsTables[lsTables$schemaname=="accessory_tables",]$tablename
 normalizedTables <- accessoryTablesList[regexpr("list_behaviors_", accessoryTablesList)==1]
 if(length(normalizedTables)==0) {
-	return(paste("DROP VIEW IF EXISTS main_tables.all_focal_data_view2;
-CREATE VIEW main_tables.all_focal_data_view2 AS (
+	return(paste("DROP VIEW IF EXISTS main_tables.all_focal_data_view;
+CREATE VIEW main_tables.all_focal_data_view AS (
 
  SELECT list_sessions.device_id,
     list_sessions.session_start_time,
@@ -101,8 +101,10 @@ for(i in 2:nVars){
 }
 #paste(leftOuterJoin(nVars=3), collapse="\n ")
 
-return(paste("DROP VIEW IF EXISTS main_tables.all_focal_data_view2;
-CREATE VIEW main_tables.all_focal_data_view2 AS (
+
+
+return(paste("DROP VIEW IF EXISTS main_tables.all_focal_data_view;
+CREATE VIEW main_tables.all_focal_data_view AS (
 
  SELECT list_sessions.device_id,
     list_sessions.session_start_time,
