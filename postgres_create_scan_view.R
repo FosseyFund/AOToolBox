@@ -287,7 +287,7 @@ CREATE TRIGGER all_scan_data_view_insert_trig
 }
 
 
-scansViewTriggerCreate()
+#scansViewTriggerCreate()
 
 
 
