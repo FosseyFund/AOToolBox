@@ -35,6 +35,7 @@ CREATE VIEW main_tables.all_scan_data_view AS (
     list_scans.longitude,
     list_scans.gps_horizontal_precision,
     list_scans.altitude,
+    list_scans.compass_bearing,
     list_sessions.gps_on,
     list_sessions.compass_on,
     list_sessions.map_mode_on,
@@ -53,7 +54,7 @@ CREATE VIEW main_tables.all_scan_data_view AS (
 } else {
 
 aggVars <- gsub("scan_data_", "", normalizedTables)
- 
+
 list_scans_agg <- function(agg="part_eaten", index=1)
 {
       
@@ -243,14 +244,16 @@ INSERT INTO  main_tables.list_focals (device_id,
             latitude,
             longitude,
             gps_horizontal_precision,
-            altitude) 
+            altitude,
+            compass_bearing) 
       VALUES(NEW.device_id, 
             NEW.focal_start_time, 
             NEW.scan_time, 
             NEW.latitude,
             NEW.longitude,
             NEW.gps_horizontal_precision,
-            NEW.altitude)
+            NEW.altitude,
+            NEW.compass_bearing)
       ON CONFLICT DO NOTHING;
       
       IF (NEW.scanned_individual_id IS NOT NULL) THEN
