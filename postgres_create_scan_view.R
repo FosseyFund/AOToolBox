@@ -147,7 +147,7 @@ paste(leftOuterJoin(nVars=length(aggVars)), collapse="\n "),
 #########################trigger function
 ######################################
 
-scansViewTriggerCreate <- function(){
+scansViewTriggerCreate <- function(con){
 lsTables <- dbGetQuery(con, "select *  from pg_tables where schemaname!='pg_catalog' AND schemaname!='information_schema';")
 
 mainTablesList <- lsTables[lsTables$schemaname=="main_tables",]$tablename

@@ -18,6 +18,10 @@ source("prepare_layoutInfoJSON.R")
 source("small_tables_upload.R")
 source("postgres_connection.R")
 source("postgres_upload.R")
+source("postgres_create_focal_view.R")
+source("postgres_create_scan_view.R")
+
+
 options(shiny.maxRequestSize=20*1024^2)
 includesFOOD <- function(dat)
 {

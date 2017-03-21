@@ -159,7 +159,7 @@ paste(leftOuterJoin(nVars=length(aggVars)), collapse="\n "),
 #########################trigger function
 ######################################
 
-behaviorsViewTriggerCreate <- function(){
+behaviorsViewTriggerCreate <- function(con){
 	mainTablesList <- lsTables[lsTables$schemaname=="main_tables",]$tablename
 if(prod(c("list_sessions", "list_focals", "list_behaviors")%in%mainTablesList)==0) stop("list_sessions, list_focals and/or list_behaviors are missing in this database!")
 lsBehaviorsCols <- dbGetQuery(con, "SELECT *
