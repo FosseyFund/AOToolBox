@@ -413,6 +413,12 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 	}
 
 	dbGetQuery(con, paste(unlist(sqlCode), collapse=" "))
+	dbGetQuery(con, "set search_path to main_tables;")
+	dbGetQuery(con, behaviorsViewCreate(con))
+	dbGetQuery(con, behaviorsViewTriggerCreate(con))
+	dbGetQuery(con, scansViewCreate(con))
+	dbGetQuery(con, scansViewTriggerCreate(con))
+
 	
 	cat(file=stderr(), paste0("Database ", newdbname ," created!\n"))
 	return("success")
