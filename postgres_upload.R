@@ -90,7 +90,7 @@ uploadScansTable <- function(scansTable, con){
 	tableHeaders <- fixHeader(names(scansTable))
 	
 	for (i in 1:nrow(scansTable)){
-		command <- paste("INSERT INTO main_tables.list_scans(device_ID, focal_start_time, scan_time, latitude, longitude, gps_horizontal_precision, altitude)
+		command <- paste("INSERT INTO main_tables.list_scans(device_ID, focal_start_time, scan_time, latitude, longitude, gps_horizontal_precision, altitude, compass_bearing)
     SELECT 
     '",as.character(scansTable[i,]$device_ID),"',
     '",timeFormat(as.character(scansTable[i,]$focal_start_timeStamp)),"',
@@ -98,7 +98,8 @@ uploadScansTable <- function(scansTable, con){
     ", naFormat(as.character(scansTable[i,]$latitude)),",
     ", naFormat(as.character(scansTable[i,]$longitude)),",
     ", naFormat(as.character(scansTable[i,]$gps_horizontal_precision)),",
-    ", naFormat(as.character(scansTable[i,]$altitude)),"
+    ", naFormat(as.character(scansTable[i,]$altitude)),",
+    ", naFormat(as.character(scansTable[i,]$compass_bearing)),"
 	WHERE NOT EXISTS (SELECT 1 from main_tables.list_scans WHERE device_ID='",as.character(scansTable[i,]$device_ID),"' AND scan_time ='",timeFormat(as.character(scansTable[i,]$scan_timeStamp)),"');", sep="")
 		command <- gsub("''", "NULL", command)
 		#command <- gsub("NA", "NULL", command)
