@@ -715,7 +715,7 @@ createDB <- eventReactive(input$createEmptyDB, {
     con <- dbConnect(dbDriver("PostgreSQL"), dbname = tolower(DBname()),
                  host = DBhost(), port = DBport(),
                  user = DBuser(), password = DBpwd())
-ans <- createListSQLTables(behav = behaviors.json.input2(), layout=layout_info.json.input2(), colmerge=input$colmerge2, con=con, newdbname= newDBname(), username= DBuser(), hostname= DBhost(), pwd= DBpwd())
+ans <- createListSQLTables(behav = behaviors.json.input2(), layout=layout_info.json.input2(), colmerge=input$colmerge2, con=con, newdbname= newDBname(), username= DBuser(), hostname= DBhost(), pwd= DBpwd(), portname=DBport())
 all_cons <- dbListConnections(dbDriver("PostgreSQL"))
     for(con in all_cons) dbDisconnect(con)
     return(ans)

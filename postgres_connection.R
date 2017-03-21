@@ -47,7 +47,7 @@ sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_scans", addFK
 }
 
 
-createListSQLTables <- function(behav, layout, colmerge, con, newdbname, username, hostname, pwd){
+createListSQLTables <- function(behav, layout, colmerge, con, newdbname, username, hostname, portname, pwd){
 	newdbname <- tolower(newdbname)
 	listTables <- jsonOutputConversion(json.output.file = NULL, behaviors.json=behav, layout_info.json=layout, colmerge=colmerge)
 	#list of headers
@@ -86,7 +86,7 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 	dbGetQuery(con, paste0("create database ",newdbname,";"))
 	all_cons <- dbListConnections(dbDriver("PostgreSQL"))
     for(con in all_cons) dbDisconnect(con)
-	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname =  newdbname, host = hostname, port = 5432, user = username, password = pwd)
+	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname =  newdbname, host = hostname, port = portname, user = username, password = pwd)
 	sqlCode <- list()
 	sqlCode <- c(sqlCode, "create schema main_tables; create schema accessory_tables; SET client_min_messages = error;")
 	sqlCode <- c(sqlCode, "drop schema IF EXISTS public;")	
