@@ -115,6 +115,7 @@ CREATE VIEW main_tables.all_scan_data_view AS (
     list_scans.longitude,
     list_scans.gps_horizontal_precision,
     list_scans.altitude,
+    list_scans.compass_bearing,
     list_sessions.gps_on,
     list_sessions.compass_on,
     list_sessions.map_mode_on,
@@ -288,44 +289,4 @@ CREATE TRIGGER all_scan_data_view_insert_trig
       main_tables.all_scan_data_view FOR EACH ROW EXECUTE PROCEDURE main_tables.all_scan_data_view_insert();
 "))
 }
-
-
-#scansViewTriggerCreate()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
