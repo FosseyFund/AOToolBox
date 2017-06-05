@@ -23,18 +23,18 @@ shinyApp(
   	downloadButton("downloadBehaviorsView", "Download behaviors", icon=icon('download'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
   	downloadButton("downloadScansView", "Download scans", icon=icon('download'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
   	HTML("<h3><b>    Sessions</b></h3>"),
-	br(),    
+	br(),
     d3tfOutput('sessionsDT', height = "auto"),
-	br(),    
+	br(),
 	actionButton('duplicateSessionRow', 'Duplicate selected row', icon=icon('copy'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
 	#actionButton('addBlankSessionRow', 'Add blank row', icon=icon('plus'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
 	actionButton('deleteSessionRow', 'Delete selected row', icon=icon('close'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
     hr(),
     hr(),
     HTML("<h3><b>    Focal samples</b></h3>"),
-	br(),    
+	br(),
     d3tfOutput('focalsDT', height = "auto"),
-	br(),    
+	br(),
     hr(),
     hr(),
     HTML("<h3><b>    Dyadic and self-directed/health data</b></h3>"),
@@ -141,7 +141,8 @@ shinyApp(
  
  
 	observeEvent(input$sessionsDT_select, {
-		     # cat(file=stderr(), paste0("ncol(focalsRV()) = ", ncol(focalsRV()), "\nnrow(focalsRV()) = ", nrow(focalsRV()), "\n"))
+		     cat(file=stderr(), paste0("is.null(input$sessionsDT_select) = ", is.null(input$sessionsDT_select), "\n"))
+	if(is.null(input$sessionsDT_select)) output$focalDT <- NULL
 	output$focalsDT <- renderD3tf({
     tableProps <- list(
       btn_reset = TRUE,
@@ -162,6 +163,8 @@ shinyApp(
 	})    	    
     	  
 	observeEvent(input$focalsDT_select, {
+			if(is.null(input$focalsDT_select)) output$behaviorsDT <- NULL
+
 		output$behaviorsDT <- renderD3tf({
     tableProps <- list(
       btn_reset = TRUE,
@@ -342,7 +345,8 @@ isolate({
       views$dat1 <- views$dat1[!(views$dat1$device_id==pk1 & views$dat1$session_start_time==pk2),]
       views$dat2 <- views$dat2[!(views$dat2$device_id==pk1 & views$dat2$session_start_time==pk2),]
       clicked$deleteSession <- !clicked$deleteSession
-	})
+      output$focalDT <- NULL
+	})   
     
     #########################   
     
