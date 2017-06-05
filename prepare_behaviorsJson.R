@@ -6,7 +6,7 @@ if(is.null(dat)) {
 } else {
 names(dat) <- gsub("[.]", "_", names(dat))##necessary due to use of unlist in jsonoutputconversion.R
 names(dat) <- gsub("'", "_", names(dat))##necessary due to use of apostrophe 
-allbehav <- dat[!duplicated(dat),]	
+allbehav <- dat[!duplicated(dat),, drop=FALSE]	
 
 
 for(i in 1:ncol(allbehav)) {
@@ -15,11 +15,9 @@ for(i in 1:ncol(allbehav)) {
 	allbehav[,i] <- factor(allbehav[,i], levels=as.character(unique(allbehav[,i])))
 	}
 
-
-
 for (i in ncol(allbehav):1){
 	allbehav[allbehav[,i]=="" & !is.na(allbehav[,i]),i] <- NA
-	allbehav <- allbehav[order(allbehav[,i]),]
+	allbehav <- allbehav[order(allbehav[,i]),, drop=FALSE]
 }
 row.names(allbehav) <- 1:nrow(allbehav)
 
@@ -69,6 +67,7 @@ for(i in 1:nrow(allbehav))
 }
 #twigs
 dupvec2 <- dupvec
+if (ncol(allbehav)==1) return(twigs)
 for(i in (ncol(allbehav)-1):1)
 {
 	#print(paste("i=", i))
