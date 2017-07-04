@@ -86,6 +86,7 @@ shinyApp(
     	cat(file=stderr(), paste0("sessionsRV updated : ", nrow(res), " nrow(views$dat1) = ", nrow(views$dat1), "\n"))
     return(res)
     	})
+    ###########################
     emptySessionRow <- function(){
     	sessionColnames <- c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "layout_info_json_version", "behaviors_json_version", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold")
     	dat <- data.frame(matrix(NA,nrow=1, ncol=length(sessionColnames)))
@@ -94,15 +95,16 @@ shinyApp(
     	return(dat)
     	}
 	sessionsRVentry <- reactiveValues(dat=emptySessionRow())
+    ###########################
 
-    clicked <- reactiveValues(deleteSession=FALSE)
+    clicked <- reactiveValues(deleteSession=FALSE, focalsDTRowSelected =FALSE)
 
 
 	focalsRV <- reactive({
 		if(is.null(input$sessionsDT_select)) return(NULL)##checks if a sessionsDT row has been selected
 		temp <- is.null(input$focalsDT_edit)
 		res <- isolate(removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select],],c("focal_start_time", "focal_end_time", "focal_individual_id", "set_duration", "set_scan_interval")))
-		cat(file=stderr(), paste0("focalsRV updated with sessionsDT_select = ",input$sessionsDT_select," and ", res[1,1], "\n\n"))
+		cat(file=stderr(), paste0("focalsRV updated with sessionsDT_select = ",input$sessionsDT_select," and ", res[1,1], " and clicked$focalsDTRowSelected = ", clicked$focalsDTRowSelected, "\n\n"))
 		return(res)
 	})
 	
@@ -131,7 +133,7 @@ shinyApp(
     ###########################
 
 	output$sessionsDT <- renderD3tf({
-		temp <- is.null(input$deleteSessionRow)
+		temp <- is.null(input$deleteSessionRow)###makes function reactive to deletion
     tableProps <- list(
       btn_reset = TRUE,
       col_types = rep("string", ncol(sessionsRV())
