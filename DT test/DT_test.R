@@ -5,17 +5,17 @@
 # library(RPostgreSQL)
 # con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = "aowinnie5433", host = "localhost", port = 5433, user = "postgres", password = "postgres")
 
-library(htmlwidgets)
-library(D3TableFilter)
-timeToChar <- function(x){
-  		temp <- format(x)
-  		temp[grepl("NA", temp)] <- NA
-  		return(temp)
-  	}
-dat1 <- data.frame(dbGetQuery(con, "select * from main_tables.all_focal_data_view;"))
-dat1[,unlist(lapply(dat1, function(x) inherits(x, "POSIXt")))] <- apply(dat1[,unlist(lapply(dat1, function(x) inherits(x, "POSIXt")))], 2, timeToChar)
-dat2 <- data.frame(dbGetQuery(con, "select * from main_tables.all_scan_data_view;"))
-dat2[,unlist(lapply(dat2, function(x) inherits(x, "POSIXt")))] <- apply(dat2[,unlist(lapply(dat2, function(x) inherits(x, "POSIXt")))], 2, timeToChar)  
+# library(htmlwidgets)
+# library(D3TableFilter)
+# timeToChar <- function(x){
+  		# temp <- format(x)
+  		# temp[grepl("NA", temp)] <- NA
+  		# return(temp)
+  	# }
+# dat1 <- data.frame(dbGetQuery(con, "select * from main_tables.all_focal_data_view;"))
+# dat1[,unlist(lapply(dat1, function(x) inherits(x, "POSIXt")))] <- apply(dat1[,unlist(lapply(dat1, function(x) inherits(x, "POSIXt")))], 2, timeToChar)
+# dat2 <- data.frame(dbGetQuery(con, "select * from main_tables.all_scan_data_view;"))
+# dat2[,unlist(lapply(dat2, function(x) inherits(x, "POSIXt")))] <- apply(dat2[,unlist(lapply(dat2, function(x) inherits(x, "POSIXt")))], 2, timeToChar)  
         
 shinyApp(
   ui = fluidPage(
@@ -35,31 +35,41 @@ shinyApp(
 	br(),
     d3tfOutput('focalsDT', height = "auto"),
 	br(),
+	actionButton('duplicateFocalRow', 'Duplicate selected row', icon=icon('copy'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
+	#actionButton('addBlankSessionRow', 'Add blank row', icon=icon('plus'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
+	actionButton('deleteFocalRow', 'Delete selected row', icon=icon('close'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
     hr(),
     hr(),
     HTML("<h3><b>    Dyadic and self-directed/health data</b></h3>"),
     br(),    
     d3tfOutput('behaviorsDT', height = "auto"),
-	br(),    
+	br(),  
+	actionButton('duplicateBehaviorRow', 'Duplicate selected row', icon=icon('copy'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
+	#actionButton('addBlankSessionRow', 'Add blank row', icon=icon('plus'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
+	actionButton('deleteBehaviorRow', 'Delete selected row', icon=icon('close'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),  
     hr(),
     hr(),
     HTML("<h3><b>    Scan list</b></h3>"),
 	br(),    
     d3tfOutput('scanListDT', height = "auto"),
     br(),    
+    actionButton('duplicateScanListRow', 'Duplicate selected row', icon=icon('copy'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
+	#actionButton('addBlankSessionRow', 'Add blank row', icon=icon('plus'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
+	actionButton('deleteScanListRow', 'Delete selected row', icon=icon('close'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
     hr(),
     hr(),
     HTML("<h3><b>    Scan data</b></h3>"),
 	br(), 
     d3tfOutput('scansDT', height = "auto"),
-    br(),    
+    br(),
+    actionButton('duplicateScanRow', 'Duplicate selected row', icon=icon('copy'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
+	#actionButton('addBlankSessionRow', 'Add blank row', icon=icon('plus'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
+	actionButton('deleteScanRow', 'Delete selected row', icon=icon('close'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),    
     hr(),
     hr()
   ),
-  server <- function(input, output, session) {
-  	
-   
-    
+  
+  server <- function(input, output, session) { 
     views <- reactiveValues(dat1=dat1, dat2=dat2)
 
     ##function to remove duplicated values
@@ -70,26 +80,26 @@ shinyApp(
     ###########################
     sessionsRV <-  reactive({
     	#temp <- is.null(input$addBlankSessionRow)+clicked$addBlankSessionRow
-    	if (is.null(isolate(views$dat1))) return(NULL)
+    	if (is.null(isolate(views$dat1))) return(NULL)##why did I isolate this value?
     	temp <- is.null(input$sessionsDT_edit) & is.null(clicked$deleteSession)
     	res <- removeDuplicates(isolate(views$dat1), c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "layout_info_json_version", "behaviors_json_version", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold"))
     	cat(file=stderr(), paste0("sessionsRV updated : ", nrow(res), " nrow(views$dat1) = ", nrow(views$dat1), "\n"))
     return(res)
     	})
-    emptySessionRaw <- function(){
+    emptySessionRow <- function(){
     	sessionColnames <- c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "layout_info_json_version", "behaviors_json_version", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold")
     	dat <- data.frame(matrix(NA,nrow=1, ncol=length(sessionColnames)))
     	for(i in 1:ncol(dat))  dat[,i] <- as.character(dat[,i])
     	names(dat) <- sessionColnames
     	return(dat)
     	}
-	sessionsRVentry <- reactiveValues(dat=emptySessionRaw())
+	sessionsRVentry <- reactiveValues(dat=emptySessionRow())
 
     clicked <- reactiveValues(deleteSession=FALSE)
 
 
 	focalsRV <- reactive({
-		if(is.null(input$sessionsDT_select)) return(NULL)
+		if(is.null(input$sessionsDT_select)) return(NULL)##checks if a sessionsDT row has been selected
 		temp <- is.null(input$focalsDT_edit)
 		res <- isolate(removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select],],c("focal_start_time", "focal_end_time", "focal_individual_id", "set_duration", "set_scan_interval")))
 		cat(file=stderr(), paste0("focalsRV updated with sessionsDT_select = ",input$sessionsDT_select," and ", res[1,1], "\n\n"))
@@ -99,7 +109,7 @@ shinyApp(
 	behaviorsRV <- reactive({
 		if(is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) return(NULL)
 				temp <- is.null(input$behaviorDT_edit)
-		return(isolate(removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$focal_start_time==focalsRV()$focal_start_time[input$focalsDT_select],],c("behavior_time", "actor", "subject", names(views$dat1)[!names(views$dat1)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "behavior_time", "actor","subject","gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")])))	)
+		return(isolate(removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$focal_start_time==focalsRV()$focal_start_time[input$focalsDT_select],],c("behavior_time", "actor", "subject", names(views$dat1)[!names(views$dat1)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "behavior_time", "actor","subject","gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")]))))
 	})
 	
 	scanListRV <- reactive({
