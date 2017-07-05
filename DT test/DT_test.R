@@ -130,37 +130,38 @@ shinyApp(
 	sessionsRV <-  reactive({
     	#temp <- is.null(input$addBlankSessionRow)+clicked$addBlankSessionRow
     	if (is.null(isolate(views$dat1))) return(emptySessionRow())##why did I isolate this value?
-    	temp <- is.null(input$sessionsDT_edit) & is.null(clicked$deleteSession)
+    	#temp <- is.null(input$sessionsDT_edit) & is.null(clicked$deleteSession)
     	res <- removeDuplicates(isolate(views$dat1), c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "layout_info_json_version", "behaviors_json_version", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold"))
     	cat(file=stderr(), paste0("sessionsRV updated : ", nrow(res), " nrow(views$dat1) = ", nrow(views$dat1), "\n"))
     return(res)
     	})
 
 	focalsRV <- reactive({
-		if(is.null(input$sessionsDT_select)) return(emptyFocalListRow())##checks if a sessionsDT row has been selected
-		temp <- is.null(input$focalsDT_edit)
-		res <- isolate(removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select],],c("focal_start_time", "focal_end_time", "focal_individual_id", "set_duration", "set_scan_interval")))
-		cat(file=stderr(), paste0("focalsRV updated with sessionsDT_select = ",input$sessionsDT_select," and ", res[1,1], "\n\n"))
+		if(isolate(is.null(input$sessionsDT_select))) return(emptyFocalListRow())##checks if a sessionsDT row has been selected
+		#temp <- is.null(input$focalsDT_edit)
+		res <-(removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select],],c("focal_start_time", "focal_end_time", "focal_individual_id", "set_duration", "set_scan_interval")))
+		cat(file=stderr(), paste0("focalsRV updated with sessionsDT_select = ",isolate(input$sessionsDT_select)," and ", res[1,1], " and input$focalsDT_select = ", isolate(input$focalsDT_select),"\n\n"))
+
 		return(res)
 	})
 	
 	behaviorsRV <- reactive({
-		if(is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) return(emptyBehaviorRow())
-				temp <- is.null(input$behaviorDT_edit)
+		if((is.null(input$sessionsDT_select) | is.null(input$focalsDT_select))) return(emptyBehaviorRow())
+		#temp <- is.null(input$behaviorDT_edit)
 		cat(file=stderr(), paste0("behaviorsRV updated with sessionsDT_select = ",input$sessionsDT_select," and input$focalsDT_select = ", input$focalsDT_select, "\n\n"))
-		return(isolate(removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$focal_start_time==focalsRV()$focal_start_time[input$focalsDT_select],],c("behavior_time", "actor", "subject", names(views$dat1)[!names(views$dat1)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "behavior_time", "actor","subject","gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")]))))
+		return((removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$focal_start_time==focalsRV()$focal_start_time[input$focalsDT_select],],c("behavior_time", "actor", "subject", names(views$dat1)[!names(views$dat1)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "behavior_time", "actor","subject","gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")]))))
 	})
 	
 	scanListRV <- reactive({
-		if(is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) return(emptyScanListRow())
-				temp <- is.null(input$scanListDT_edit)
-		return(isolate(removeDuplicates(views$dat2[views$dat2$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat2$focal_start_time==focalsRV()$focal_start_time[input$focalsDT_select],],c("scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude")))	)
+		if((is.null(input$sessionsDT_select) | is.null(input$focalsDT_select))) return(emptyScanListRow())
+				#temp <- is.null(input$scanListDT_edit)
+		return((removeDuplicates(views$dat2[views$dat2$device_id==sessionsRV()$device_id[isolate(input$sessionsDT_select)] & views$dat2$focal_start_time==focalsRV()$focal_start_time[isolate(input$focalsDT_select)],],c("scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude")))	)
 	})
 
 	scansRV <- reactive({
-		if(is.null(input$scanListDT_select)) return(emptyScanRow())
-		temp <- is.null(input$scansDT_edit)
-		res <- isolate(removeDuplicates(views$dat2[views$dat2$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat2$scan_time== scanListRV()$scan_time[input$scanListDT_select],],c("scanned_individual_id", names(views$dat2)[!names(views$dat2)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "scan_time", "scanned_individual_id","scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")])))
+		if((is.null(input$scanListDT_select))) return(emptyScanRow())
+		#temp <- is.null(input$scansDT_edit)
+		res <-(removeDuplicates(views$dat2[views$dat2$device_id==sessionsRV()$device_id[isolate(input$sessionsDT_select)] & views$dat2$scan_time== scanListRV()$scan_time[isolate(input$scanListDT_select)],],c("scanned_individual_id", names(views$dat2)[!names(views$dat2)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "scan_time", "scanned_individual_id","scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")])))
 		res <- res[!is.na(res$scanned_individual_id),]
 		return(res)
 	})
@@ -175,7 +176,7 @@ shinyApp(
       btn_reset = TRUE,
       col_types = rep("string", ncol(emptySessionRow())
     ));
-    d3tf(sessionsRV(),
+    d3tf(isolate(sessionsRV()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -187,15 +188,16 @@ shinyApp(
          selectableRowsClass='success'
 	);
   })
- 
+
  
 	observeEvent(input$sessionsDT_select, {
 		     cat(file=stderr(), paste0("is.null(input$sessionsDT_select) = ", is.null(input$sessionsDT_select), "\n"))
 	output$focalsDT <- renderD3tf({
+				     cat(file=stderr(), paste0("render focalsDT", "\n"))
     tableProps <- list(
       btn_reset = TRUE,
       col_types = rep("string", ncol(emptyFocalListRow())));
-    d3tf(focalsRV(),
+    d3tf(isolate(focalsRV()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -210,6 +212,8 @@ shinyApp(
   
   
 	output$behaviorsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render behaviorsDT", "\n"))
+
     tableProps <- list(
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
@@ -228,6 +232,8 @@ shinyApp(
   })
 		
 	output$scanListDT <- renderD3tf({
+								     cat(file=stderr(), paste0("render scanListsDT", "\n"))
+
     tableProps <- list(
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanListRow()))
@@ -246,6 +252,8 @@ shinyApp(
   })
 
 	output$scansDT <- renderD3tf({
+								     cat(file=stderr(), paste0("render scansDT", "\n"))
+
     tableProps <- list(
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanRow()))
@@ -270,11 +278,13 @@ shinyApp(
 			#if(is.null(input$focalsDT_select)) output$behaviorsDT <- NULL
 
 		output$behaviorsDT <- renderD3tf({
+									     cat(file=stderr(), paste0("render behaviorsDTbis", "\n"))
+
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(behaviorsRV()))
+      col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
     ));
-    d3tf(behaviorsRV(),
+    d3tf((behaviorsRV()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -287,11 +297,13 @@ shinyApp(
 	);
   })
   output$scanListDT <- renderD3tf({
+  							     cat(file=stderr(), paste0("render scanListDTbis", "\n"))
+
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(scanListRV()))
+      col_types = rep("string", isolate(ncol(emptyScanListRow()))
     ));
-    d3tf(scanListRV(),
+    d3tf((scanListRV()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -305,6 +317,8 @@ shinyApp(
   })
   
   output$scansDT <- renderD3tf({
+  	  							     cat(file=stderr(), paste0("render scansDTbis", "\n"))
+
     tableProps <- list(
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanRow()))
@@ -322,15 +336,15 @@ shinyApp(
 	);
   })	
   
-  
-  
 	})      	  
  
 	observeEvent(input$scanListDT_select, {
 	output$scansDT <- renderD3tf({
+		  							     cat(file=stderr(), paste0("render scansDTter", "\n"))
+
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(scansRV()))
+      col_types = rep("string", isolate(ncol(emptyScanRow()))
     ));
     d3tf(scansRV(),
          tableProps = isolate(tableProps),
@@ -391,16 +405,14 @@ isolate({
       val <- edit$val;
       pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
       pk2 <- focalsRV()$focal_start_time[row]
-      colname <- names(focalsRV())[col]
-      cat(file=stderr(), "editing... row = ", row, " col = ", col, " val = ", val, "nrows = ",sum(views$dat1$device_id==pk1 & views$dat1$session_start_time==pk2), "\n")
-            cat(file=stderr(), "pk1 = ", pk1, " pk2 = ", pk2, " colname = ", colname, "\n")    
+      colname <- names(focalsRV())[col]   
        confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
        views$dat1[views$dat1$device_id==pk1 & views$dat1$focal_start_time==pk2, names(views$dat1)==colname] <- val
        views$dat2[views$dat2$device_id==pk1 & views$dat2$focal_start_time==pk2, names(views$dat2)==colname] <- val
      })
   })
 
-       observeEvent(input$behaviorsDT_edit,{
+    observeEvent(input$behaviorsDT_edit,{
     if(is.null(input$behaviorsDT_edit)) return(NULL);
      edit <- input$behaviorsDT_edit;
 isolate({
@@ -414,9 +426,7 @@ isolate({
       pk2 <- behaviorsRV()$behavior_time[row]
       pk3 <- behaviorsRV()$actor[row]
       pk4 <- behaviorsRV()$subject[row]
-      colname <- names(behaviorsRV())[col]
-      cat(file=stderr(), "editing... row = ", row, " col = ", col, " val = ", val, "nrows = ",sum(views$dat1$device_id==pk1 & views$dat1$session_start_time==pk2), "\n")
-            cat(file=stderr(), "pk1 = ", pk1, " pk2 = ", pk2, " colname = ", colname, "\n")    
+      colname <- names(behaviorsRV())[col]    
        confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
        views$dat1[views$dat1$device_id==pk1 & views$dat1$behavior_time==pk2 & views$dat1$actor==pk3 & views$dat1$subject==pk4, names(views$dat1)==colname] <- val
      })
@@ -462,8 +472,12 @@ isolate({
   }) 
     
 
-
-    #########################   
+ #########################   
+ #########################   
+ ######row deletion
+ #########################   
+ #########################
+  
 	observeEvent(input$deleteSessionRow, {
 		if(!is.null(input$sessionsDT_select)) {
       pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
@@ -475,6 +489,120 @@ isolate({
       #output$focalDT <- NULL
       }
 	})   
+    
+    	observeEvent(input$deleteFocalRow, {
+    	cat(file=stderr(), paste0("deleting focal row : ", input$focalsDT_select, "\n"))
+    		
+		if(!is.null(input$focalsDT_select)) {
+			
+      pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
+      pk2 <- focalsRV()$focal_start_time[input$focalsDT_select]
+      
+      cat(file=stderr(), paste0("pk1 = ", pk1," pk2 = ", pk2, " nb rows to delete = ",sum(views$dat1$device_id==pk1 & views$dat1$focal_start_time==pk2), "\n"))
+
+       views$dat1 <- views$dat1[!(views$dat1$device_id==pk1 & views$dat1$focal_start_time==pk2),]
+       views$dat2[!(views$dat2$device_id==pk1 & views$dat2$focal_start_time==pk2),]
+      
+      
+      	output$focalsDT <- renderD3tf({
+				     cat(file=stderr(), paste0("render focalsDTDelete", "\n"))
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", ncol(emptyFocalListRow())));
+    d3tf(isolate(focalsRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })	
+      
+     output$behaviorsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render behaviorsDT", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
+    ));
+    d3tf(emptyBehaviorRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+		
+	output$scanListDT <- renderD3tf({
+								     cat(file=stderr(), paste0("render scanListsDT", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanListRow()))
+    ));
+    d3tf(emptyScanListRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+
+	output$scansDT <- renderD3tf({
+								     cat(file=stderr(), paste0("render scansDT", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanRow()))
+    ));
+    d3tf(emptyScanRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })		
+
+      
+      
+      }
+	})  
+    
+    
+    observeEvent(input$deleteBehaviorRow, {
+    	    	cat(file=stderr(), paste0("deleting behavior row : ", input$behaviorsDT_select, "\n"))
+	if(!is.null(input$behaviorsDT_select)) {
+      pk1 <- sessionsRV()$device_id[input$sessionsDT_select]		
+      pk2 <- behaviorsRV()$behavior_time[input$behaviorsDT_select]
+      pk3 <- behaviorsRV()$actor[input$behaviorsDT_select]
+      pk4 <- behaviorsRV()$subject[input$behaviorsDT_select]
+      focalsDTSelectedRow <- input$focalsDT_select
+       views$dat1 <- views$dat1[!(views$dat1$device_id==pk1 & views$dat1$behavior_time==pk2 & views$dat1$actor==pk3 & views$dat1$subject==pk4),]
+      #setRowClass(session, tbl="focalsDT", row= focalsDTSelectedRow, class="active")
+      cat(file=stderr(), paste0("set row class for focalsDT row : ", focalsDTSelectedRow, "\n"))
+
+      
+      }
+	})  
     
     #########################   
     
