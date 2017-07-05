@@ -78,14 +78,7 @@ shinyApp(
     	return(temp[!duplicated(temp),])
     }
     ###########################
-    sessionsRV <-  reactive({
-    	#temp <- is.null(input$addBlankSessionRow)+clicked$addBlankSessionRow
-    	if (is.null(isolate(views$dat1))) return(NULL)##why did I isolate this value?
-    	temp <- is.null(input$sessionsDT_edit) & is.null(clicked$deleteSession)
-    	res <- removeDuplicates(isolate(views$dat1), c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "layout_info_json_version", "behaviors_json_version", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold"))
-    	cat(file=stderr(), paste0("sessionsRV updated : ", nrow(res), " nrow(views$dat1) = ", nrow(views$dat1), "\n"))
-    return(res)
-    	})
+    
     ###########################
     emptySessionRow <- function(){
     	sessionColnames <- c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "layout_info_json_version", "behaviors_json_version", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold")
@@ -134,9 +127,17 @@ shinyApp(
 
     clicked <- reactiveValues(deleteSession=FALSE)
 
+	sessionsRV <-  reactive({
+    	#temp <- is.null(input$addBlankSessionRow)+clicked$addBlankSessionRow
+    	if (is.null(isolate(views$dat1))) return(emptySessionRow())##why did I isolate this value?
+    	temp <- is.null(input$sessionsDT_edit) & is.null(clicked$deleteSession)
+    	res <- removeDuplicates(isolate(views$dat1), c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "layout_info_json_version", "behaviors_json_version", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold"))
+    	cat(file=stderr(), paste0("sessionsRV updated : ", nrow(res), " nrow(views$dat1) = ", nrow(views$dat1), "\n"))
+    return(res)
+    	})
 
 	focalsRV <- reactive({
-		if(is.null(input$sessionsDT_select)) return(NULL)##checks if a sessionsDT row has been selected
+		if(is.null(input$sessionsDT_select)) return(emptyFocalListRow())##checks if a sessionsDT row has been selected
 		temp <- is.null(input$focalsDT_edit)
 		res <- isolate(removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select],],c("focal_start_time", "focal_end_time", "focal_individual_id", "set_duration", "set_scan_interval")))
 		cat(file=stderr(), paste0("focalsRV updated with sessionsDT_select = ",input$sessionsDT_select," and ", res[1,1], "\n\n"))
@@ -144,20 +145,20 @@ shinyApp(
 	})
 	
 	behaviorsRV <- reactive({
-		if(is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) return(NULL)
+		if(is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) return(emptyBehaviorRow())
 				temp <- is.null(input$behaviorDT_edit)
 		cat(file=stderr(), paste0("behaviorsRV updated with sessionsDT_select = ",input$sessionsDT_select," and input$focalsDT_select = ", input$focalsDT_select, "\n\n"))
 		return(isolate(removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$focal_start_time==focalsRV()$focal_start_time[input$focalsDT_select],],c("behavior_time", "actor", "subject", names(views$dat1)[!names(views$dat1)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "behavior_time", "actor","subject","gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")]))))
 	})
 	
 	scanListRV <- reactive({
-		if(is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) return(NULL)
+		if(is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) return(emptyScanListRow())
 				temp <- is.null(input$scanListDT_edit)
 		return(isolate(removeDuplicates(views$dat2[views$dat2$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat2$focal_start_time==focalsRV()$focal_start_time[input$focalsDT_select],],c("scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude")))	)
 	})
 
 	scansRV <- reactive({
-		if(is.null(input$scanListDT_select)) return(NULL)
+		if(is.null(input$scanListDT_select)) return(emptyScanRow())
 		temp <- is.null(input$scansDT_edit)
 		res <- isolate(removeDuplicates(views$dat2[views$dat2$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat2$scan_time== scanListRV()$scan_time[input$scanListDT_select],],c("scanned_individual_id", names(views$dat2)[!names(views$dat2)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "scan_time", "scanned_individual_id","scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")])))
 		res <- res[!is.na(res$scanned_individual_id),]
@@ -174,7 +175,7 @@ shinyApp(
       btn_reset = TRUE,
       col_types = rep("string", ncol(emptySessionRow())
     ));
-    d3tf(isolate(sessionsRV()),
+    d3tf(sessionsRV(),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -193,9 +194,8 @@ shinyApp(
 	output$focalsDT <- renderD3tf({
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(focalsRV()))
-    ));
-    d3tf(isolate(focalsRV()),
+      col_types = rep("string", ncol(emptyFocalListRow())));
+    d3tf(focalsRV(),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -274,7 +274,7 @@ shinyApp(
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(behaviorsRV()))
     ));
-    d3tf(isolate(behaviorsRV()),
+    d3tf(behaviorsRV(),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -291,7 +291,7 @@ shinyApp(
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(scanListRV()))
     ));
-    d3tf(isolate(scanListRV()),
+    d3tf(scanListRV(),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -332,7 +332,7 @@ shinyApp(
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(scansRV()))
     ));
-    d3tf(isolate(scansRV()),
+    d3tf(scansRV(),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -352,6 +352,7 @@ shinyApp(
      
   observeEvent(input$sessionsDT_edit,{
     if(is.null(input$sessionsDT_edit)) return(NULL);
+    cat(file=stderr(), paste0("input$sessionsDT_edit with row: ", input$sessionsDT_select, "\n"))
      edit <- input$sessionsDT_edit;
 isolate({
       # need isolate, otherwise this observer would run twice
@@ -364,13 +365,13 @@ isolate({
       pk2 <- sessionsRV()$session_start_time[row]
       colname <- names(sessionsRV())[col]
       cat(file=stderr(), "editing... row = ", row, " col = ", col, " val = ", val, "\n")
-      if(col == 4) {
-        oldval <- sessionsRV()[row,col];
-        if(!val%in%c("PAB", "MSK", "ISA")) {
-          rejectEdit(session, tbl = "sessionsDT", row = row, col = col,  id = id, value = oldval);
-           return(NULL);
-         }
-         }      
+      # if(col == 4) {
+        # oldval <- sessionsRV()[row,col];
+        # if(!val%in%c("PAB", "MSK", "ISA")) {
+          # rejectEdit(session, tbl = "sessionsDT", row = row, col = col,  id = id, value = oldval);
+           # return(NULL);
+         # }
+         # }      
        confirmEdit(session, tbl = "sessionsDT", row = row, col = col, id = id, value = val);
        views$dat1[views$dat1$device_id==pk1 & views$dat1$session_start_time==pk2, names(views$dat1)==colname] <- val
        views$dat2[views$dat2$device_id==pk1 & views$dat2$session_start_time==pk2, names(views$dat2)==colname] <- val
@@ -464,13 +465,15 @@ isolate({
 
     #########################   
 	observeEvent(input$deleteSessionRow, {
+		if(!is.null(input$sessionsDT_select)) {
       pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
       pk2 <- sessionsRV()$session_start_time[input$sessionsDT_select]
       cat(file=stderr(), paste0("pk1 = ", pk1," pk2 = ", pk2, " nb rows to delete = ", sum(views$dat1$device_id==pk1 & views$dat1$session_start_time==pk2), "\n"))
       views$dat1 <- views$dat1[!(views$dat1$device_id==pk1 & views$dat1$session_start_time==pk2),]
       views$dat2 <- views$dat2[!(views$dat2$device_id==pk1 & views$dat2$session_start_time==pk2),]
       clicked$deleteSession <- !clicked$deleteSession
-      output$focalDT <- NULL
+      #output$focalDT <- NULL
+      }
 	})   
     
     #########################   
