@@ -94,23 +94,59 @@ shinyApp(
     	names(dat) <- sessionColnames
     	return(dat)
     	}
+    	
+    	emptyFocalListRow <- function(){
+    focalListColnames <- c("focal_start_time", "focal_end_time", "focal_individual_id", "set_duration", "set_scan_interval")
+    	dat <- data.frame(matrix("",nrow=1, ncol=length(focalListColnames)))
+    	for(i in 1:ncol(dat))  dat[,i] <- as.character(dat[,i])
+    	names(dat) <- focalListColnames
+    	return(dat)
+    	}
+    	
+    	
+    emptyBehaviorRow <- function(){
+    behaviorColnames <- c("behavior_time", "actor", "subject", names(views$dat1)[!names(views$dat1)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "behavior_time", "actor","subject","gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")])
+    	dat <- data.frame(matrix("",nrow=1, ncol=length(behaviorColnames)))
+    	for(i in 1:ncol(dat))  dat[,i] <- as.character(dat[,i])
+    	names(dat) <- behaviorColnames
+    	return(dat)
+    	}
+    	
+    	emptyScanListRow <- function(){
+    scanListColnames <- c("scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude")
+    	dat <- data.frame(matrix("",nrow=1, ncol=length(scanListColnames)))
+    	for(i in 1:ncol(dat))  dat[,i] <- as.character(dat[,i])
+    	names(dat) <- scanListColnames
+    	return(dat)
+    	}
+
+
+    emptyScanRow <- function(){
+    scanColnames <- c("scanned_individual_id", names(views$dat2)[!names(views$dat2)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "scan_time", "scanned_individual_id","scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")])
+    	dat <- data.frame(matrix("",nrow=1, ncol=length(scanColnames)))
+    	for(i in 1:ncol(dat))  dat[,i] <- as.character(dat[,i])
+    	names(dat) <- scanColnames
+    	return(dat)
+    	}
+    
 	sessionsRVentry <- reactiveValues(dat=emptySessionRow())
     ###########################
 
-    clicked <- reactiveValues(deleteSession=FALSE, focalsDTRowSelected =FALSE)
+    clicked <- reactiveValues(deleteSession=FALSE)
 
 
 	focalsRV <- reactive({
 		if(is.null(input$sessionsDT_select)) return(NULL)##checks if a sessionsDT row has been selected
 		temp <- is.null(input$focalsDT_edit)
 		res <- isolate(removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select],],c("focal_start_time", "focal_end_time", "focal_individual_id", "set_duration", "set_scan_interval")))
-		cat(file=stderr(), paste0("focalsRV updated with sessionsDT_select = ",input$sessionsDT_select," and ", res[1,1], " and clicked$focalsDTRowSelected = ", clicked$focalsDTRowSelected, "\n\n"))
+		cat(file=stderr(), paste0("focalsRV updated with sessionsDT_select = ",input$sessionsDT_select," and ", res[1,1], "\n\n"))
 		return(res)
 	})
 	
 	behaviorsRV <- reactive({
 		if(is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) return(NULL)
 				temp <- is.null(input$behaviorDT_edit)
+		cat(file=stderr(), paste0("behaviorsRV updated with sessionsDT_select = ",input$sessionsDT_select," and input$focalsDT_select = ", input$focalsDT_select, "\n\n"))
 		return(isolate(removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$focal_start_time==focalsRV()$focal_start_time[input$focalsDT_select],],c("behavior_time", "actor", "subject", names(views$dat1)[!names(views$dat1)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "behavior_time", "actor","subject","gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")]))))
 	})
 	
@@ -133,10 +169,10 @@ shinyApp(
     ###########################
 
 	output$sessionsDT <- renderD3tf({
-		temp <- is.null(input$deleteSessionRow)###makes function reactive to deletion
+	temp <- is.null(input$deleteSessionRow)###makes function reactive to deletion
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", ncol(sessionsRV())
+      col_types = rep("string", ncol(emptySessionRow())
     ));
     d3tf(isolate(sessionsRV()),
          tableProps = isolate(tableProps),
@@ -154,7 +190,6 @@ shinyApp(
  
 	observeEvent(input$sessionsDT_select, {
 		     cat(file=stderr(), paste0("is.null(input$sessionsDT_select) = ", is.null(input$sessionsDT_select), "\n"))
-	if(is.null(input$sessionsDT_select)) output$focalDT <- NULL
 	output$focalsDT <- renderD3tf({
     tableProps <- list(
       btn_reset = TRUE,
@@ -171,11 +206,68 @@ shinyApp(
          selectableRows='single',
          selectableRowsClass='success'
 	);
+  })	
+  
+  
+	output$behaviorsDT <- renderD3tf({
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
+    ));
+    d3tf(emptyBehaviorRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
   })
+		
+	output$scanListDT <- renderD3tf({
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanListRow()))
+    ));
+    d3tf(emptyScanListRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+
+	output$scansDT <- renderD3tf({
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanRow()))
+    ));
+    d3tf(emptyScanRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })		
+
+		
 	})    	    
     	  
 	observeEvent(input$focalsDT_select, {
-			if(is.null(input$focalsDT_select)) output$behaviorsDT <- NULL
+			#if(is.null(input$focalsDT_select)) output$behaviorsDT <- NULL
 
 		output$behaviorsDT <- renderD3tf({
     tableProps <- list(
@@ -211,6 +303,27 @@ shinyApp(
          selectableRowsClass='success'
 	);
   })
+  
+  output$scansDT <- renderD3tf({
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanRow()))
+    ));
+    d3tf(emptyScanRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })	
+  
+  
+  
 	})      	  
  
 	observeEvent(input$scanListDT_select, {
