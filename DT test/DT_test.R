@@ -129,9 +129,9 @@ shinyApp(
 
 	sessionsRV <-  reactive({
     	#temp <- is.null(input$addBlankSessionRow)+clicked$addBlankSessionRow
-    	if (is.null(isolate(views$dat1))) return(emptySessionRow())##why did I isolate this value?
+    	if (is.null((views$dat1))) return(emptySessionRow())##why did I isolate this value?
     	#temp <- is.null(input$sessionsDT_edit) & is.null(clicked$deleteSession)
-    	res <- removeDuplicates(isolate(views$dat1), c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "layout_info_json_version", "behaviors_json_version", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold"))
+    	res <- removeDuplicates((views$dat1), c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "layout_info_json_version", "behaviors_json_version", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold"))
     	cat(file=stderr(), paste0("sessionsRV updated : ", nrow(res), " nrow(views$dat1) = ", nrow(views$dat1), "\n"))
     return(res)
     	})
@@ -286,7 +286,7 @@ shinyApp(
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
     ));
-    d3tf((behaviorsRV()),
+    d3tf(isolate(behaviorsRV()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -305,7 +305,7 @@ shinyApp(
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanListRow()))
     ));
-    d3tf((scanListRV()),
+    d3tf(isolate(scanListRV()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -325,7 +325,7 @@ shinyApp(
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanRow()))
     ));
-    d3tf(emptyScanRow(),
+    d3tf(isolate(emptyScanRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -381,16 +381,10 @@ isolate({
       pk2 <- sessionsRV()$session_start_time[row]
       colname <- names(sessionsRV())[col]
       cat(file=stderr(), "editing... row = ", row, " col = ", col, " val = ", val, "\n")
-      # if(col == 4) {
-        # oldval <- sessionsRV()[row,col];
-        # if(!val%in%c("PAB", "MSK", "ISA")) {
-          # rejectEdit(session, tbl = "sessionsDT", row = row, col = col,  id = id, value = oldval);
-           # return(NULL);
-         # }
-         # }      
-       confirmEdit(session, tbl = "sessionsDT", row = row, col = col, id = id, value = val);
+    
        views$dat1[views$dat1$device_id==pk1 & views$dat1$session_start_time==pk2, names(views$dat1)==colname] <- val
        views$dat2[views$dat2$device_id==pk1 & views$dat2$session_start_time==pk2, names(views$dat2)==colname] <- val
+        #confirmEdit(session, tbl = "sessionsDT", row = row, col = col, id = id, value = val)
      })
   })
   
@@ -408,9 +402,9 @@ isolate({
       pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
       pk2 <- focalsRV()$focal_start_time[row]
       colname <- names(focalsRV())[col]   
-       confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
        views$dat1[views$dat1$device_id==pk1 & views$dat1$focal_start_time==pk2, names(views$dat1)==colname] <- val
        views$dat2[views$dat2$device_id==pk1 & views$dat2$focal_start_time==pk2, names(views$dat2)==colname] <- val
+              confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
      })
   })
 
@@ -702,7 +696,306 @@ isolate({
 
       
       }
+	})
+	
+	
+	
+	    	observeEvent(input$deleteScanListRow, {
+    	cat(file=stderr(), paste0("deleting scanListDT row : ", input$scanListDT_select, "\n"))
+    		
+		if(!is.null(input$scanListDT_select)) {
+			
+      pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
+      pk2 <- scanListRV()$scan_time[input$scanListDT_select]
+      
+      cat(file=stderr(), paste0("pk1 = ", pk1," pk2 = ", pk2, " nb rows to delete = ",sum(views$dat2$device_id==pk1 & views$dat2$scan_time ==pk2 & !is.na(views$dat2$scan_time)), "\n"))
+
+       views$dat2 <- views$dat2[!(views$dat2$device_id==pk1 & views$dat2$scan_time==pk2 & !is.na(views$dat2$scan_time)),]      
+      
+      	output$scanListDT <- renderD3tf({
+				     cat(file=stderr(), paste0("render scanListDTDelete", "\n"))
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", ncol(emptyScanListRow())));
+    d3tf(isolate(scanListRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })	
+      
+     
+	output$scansDT <- renderD3tf({
+								     cat(file=stderr(), paste0("render scansDTDelete", "\n"))
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanRow()))
+    ));
+    d3tf(emptyScanRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+      }
 	})  
+
+	    	observeEvent(input$deleteScanRow, {
+    	cat(file=stderr(), paste0("deleting scansDT row : ", input$scansDT_select, "\n"))
+    		
+		if(!is.null(input$scansDT_select)) {
+			
+ 	  pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
+      pk2 <- scanListRV()$scan_time[input$scanListDT_select]
+      pk3 <- scansRV()$scanned_individual_id[input$scansDT_select]
+            
+      cat(file=stderr(), paste0("pk1 = ", pk1," pk2 = ", pk2," pk3 = ", pk3, " nb rows to delete = ", sum(views$dat2$device_id==pk1 & views$dat2$scan_time ==pk2 & views$dat2$scanned_individual_id ==pk3 & !is.na(views$dat2$scan_time)), "\n"))
+
+       views$dat2 <- views$dat2[!(views$dat2$device_id==pk1 & views$dat2$scan_time==pk2 & views$dat2$scanned_individual_id==pk3 & !is.na(views$dat2$scan_time)),]      
+      
+    output$scansDT <- renderD3tf({
+				     cat(file=stderr(), paste0("render scansDTDelete", "\n"))
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", ncol(emptyScanRow())));
+    d3tf(isolate(scansRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })	
+    }
+	})  	  
+
+ #########################   
+ #########################   
+ ######row duplication
+ #########################   
+ #########################
+
+ observeEvent(input$duplicateSessionRow, {
+		if(!is.null(input$sessionsDT_select)) {
+      cat(file=stderr(), paste0("duplicating... "))
+      dupRow <- sessionsRV()[input$sessionsDT_select,]
+      dupRow$session_start_time <- "ENTER DATE/TIME"
+      views$dat1 <- smartbind(views$dat1, dupRow)
+      views$dat2 <- smartbind(views$dat2, dupRow)
+
+      output$sessionsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render sessionsDT RowDuplicate", "\n"))
+	#temp <- is.null(input$deleteSessionRow)###makes function reactive to deletion
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", ncol(emptySessionRow())
+    ));
+    d3tf(isolate(sessionsRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+  
+  output$focalsDT <- renderD3tf({
+				     cat(file=stderr(), paste0("render focalsDTDuplicate", "\n"))
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", ncol(emptyFocalListRow())));
+    d3tf(isolate(emptyFocalListRow()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })	
+  
+	output$behaviorsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render behaviorsDTDuplicate", "\n"))
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
+    ));
+    d3tf(emptyBehaviorRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+		
+	output$scanListDT <- renderD3tf({
+								     cat(file=stderr(), paste0("render scanListsDTDuplicate", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanListRow()))
+    ));
+    d3tf(emptyScanListRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+
+	output$scansDT <- renderD3tf({
+								     cat(file=stderr(), paste0("render scansDTDuplicate", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanRow()))
+    ));
+    d3tf(emptyScanRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+  
+  }
+  })
+ 
+ 
+ 
+ 	observeEvent(input$duplicateFocalRow, {
+    		
+		if(!is.null(input$focalsDT_select)) {
+		
+	  cat(file=stderr(), paste0("duplicating... "))
+      dupRowSession <- sessionsRV()[input$sessionsDT_select,]
+      dupRowFocal <- focalsRV()[input$focalsDT_select,]
+      dupRow <- cbind(dupRowSession, dupRowFocal)
+      dupRow$focal_start_time <- "ENTER DATE/TIME"
+      dupRow$focal_end_time <- "ENTER DATE/TIME"
+      dupRow$focal_individual_id <- "ENTER FOCAL INDIV ID"
+
+      views$dat1 <- smartbind(views$dat1, dupRow)
+		
+		
+     
+      	output$focalsDT <- renderD3tf({
+				     cat(file=stderr(), paste0("render focalsDTDuplicate", "\n"))
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", ncol(emptyFocalListRow())));
+    d3tf(isolate(focalsRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })	
+      
+     output$behaviorsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render behaviorsDTDuplicate", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
+    ));
+    d3tf(emptyBehaviorRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+		
+	output$scanListDT <- renderD3tf({
+								     cat(file=stderr(), paste0("render scanListsDTDuplicate", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanListRow()))
+    ));
+    d3tf(emptyScanListRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+
+	output$scansDT <- renderD3tf({
+								     cat(file=stderr(), paste0("render scansDTDuplicate", "\n"))
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanRow()))
+    ));
+    d3tf(emptyScanRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+      }
+	})  
+ 
     
     #########################   
     
