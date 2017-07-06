@@ -10,6 +10,8 @@ install.load("shiny")
 install.load("rhandsontable")
 install.load("markdown")
 install.load("RPostgreSQL")
+install.load("gtools")
+
 source("prepare_behaviorsJson.R")
 source("prepare_foodsDyadicScanSolo.R")
 source("jsonOutputConversion.R")
