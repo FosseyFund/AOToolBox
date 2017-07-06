@@ -384,7 +384,7 @@ isolate({
     
        views$dat1[views$dat1$device_id==pk1 & views$dat1$session_start_time==pk2, names(views$dat1)==colname] <- val
        views$dat2[views$dat2$device_id==pk1 & views$dat2$session_start_time==pk2, names(views$dat2)==colname] <- val
-        #confirmEdit(session, tbl = "sessionsDT", row = row, col = col, id = id, value = val)
+        ##confirmEdit(session, tbl = "sessionsDT", row = row, col = col, id = id, value = val)
      })
   })
   
@@ -404,7 +404,7 @@ isolate({
       colname <- names(focalsRV())[col]   
        views$dat1[views$dat1$device_id==pk1 & views$dat1$focal_start_time==pk2, names(views$dat1)==colname] <- val
        views$dat2[views$dat2$device_id==pk1 & views$dat2$focal_start_time==pk2, names(views$dat2)==colname] <- val
-              confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
+              #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
      })
   })
 
@@ -423,7 +423,7 @@ isolate({
       pk3 <- behaviorsRV()$actor[row]
       pk4 <- behaviorsRV()$subject[row]
       colname <- names(behaviorsRV())[col]    
-       confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
+       #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
        views$dat1[views$dat1$device_id==pk1 & views$dat1$behavior_time==pk2 & views$dat1$actor==pk3 & views$dat1$subject==pk4, names(views$dat1)==colname] <- val
      })
   }) 
@@ -442,7 +442,7 @@ isolate({
       pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
       pk2 <- scanListRV()$scan_time[row]
       colname <- names(scanListRV())[col]
-       confirmEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value = val);
+       #confirmEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value = val);
       views$dat2[views$dat2$device_id==pk1 & views$dat2$scan_time==pk2 & !is.na(views$dat2$scan_time), names(views$dat2)==colname] <- val
      })
   }) 
@@ -462,7 +462,7 @@ isolate({
       pk3 <- scansRV()$scanned_individual_id[row]
       colname <- names(scansRV())[col]
       cat(file=stderr(), paste0("pk3 = ", pk3, "\n"))
-       confirmEdit(session, tbl = "scansDT", row = row, col = col, id = id, value = val);
+       #confirmEdit(session, tbl = "scansDT", row = row, col = col, id = id, value = val);
       views$dat2[views$dat2$device_id==pk1 & views$dat2$scan_time==pk2 & views$dat2$scanned_individual_id==pk3 & !is.na(views$dat2$scan_time), names(views$dat2)==colname] <- val
      })
   }) 
