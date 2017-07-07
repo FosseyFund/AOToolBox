@@ -149,19 +149,19 @@ shinyApp(
 		if((is.null(input$sessionsDT_select) | is.null(input$focalsDT_select))) return(emptyBehaviorRow())
 		#temp <- is.null(input$behaviorDT_edit)
 		cat(file=stderr(), paste0("behaviorsRV updated with sessionsDT_select = ",input$sessionsDT_select," and input$focalsDT_select = ", input$focalsDT_select, "\n\n"))
-		return((removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$focal_start_time==focalsRV()$focal_start_time[input$focalsDT_select],],c("behavior_time", "actor", "subject", names(views$dat1)[!names(views$dat1)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "behavior_time", "actor","subject","gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")]))))
+		return((removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$focal_start_time==focalsRV()$focal_start_time[input$focalsDT_select] & views$dat1$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select],],c("behavior_time", "actor", "subject", names(views$dat1)[!names(views$dat1)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "behavior_time", "actor","subject","gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")]))))
 	})
 	
 	scanListRV <- reactive({
 		if((is.null(input$sessionsDT_select) | is.null(input$focalsDT_select))) return(emptyScanListRow())
 				#temp <- is.null(input$scanListDT_edit)
-		return((removeDuplicates(views$dat2[views$dat2$device_id==sessionsRV()$device_id[isolate(input$sessionsDT_select)] & views$dat2$focal_start_time==focalsRV()$focal_start_time[isolate(input$focalsDT_select)],],c("scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude")))	)
+		return((removeDuplicates(views$dat2[views$dat2$device_id==sessionsRV()$device_id[isolate(input$sessionsDT_select)] & views$dat2$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select] & views$dat2$focal_start_time==focalsRV()$focal_start_time[isolate(input$focalsDT_select)],],c("scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude")))	)
 	})
 
 	scansRV <- reactive({
 		if((is.null(input$scanListDT_select))) return(emptyScanRow())
 		#temp <- is.null(input$scansDT_edit)
-		res <-(removeDuplicates(views$dat2[views$dat2$device_id==sessionsRV()$device_id[isolate(input$sessionsDT_select)] & views$dat2$scan_time== scanListRV()$scan_time[isolate(input$scanListDT_select)],],c("scanned_individual_id", names(views$dat2)[!names(views$dat2)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "scan_time", "scanned_individual_id","scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")])))
+		res <-(removeDuplicates(views$dat2[views$dat2$device_id==sessionsRV()$device_id[isolate(input$sessionsDT_select)] & views$dat2$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select] & views$dat2$scan_time== scanListRV()$scan_time[isolate(input$scanListDT_select)],],c("scanned_individual_id", names(views$dat2)[!names(views$dat2)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "scan_time", "scanned_individual_id","scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")])))
 		res <- res[!is.na(res$scanned_individual_id),]
 		return(res)
 	})
@@ -362,9 +362,12 @@ shinyApp(
   })
 	}) 
     		
-    		
+###########################    		
 ###########################
-#########################
+#################edit cells
+###########################
+###########################
+
      
   observeEvent(input$sessionsDT_edit,{
     if(is.null(input$sessionsDT_edit)) return(NULL);
@@ -401,10 +404,19 @@ isolate({
       val <- edit$val;
       pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
       pk2 <- focalsRV()$focal_start_time[row]
-      colname <- names(focalsRV())[col]   
+      pk3 <- sessionsRV()$session_start_time[input$sessionsDT_select]
+
+      colname <- names(focalsRV())[col]
+      #cat(file=stderr(), "editing... row = ", row, " col = ", col, " val = ", val, " pk1 = ", pk1, "pk2 = ",pk2 ,"\n")
+       if(is.na(pk2)){
+       	views$dat1[views$dat1$device_id==pk1 & views$dat1$session_start_time ==pk3, names(views$dat1)==colname] <- val
+       	views$dat2[views$dat2$device_id==pk1 & views$dat2$session_start_time ==pk3, names(views$dat2)==colname] <- val
+       } else {
+        
        views$dat1[views$dat1$device_id==pk1 & views$dat1$focal_start_time==pk2, names(views$dat1)==colname] <- val
        views$dat2[views$dat2$device_id==pk1 & views$dat2$focal_start_time==pk2, names(views$dat2)==colname] <- val
               #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
+        }
      })
   })
 
@@ -422,9 +434,16 @@ isolate({
       pk2 <- behaviorsRV()$behavior_time[row]
       pk3 <- behaviorsRV()$actor[row]
       pk4 <- behaviorsRV()$subject[row]
+      pk5 <- sessionsRV()$session_start_time[input$sessionsDT_select]
+
       colname <- names(behaviorsRV())[col]    
+      
+        if(is.na(pk2) | is.na(pk3) | is.na(pk4)){
+       	views$dat1[views$dat1$device_id==pk1 & views$dat1$session_start_time ==pk5, names(views$dat1)==colname] <- val
+       } else {
        #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
        views$dat1[views$dat1$device_id==pk1 & views$dat1$behavior_time==pk2 & views$dat1$actor==pk3 & views$dat1$subject==pk4, names(views$dat1)==colname] <- val
+       }
      })
   }) 
          
@@ -433,7 +452,7 @@ isolate({
     if(is.null(input$scanListDT_edit)) return(NULL);
      edit <- input$scanListDT_edit;
 isolate({
-      # need isolate, otherwise this observer would run twice
+	      # need isolate, otherwise this observer would run twice
       # for each edit
       id <- edit$id;
       row <- as.integer(edit$row);
@@ -441,9 +460,30 @@ isolate({
       val <- edit$val;
       pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
       pk2 <- scanListRV()$scan_time[row]
+      pk3 <- sessionsRV()$session_start_time[input$sessionsDT_select]
+	  oldval <- scanListRV()[row, col]
+
+if(is.null(input$focalsDT_select)) {
+	       rejectEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value = "");
+
+} else {
+
       colname <- names(scanListRV())[col]
+      
+      if(is.na(pk2)){
+       	views$dat2[views$dat2$device_id==pk1 & views$dat2$session_start_time ==pk3, names(views$dat2)==colname] <- val
+       } else {
+       
+       cat(file=stderr(), "editing... row = ", row, " col = ", col, " val = ", val, " pk1 = ", pk1, "pk2 = ",pk2 ,"pk3= ",pk3 , "colname = ", colname,"oldval = ",oldval, "\n")
        #confirmEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value = val);
+     
+      if (colname=="scan_time") pk2 <- oldval
+             cat(file=stderr(), "sum(views$dat2$scan_time==pk2) = ", sum(views$dat2$scan_time==pk2 & !is.na(views$dat2$scan_time)), "\n")
       views$dat2[views$dat2$device_id==pk1 & views$dat2$scan_time==pk2 & !is.na(views$dat2$scan_time), names(views$dat2)==colname] <- val
+      }
+      
+     }
+      
      })
   }) 
     
@@ -795,7 +835,7 @@ isolate({
 		if(!is.null(input$sessionsDT_select)) {
       cat(file=stderr(), paste0("duplicating... "))
       dupRow <- sessionsRV()[input$sessionsDT_select,]
-      dupRow$session_start_time <- "ENTER DATE/TIME"
+      dupRow$session_start_time <- paste(dupRow$session_start_time, "EDIT !")
       views$dat1 <- smartbind(views$dat1, dupRow)
       views$dat2 <- smartbind(views$dat2, dupRow)
 
@@ -909,8 +949,8 @@ isolate({
       dupRowSession <- sessionsRV()[input$sessionsDT_select,]
       dupRowFocal <- focalsRV()[input$focalsDT_select,]
       dupRow <- cbind(dupRowSession, dupRowFocal)
-      dupRow$focal_start_time <- "ENTER DATE/TIME"
-      dupRow$focal_end_time <- "ENTER DATE/TIME"
+      dupRow$focal_start_time <- paste(dupRow$focal_start_time, "EDIT !")
+      dupRow$focal_end_time <- paste(dupRow$focal_end_time, "EDIT !")
       dupRow$focal_individual_id <- "ENTER FOCAL INDIV ID"
 
       views$dat1 <- smartbind(views$dat1, dupRow)
@@ -996,6 +1036,102 @@ isolate({
       }
 	})  
  
+ 
+ 	observeEvent(input$duplicateBehaviorRow, {
+    		
+		if(!is.null(input$behaviorsDT_select)) {
+		
+	  cat(file=stderr(), paste0("duplicating... "))
+      dupRowSession <- sessionsRV()[input$sessionsDT_select,]
+      dupRowFocal <- focalsRV()[input$focalsDT_select,]
+      dupRowBehav <- behaviorsRV()[input$behaviorsDT_select,]
+
+      dupRow <- cbind(dupRowSession, dupRowFocal, dupRowBehav)
+      dupRow$behavior_time <- paste(dupRow$behavior_time, "EDIT !")
+      dupRow$actor <- "ENTER ACTOR"
+      dupRow$subject <- "ENTER SUBJECT"
+
+      views$dat1 <- smartbind(views$dat1, dupRow)
+      
+     output$behaviorsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render behaviorsDTDuplicate", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
+    ));
+    d3tf(isolate(behaviorsRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+		
+      }
+	})   
+ 
+ 	observeEvent(input$duplicateScanListRow, {
+    		
+		if(!is.null(input$scanListDT_select)) {
+		
+	  cat(file=stderr(), paste0("duplicating... "))
+      dupRowSession <- sessionsRV()[input$sessionsDT_select,]
+      dupRowFocal <- focalsRV()[input$focalsDT_select,]
+      dupRowScanList <- scanListRV()[input$scanListDT_select,]
+
+      dupRow <- cbind(dupRowSession, dupRowFocal, dupRowScanList)
+      dupRow$scan_time <- paste(dupRow$scan_time, "EDIT !")
+
+      views$dat2 <- smartbind(views$dat2, dupRow)
+      
+     output$scanListDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render scanListDTDuplicate", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanListRow()))
+    ));
+    d3tf(isolate(scanListRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })		
+  
+  	output$scansDT <- renderD3tf({
+								     cat(file=stderr(), paste0("render scansDTDuplicate", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanRow()))
+    ));
+    d3tf(emptyScanRow(),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+      }
+	}) 
+    
     
     #########################   
     
