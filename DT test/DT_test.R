@@ -435,25 +435,24 @@ isolate({
       pk3 <- behaviorsRV()$actor[row]
       pk4 <- behaviorsRV()$subject[row]
       pk5 <- sessionsRV()$session_start_time[input$sessionsDT_select]
-
-      colname <- names(behaviorsRV())[col]    
-      
+      if(is.null(input$focalsDT_select)) {
+	       rejectEdit(session, tbl = "behaviorsDT", row = row, col = col, id = id, value = "");
+} else {
+      colname <- names(behaviorsRV())[col]          
         if(is.na(pk2) | is.na(pk3) | is.na(pk4)){
        	views$dat1[views$dat1$device_id==pk1 & views$dat1$session_start_time ==pk5, names(views$dat1)==colname] <- val
        } else {
        #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
        views$dat1[views$dat1$device_id==pk1 & views$dat1$behavior_time==pk2 & views$dat1$actor==pk3 & views$dat1$subject==pk4, names(views$dat1)==colname] <- val
        }
-     })
+     }})
   }) 
          
          
-     observeEvent(input$scanListDT_edit,{
+      observeEvent(input$scanListDT_edit,{
     if(is.null(input$scanListDT_edit)) return(NULL);
      edit <- input$scanListDT_edit;
 isolate({
-	      # need isolate, otherwise this observer would run twice
-      # for each edit
       id <- edit$id;
       row <- as.integer(edit$row);
       col <- as.integer(edit$col);
@@ -461,31 +460,25 @@ isolate({
       pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
       pk2 <- scanListRV()$scan_time[row]
       pk3 <- sessionsRV()$session_start_time[input$sessionsDT_select]
-	  oldval <- scanListRV()[row, col]
-
+	  #oldval <- scanListRV()[row, col]
 if(is.null(input$focalsDT_select)) {
 	       rejectEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value = "");
-
 } else {
 
-      colname <- names(scanListRV())[col]
-      
+      colname <- names(scanListRV())[col]      
       if(is.na(pk2)){
        	views$dat2[views$dat2$device_id==pk1 & views$dat2$session_start_time ==pk3, names(views$dat2)==colname] <- val
        } else {
        
-       cat(file=stderr(), "editing... row = ", row, " col = ", col, " val = ", val, " pk1 = ", pk1, "pk2 = ",pk2 ,"pk3= ",pk3 , "colname = ", colname,"oldval = ",oldval, "\n")
+       #cat(file=stderr(), "editing... row = ", row, " col = ", col, " val = ", val, " pk1 = ", pk1, "pk2 = ",pk2 ,"pk3= ",pk3 , "colname = ", colname,"oldval = ",oldval, "\n")
        #confirmEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value = val);
      
-      if (colname=="scan_time") pk2 <- oldval
-             cat(file=stderr(), "sum(views$dat2$scan_time==pk2) = ", sum(views$dat2$scan_time==pk2 & !is.na(views$dat2$scan_time)), "\n")
+      #if (colname=="scan_time") pk2 <- oldval
       views$dat2[views$dat2$device_id==pk1 & views$dat2$scan_time==pk2 & !is.na(views$dat2$scan_time), names(views$dat2)==colname] <- val
-      }
-      
+      }      
      }
-      
      })
-  }) 
+  })
     
      observeEvent(input$scansDT_edit,{
     if(is.null(input$scansDT_edit)) return(NULL);
@@ -500,11 +493,18 @@ isolate({
       pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
       pk2 <- scanListRV()$scan_time[input$scanListDT_select]
       pk3 <- scansRV()$scanned_individual_id[row]
+      
+ if(is.null(input$scanListDT_select)) {
+	       rejectEdit(session, tbl = "scansDT", row = row, col = col, id = id, value = "");
+} else {
       colname <- names(scansRV())[col]
+            if(is.na(pk3)){
+       	views$dat2[views$dat2$device_id==pk1 & views$dat2$scan_time ==pk2, names(views$dat2)==colname] <- val
+       } else {
       cat(file=stderr(), paste0("pk3 = ", pk3, "\n"))
        #confirmEdit(session, tbl = "scansDT", row = row, col = col, id = id, value = val);
       views$dat2[views$dat2$device_id==pk1 & views$dat2$scan_time==pk2 & views$dat2$scanned_individual_id==pk3 & !is.na(views$dat2$scan_time), names(views$dat2)==colname] <- val
-     })
+     }}})
   }) 
     
 
