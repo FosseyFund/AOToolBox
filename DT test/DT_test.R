@@ -435,12 +435,14 @@ isolate({
       pk3 <- behaviorsRV()$actor[row]
       pk4 <- behaviorsRV()$subject[row]
       pk5 <- sessionsRV()$session_start_time[input$sessionsDT_select]
+      pk6 <- focalsRV()$focal_start_time[input$focalsDT_select]
+
       if(is.null(input$focalsDT_select)) {
 	       rejectEdit(session, tbl = "behaviorsDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(behaviorsRV())[col]          
         if(is.na(pk2) | is.na(pk3) | is.na(pk4)){
-       	views$dat1[views$dat1$device_id==pk1 & views$dat1$session_start_time ==pk5, names(views$dat1)==colname] <- val
+       	views$dat1[views$dat1$device_id==pk1 & views$dat1$session_start_time ==pk5 & views$dat1$focal_start_time==pk6, names(views$dat1)==colname] <- val
        } else {
        #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
        views$dat1[views$dat1$device_id==pk1 & views$dat1$behavior_time==pk2 & views$dat1$actor==pk3 & views$dat1$subject==pk4, names(views$dat1)==colname] <- val
@@ -954,6 +956,7 @@ isolate({
       dupRow$focal_individual_id <- "ENTER FOCAL INDIV ID"
 
       views$dat1 <- smartbind(views$dat1, dupRow)
+      views$dat2 <- smartbind(views$dat2, dupRow)
 		
 		
      
@@ -1132,7 +1135,45 @@ isolate({
       }
 	}) 
     
-    
+
+ 	observeEvent(input$duplicateScanRow, {
+    		
+		if(!is.null(input$scansDT_select)) {
+		
+	  cat(file=stderr(), paste0("duplicating... "))
+      dupRowSession <- sessionsRV()[input$sessionsDT_select,]
+      dupRowFocal <- focalsRV()[input$focalsDT_select,]
+      dupRowScanList <- scanListRV()[input$scanListDT_select,]
+      dupRowScan <- scansRV()[input$scansDT_select,]
+
+      dupRow <- cbind(dupRowSession, dupRowFocal, dupRowScanList, dupRowScan)
+      dupRow$scanned_individual_id <- paste(dupRow$scanned_individual_id, "EDIT !")
+
+      views$dat2 <- smartbind(views$dat2, dupRow)		
+  
+  	output$scansDT <- renderD3tf({
+								     cat(file=stderr(), paste0("render scansDTDuplicate", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanRow()))
+    ));
+    d3tf(isolate(scansRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+      }
+	}) 
+
+
     #########################   
     
     output$downloadBehaviorsView <- downloadHandler(
