@@ -161,8 +161,8 @@ shinyApp(
 	scansRV <- reactive({
 		if((is.null(input$scanListDT_select))) return(emptyScanRow())
 		#temp <- is.null(input$scansDT_edit)
-		res <-(removeDuplicates(views$dat2[views$dat2$device_id==sessionsRV()$device_id[isolate(input$sessionsDT_select)] & views$dat2$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select] & views$dat2$scan_time== scanListRV()$scan_time[isolate(input$scanListDT_select)],],c("scanned_individual_id", names(views$dat2)[!names(views$dat2)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "scan_time", "scanned_individual_id","scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")])))
-		res <- res[!is.na(res$scanned_individual_id),]
+		
+		res <-(removeDuplicates(views$dat2[views$dat2$device_id==sessionsRV()$device_id[isolate(input$sessionsDT_select)] & views$dat2$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select] & views$dat2$scan_time== scanListRV()$scan_time[isolate(input$scanListDT_select)] & !is.na(views$dat2$scan_time),],c("scanned_individual_id", names(views$dat2)[!names(views$dat2)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "scan_time", "scanned_individual_id","scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")])))
 		return(res)
 	})
 
@@ -343,12 +343,12 @@ shinyApp(
 	observeEvent(input$scanListDT_select, {
 	output$scansDT <- renderD3tf({
 		  							     cat(file=stderr(), paste0("render scansDTter", "\n"))
-
+cat(file=stderr(), paste0("scansRV dim : ", dim(scansRV()), "\n"))
     tableProps <- list(
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanRow()))
     ));
-    d3tf(scansRV(),
+    d3tf(isolate(scansRV()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -495,13 +495,16 @@ isolate({
       pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
       pk2 <- scanListRV()$scan_time[input$scanListDT_select]
       pk3 <- scansRV()$scanned_individual_id[row]
-      
+      cat(file=stderr(), paste0("pk1 = ", pk1,"pk2 = ", pk2,"pk3 = ", pk3, "\n"))
+
  if(is.null(input$scanListDT_select)) {
 	       rejectEdit(session, tbl = "scansDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(scansRV())[col]
             if(is.na(pk3)){
-       	views$dat2[views$dat2$device_id==pk1 & views$dat2$scan_time ==pk2, names(views$dat2)==colname] <- val
+        cat(file=stderr(), paste0("pk3 is NA, pk1 = ", pk1,"; pk2 = ", pk2,"; pk3 = ", pk3, "\n")) 
+        cat(file=stderr(), paste0("nb rows from dat2 to edit : ", sum(views$dat2$device_id==pk1 & views$dat2$scan_time ==pk2), "\n")) 
+       	views$dat2[views$dat2$device_id==pk1 & views$dat2$scan_time ==pk2 & !is.na(views$dat2$scan_time), names(views$dat2)==colname] <- val
        } else {
       cat(file=stderr(), paste0("pk3 = ", pk3, "\n"))
        #confirmEdit(session, tbl = "scansDT", row = row, col = col, id = id, value = val);
