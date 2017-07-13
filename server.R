@@ -654,9 +654,7 @@ database <- eventReactive(input$postgresConnect, {
     	all_cons <- dbListConnections(drv)
     for(con in all_cons) dbDisconnect(con)
 
-    con <- dbConnect(dbDriver("PostgreSQL"), dbname = tolower(DBname()),
-                 host = DBhost(), port = DBport(),
-                 user = DBuser(), password = DBpwd())
+    con <- dbConnect(dbDriver("PostgreSQL"), dbname = tolower(DBname()), host = DBhost(), port = DBport(), user = DBuser(), password = DBpwd())
 #cat(file=stderr(), paste(DBname(), DBhost(), DBport(),DBuser(), DBpwd(), collapse=", "))
     return(con)
 })  		
@@ -712,9 +710,7 @@ createDB <- eventReactive(input$createEmptyDB, {
 		}
 	 cat(file=stderr(), "Creating empty database...\n")
     #listTables1 <- jsonOutputConversion(json.output.file =NULL, behaviors.json.input2(), layout_info.json.input2(), colmerge=input$colmerge2)
-    con <- dbConnect(dbDriver("PostgreSQL"), dbname = tolower(DBname()),
-                 host = DBhost(), port = DBport(),
-                 user = DBuser(), password = DBpwd())
+    con <- dbConnect(dbDriver("PostgreSQL"), dbname = tolower(DBname()), host = DBhost(), port = DBport(),user = DBuser(), password = DBpwd())
 ans <- createListSQLTables(behav = behaviors.json.input2(), layout=layout_info.json.input2(), colmerge=input$colmerge2, con=con, newdbname= newDBname(), username= DBuser(), hostname= DBhost(), pwd= DBpwd(), portname=DBport())
 all_cons <- dbListConnections(dbDriver("PostgreSQL"))
     for(con in all_cons) dbDisconnect(con)
@@ -728,9 +724,7 @@ output$newDBcreated <- renderText({
       value = newDBname())
         output$table11 <- renderTable({
 				#cat(file=stderr(), "test")
-		con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = tolower(DBname()),
-                 host = DBhost(), port = DBport(),
-                 user = DBuser(), password = DBpwd())
+		con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = tolower(DBname()),host = DBhost(), port = DBport(),user = DBuser(), password = DBpwd())
 		return(getTableList(con, DBname()))
 		}, include.rownames=F)
 		all_cons <- dbListConnections(dbDriver("PostgreSQL"))
@@ -775,9 +769,7 @@ dataOutput5 <- reactive({
 		
 	outputTables <- jsonOutputConversion(json.output.file.input3(), behaviors.json.input3(), layout_info.json.input3(), colmerge=input$colmerge3)
     cat(file=stderr(), "Uploading file...\n")
-	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = tolower(DBname()),
-           host = DBhost(), port = DBport(),
-           user = DBuser(), password = DBpwd())
+	con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = tolower(DBname()),host = DBhost(), port = DBport(),user = DBuser(), password = DBpwd())
 if(nrow(outputTables$sessionsTable)>0) uploadSessionsTable(outputTables$sessionsTable, con)
 if(nrow(outputTables$focalsTable)>0) uploadFocalsTable(outputTables$focalsTable, con)
 if(nrow(outputTables$behaviorsTable)>0) uploadBehaviorsTable(outputTables$behaviorsTable, con)
