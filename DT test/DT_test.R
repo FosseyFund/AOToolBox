@@ -1,7 +1,7 @@
 #devtools::install_github('rstudio/DT@feature/editor')
+# library(DT)
 
 # library(shiny)
-# library(DT)
 # library(RPostgreSQL)
 # con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = "aowinnie5433", host = "localhost", port = 5433, user = "postgres", password = "postgres")
 
@@ -122,10 +122,10 @@ shinyApp(
     	return(dat)
     	}
     
-	sessionsRVentry <- reactiveValues(dat=emptySessionRow())
+	##sessionsRVentry <- reactiveValues(dat=emptySessionRow())
     ###########################
 
-    clicked <- reactiveValues(deleteSession=FALSE)
+    #clicked <- reactiveValues(deleteSession=FALSE)
 
 	sessionsRV <-  reactive({
     	#temp <- is.null(input$addBlankSessionRow)+clicked$addBlankSessionRow
@@ -341,7 +341,7 @@ shinyApp(
 	observeEvent(input$scanListDT_select, {
 	output$scansDT <- renderD3tf({
 		  							     cat(file=stderr(), paste0("render scansDTter", "\n"))
-cat(file=stderr(), paste0("scansRV dim : ", dim(scansRV()), "\n"))
+cat(file=stderr(), paste0("scansRV dim : ", paste(isolate(dim(scansRV())), collapse=", "), "\n"))
     tableProps <- list(
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanRow()))
@@ -418,7 +418,7 @@ isolate({
      })
   })
 
-    observeEvent(input$behaviorsDT_edit,{
+observeEvent(input$behaviorsDT_edit,{
     if(is.null(input$behaviorsDT_edit)) return(NULL);
      edit <- input$behaviorsDT_edit;
 isolate({
@@ -439,7 +439,7 @@ isolate({
 	       rejectEdit(session, tbl = "behaviorsDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(behaviorsRV())[col]          
-        if(is.na(pk2) | is.na(pk3) | is.na(pk4)){
+        if((is.na(pk2) | is.na(pk3) | is.na(pk4)) & nrow(behaviorsRV())==1){
        	views$dat1[views$dat1$device_id==pk1 & views$dat1$session_start_time ==pk5 & views$dat1$focal_start_time==pk6, names(views$dat1)==colname] <- val
        } else {
        #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
@@ -448,8 +448,8 @@ isolate({
      }})
   }) 
          
-         
-      observeEvent(input$scanListDT_edit,{
+        
+observeEvent(input$scanListDT_edit,{
     if(is.null(input$scanListDT_edit)) return(NULL);
      edit <- input$scanListDT_edit;
 isolate({
@@ -466,18 +466,21 @@ if(is.null(input$focalsDT_select)) {
 } else {
 
       colname <- names(scanListRV())[col]      
-      if(is.na(pk2)){
+      if(is.na(pk2) & nrow(scanListRV())==1){
        	views$dat2[views$dat2$device_id==pk1 & views$dat2$session_start_time ==pk3, names(views$dat2)==colname] <- val
        } else {
-       
+       if(col==1 & (is.na(val) | val %in% scansRV()$scanned_individual_id[-row] | val=="" )) {
+       	rejectEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value= pk2)
+            cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
+       	} else {
        #cat(file=stderr(), "editing... row = ", row, " col = ", col, " val = ", val, " pk1 = ", pk1, "pk2 = ",pk2 ,"pk3= ",pk3 , "colname = ", colname,"oldval = ",oldval, "\n")
        #confirmEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value = val);
      
       #if (colname=="scan_time") pk2 <- oldval
       views$dat2[views$dat2$device_id==pk1 & views$dat2$scan_time==pk2 & !is.na(views$dat2$scan_time), names(views$dat2)==colname] <- val
-      }      
+      }}}    
      }
-     })
+     )
   })
     
      observeEvent(input$scansDT_edit,{
@@ -489,24 +492,30 @@ isolate({
       id <- edit$id;
       row <- as.integer(edit$row);
       col <- as.integer(edit$col);
+      oldval <- scansRV()[row,col]
       val <- edit$val;
       pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
       pk2 <- scanListRV()$scan_time[input$scanListDT_select]
       pk3 <- scansRV()$scanned_individual_id[row]
       cat(file=stderr(), paste0("pk1 = ", pk1,"pk2 = ", pk2,"pk3 = ", pk3, "\n"))
-
  if(is.null(input$scanListDT_select)) {
 	       rejectEdit(session, tbl = "scansDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(scansRV())[col]
-            if(is.na(pk3)){
+       if(is.na(pk3) & nrow(scansRV())==1){
         cat(file=stderr(), paste0("pk3 is NA, pk1 = ", pk1,"; pk2 = ", pk2,"; pk3 = ", pk3, "\n")) 
-        cat(file=stderr(), paste0("nb rows from dat2 to edit : ", sum(views$dat2$device_id==pk1 & views$dat2$scan_time ==pk2), "\n")) 
+        cat(file=stderr(), paste0("scanned_individual_id is NA. Nb rows from dat2 to edit : ", sum(views$dat2$device_id==pk1 & views$dat2$scan_time ==pk2  & !is.na(views$dat2$scan_time)), "\n")) 
        	views$dat2[views$dat2$device_id==pk1 & views$dat2$scan_time ==pk2 & !is.na(views$dat2$scan_time), names(views$dat2)==colname] <- val
        } else {
+       	if(col==1 & (is.na(val) | val %in% scansRV()$scanned_individual_id[-row] | val=="" )) {
+            rejectEdit(session, tbl = "scansDT", row = row, col = col, id = id, value= oldval)
+            cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
+       	} else {
+       	cat(file=stderr(), paste0("nb rows from dat2 to edit : ", sum(views$dat2$device_id==pk1 & views$dat2$scan_time ==pk2 & views$dat2$scanned_individual_id==pk3   & !is.na(views$dat2$scan_time)), "\n"))
       cat(file=stderr(), paste0("pk3 = ", pk3, "\n"))
        #confirmEdit(session, tbl = "scansDT", row = row, col = col, id = id, value = val);
       views$dat2[views$dat2$device_id==pk1 & views$dat2$scan_time==pk2 & views$dat2$scanned_individual_id==pk3 & !is.na(views$dat2$scan_time), names(views$dat2)==colname] <- val
+      }
      }}})
   }) 
     
