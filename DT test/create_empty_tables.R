@@ -39,3 +39,4 @@ emptySessionRow <- function(){
     	names(dat) <- scanColnames
     	return(dat)
     	}
+    	
