@@ -18,11 +18,13 @@
         
 
   
-shinyServer(function(input, output, session) { 
-    views <- reactiveValues(dat1=dat1, dat2=dat2)
-
+shinyServer(function(input, output, session) {
+test_existance <- function(x){
+	if(exists(x)) return(get(x)) else return(NULL)}
+	
+views <- reactiveValues(dat1= test_existance("dat1"), dat2= test_existance("dat2"))
     ##function to remove duplicated values
-    removeDuplicates <- function(dat, vec){
+removeDuplicates <- function(dat, vec){
     	temp <- dat[,match(vec, names(dat))]
     	return(temp[!duplicated(temp),])
     }

@@ -1,18 +1,19 @@
 sessionsRV <-  reactive({
     	#temp <- is.null(input$addBlankSessionRow)+clicked$addBlankSessionRow
-    	if (is.null((views$dat1))) return(emptySessionRow())##why did I isolate this value?
+    	if (is.null(views$dat1)) return(emptySessionRow())
+    	if (nrow(views$dat1)==0) return(emptySessionRow())
+
     	#temp <- is.null(input$sessionsDT_edit) & is.null(clicked$deleteSession)
     	res <- removeDuplicates((views$dat1), c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "layout_info_json_version", "behaviors_json_version", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold"))
     	cat(file=stderr(), paste0("sessionsRV updated : ", nrow(res), " nrow(views$dat1) = ", nrow(views$dat1), "\n"))
     return(res)
     	})
 
-	focalsRV <- reactive({
+focalsRV <- reactive({
 		if(isolate(is.null(input$sessionsDT_select))) return(emptyFocalListRow())##checks if a sessionsDT row has been selected
 		#temp <- is.null(input$focalsDT_edit)
 		res <-(removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select],],c("focal_start_time", "focal_end_time", "focal_individual_id", "set_duration", "set_scan_interval")))
 		cat(file=stderr(), paste0("focalsRV updated with sessionsDT_select = ",isolate(input$sessionsDT_select)," and ", res[1,1], " and input$focalsDT_select = ", isolate(input$focalsDT_select),"\n\n"))
-
 		return(res)
 	})
 	
