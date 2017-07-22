@@ -9,17 +9,25 @@ isolate({
       row <- as.integer(edit$row);
       col <- as.integer(edit$col);
       val <- edit$val;
+      oldval <- sessionsRV()[row, col]
       pk1 <- sessionsRV()$device_id[row]
       pk2 <- sessionsRV()$session_start_time[row]
+
       colname <- names(sessionsRV())[col]
-      cat(file=stderr(), "editing... row = ", row, " col = ", col, " val = ", val, "\n")
-    
+      if((col%in%c(1,2) & (is.na(val) | val=="")) | 
+       	   (col==1 & sum(duplicated(rbind(sessionsRV()[-row, 1:2], data.frame(device_id=val, session_start_time=sessionsRV()[row, 2]))))>0)  | 
+       	   (col==2 & sum(duplicated(rbind(sessionsRV()[-row, 1:2], data.frame(device_id=sessionsRV()[row, 1], session_start_time=val))))>0)
+       	   )
+       {
+       	rejectEdit(session, tbl = "sessionsDT", row = row, col = col, id = id, value= oldval)
+        cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
+       	} else {	    
        views$dat1[views$dat1$device_id==pk1 & views$dat1$session_start_time==pk2, names(views$dat1)==colname] <- val
        views$dat2[views$dat2$device_id==pk1 & views$dat2$session_start_time==pk2, names(views$dat2)==colname] <- val
         ##confirmEdit(session, tbl = "sessionsDT", row = row, col = col, id = id, value = val)
+     }  
      })
   })
-  
   
 observeEvent(input$focalsDT_edit,{
     if(is.null(input$focalsDT_edit)) return(NULL);
