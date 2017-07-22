@@ -1,5 +1,9 @@
 observeEvent(input$duplicateSessionRow, {
 		if(!is.null(input$sessionsDT_select)) {
+      	 if(!sessionsRV()$session_start_time[input$sessionsDT_select]=="" &
+      	    !sessionsRV()$device_id[input$sessionsDT_select]==""
+      	 ){
+
       cat(file=stderr(), paste0("duplicating... "))
       dupRow <- sessionsRV()[input$sessionsDT_select,]
       dupRow$session_start_time <- paste(dupRow$session_start_time, "EDIT !")
@@ -24,8 +28,7 @@ observeEvent(input$duplicateSessionRow, {
          selectableRows='single',
          selectableRowsClass='success'
 	);
-  })
-  
+  })  
   output$focalsDT <- renderD3tf({
 				     cat(file=stderr(), paste0("render focalsDTDuplicate", "\n"))
     tableProps <- list(
@@ -102,7 +105,7 @@ observeEvent(input$duplicateSessionRow, {
          selectableRowsClass='success'
 	);
   })
-  
+  }
   }
   })
  
@@ -111,6 +114,8 @@ observeEvent(input$duplicateSessionRow, {
  	observeEvent(input$duplicateFocalRow, {
     		
 		if(!is.null(input$focalsDT_select)) {
+		 if(!focalsRV()$focal_start_time[input$focalsDT_select]==""){
+
 		
 	  cat(file=stderr(), paste0("duplicating... "))
       dupRowSession <- sessionsRV()[input$sessionsDT_select,]
@@ -123,9 +128,7 @@ observeEvent(input$duplicateSessionRow, {
       views$dat1 <- smartbind(views$dat1, dupRow)
       views$dat2 <- smartbind(views$dat2, dupRow)
 		
-		
-     
-      	output$focalsDT <- renderD3tf({
+      output$focalsDT <- renderD3tf({
 				     cat(file=stderr(), paste0("render focalsDTDuplicate", "\n"))
     tableProps <- list(
       btn_reset = TRUE,
@@ -202,12 +205,16 @@ observeEvent(input$duplicateSessionRow, {
 	);
   })
       }
+      }
 	})  
  
  
  	observeEvent(input$duplicateBehaviorRow, {
     		
 		if(!is.null(input$behaviorsDT_select)) {
+			if(!behaviorsRV()$behavior_time[input$behaviorsDT_select]=="" & 
+			!behaviorsRV()$actor[input$behaviorsDT_select]=="" &
+			!behaviorsRV()$subject[input$behaviorsDT_select]=="") {
 		
 	  cat(file=stderr(), paste0("duplicating... "))
       dupRowSession <- sessionsRV()[input$sessionsDT_select,]
@@ -240,13 +247,13 @@ observeEvent(input$duplicateSessionRow, {
          selectableRowsClass='success'
 	);
   })
-		
-      }
+	}
+    }
 	})   
  
  	observeEvent(input$duplicateScanListRow, {
-    		
-		if(!is.null(input$scanListDT_select)) {
+		if(!is.null(input$scanListDT_select)){
+			if(!scanListRV()$scan_time[input$scanListDT_select]==""){
 		
 	  cat(file=stderr(), paste0("duplicating... "))
       dupRowSession <- sessionsRV()[input$sessionsDT_select,]
@@ -298,12 +305,14 @@ observeEvent(input$duplicateSessionRow, {
 	);
   })
       }
+      }
 	}) 
     
 
  	observeEvent(input$duplicateScanRow, {
     		
-		if(!is.null(input$scansDT_select)) {
+		if(!is.null(input$scansDT_select)){
+			if(!scansRV()$scanned_individual_id[input$scansDT_select]=="") {
 		
 	  cat(file=stderr(), paste0("duplicating... "))
       dupRowSession <- sessionsRV()[input$sessionsDT_select,]
@@ -335,6 +344,7 @@ observeEvent(input$duplicateSessionRow, {
          selectableRowsClass='success'
 	);
   })
+      }
       }
 	}) 
 
