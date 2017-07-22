@@ -59,6 +59,7 @@ isolate({
       row <- as.integer(edit$row);
       col <- as.integer(edit$col);
       val <- edit$val;
+      oldval <- behaviorsRV()[row, col]
       pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
       pk2 <- behaviorsRV()$behavior_time[row]
       pk3 <- behaviorsRV()$actor[row]
@@ -73,8 +74,17 @@ isolate({
         if((is.na(pk2) | is.na(pk3) | is.na(pk4)) & nrow(behaviorsRV())==1){
        	views$dat1[views$dat1$device_id==pk1 & views$dat1$session_start_time ==pk5 & views$dat1$focal_start_time==pk6, names(views$dat1)==colname] <- val
        } else {
+       if((col%in%c(1,2,3) & (is.na(val) | val=="")) | 
+       	   (col==1 & sum(duplicated(rbind(behaviorsRV()[-row, 1:3], data.frame(behavior_time=val, behaviorsRV()[row, c(2,3)])))>0))  | 
+       	   (col==2 & sum(duplicated(rbind(behaviorsRV()[-row, 1:3], data.frame(actor=val, behaviorsRV()[row, c(1,3)])))>0))   | 
+       	   (col==3 & sum(duplicated(rbind(behaviorsRV()[-row, 1:3], data.frame(subject=val, behaviorsRV()[row, c(1,2)])))>0))
+       ) {
+       	rejectEdit(session, tbl = "behaviorsDT", row = row, col = col, id = id, value= oldval)
+        cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
+       	} else {
        #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
        views$dat1[views$dat1$device_id==pk1 & views$dat1$behavior_time==pk2 & views$dat1$actor==pk3 & views$dat1$subject==pk4, names(views$dat1)==colname] <- val
+       }
        }
      }})
   }) 
