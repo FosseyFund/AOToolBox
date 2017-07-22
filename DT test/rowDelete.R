@@ -1,5 +1,5 @@
 	observeEvent(input$deleteSessionRow, {
-		if(!is.null(input$sessionsDT_select)) {
+		if(!is.null(input$sessionsDT_select) & nrow(sessionsRV())>1) {
       pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
       pk2 <- sessionsRV()$session_start_time[input$sessionsDT_select]
       cat(file=stderr(), paste0("pk1 = ", pk1," pk2 = ", pk2, " nb rows to delete = ", sum(views$dat1$device_id==pk1 & views$dat1$session_start_time==pk2), "\n"))
@@ -7,7 +7,6 @@
       views$dat2 <- views$dat2[!(views$dat2$device_id==pk1 & views$dat2$session_start_time==pk2),]
       #clicked$deleteSession <- !clicked$deleteSession
       #output$focalDT <- NULL
-      
       output$sessionsDT <- renderD3tf({
 						     cat(file=stderr(), paste0("render sessionsDTDelete", "\n"))
 
@@ -55,7 +54,7 @@
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
     ));
-    d3tf(emptyBehaviorRow(),
+    d3tf(isolate(emptyBehaviorRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -75,7 +74,7 @@
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanListRow()))
     ));
-    d3tf(emptyScanListRow(),
+    d3tf(isolate(emptyScanListRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -95,7 +94,7 @@
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanRow()))
     ));
-    d3tf(emptyScanRow(),
+    d3tf(isolate(emptyScanRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -321,7 +320,7 @@ if(length(unique(views$dat1$focal_start_time[views$dat1$device_id==pk1 & views$d
       }
 	})  
 
-	    	observeEvent(input$deleteScanRow, {
+observeEvent(input$deleteScanRow, {
     	cat(file=stderr(), paste0("deleting scansDT row : ", input$scansDT_select, "\n"))
     		
 		if(!is.null(input$scansDT_select)) {

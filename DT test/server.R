@@ -16,27 +16,25 @@
 # dat2 <- data.frame(dbGetQuery(con, "select * from main_tables.all_scan_data_view;"))
 # dat2[,unlist(lapply(dat2, function(x) inherits(x, "POSIXt")))] <- apply(dat2[,unlist(lapply(dat2, function(x) inherits(x, "POSIXt")))], 2, timeToChar)  
         
-
-  
 shinyServer(function(input, output, session) {
 test_existance <- function(x){
 	if(exists(x)) return(get(x)) else return(NULL)}
 	
 views <- reactiveValues(dat1= test_existance("dat1"), dat2= test_existance("dat2"))
-    ##function to remove duplicated values
+
+##function to remove duplicated values and select columns
 removeDuplicates <- function(dat, vec){
     	temp <- dat[,match(vec, names(dat))]
     	return(temp[!duplicated(temp),])
-    }
+}
 
-###########################
+
 ###########################
 ###########################
 ###########################
 source("create_empty_tables.R", local=TRUE)
 source("tablesRV.R", local=TRUE)
 
-###########################
 ###########################
 ###########################
 ###########################
