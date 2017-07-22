@@ -21,7 +21,7 @@ isolate({
   })
   
   
-    observeEvent(input$focalsDT_edit,{
+observeEvent(input$focalsDT_edit,{
     if(is.null(input$focalsDT_edit)) return(NULL);
      edit <- input$focalsDT_edit;
 isolate({
@@ -31,20 +31,30 @@ isolate({
       row <- as.integer(edit$row);
       col <- as.integer(edit$col);
       val <- edit$val;
+      oldval <- focalsRV()[row, col]
       pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
       pk2 <- focalsRV()$focal_start_time[row]
       pk3 <- sessionsRV()$session_start_time[input$sessionsDT_select]
-
-      colname <- names(focalsRV())[col]
-      #cat(file=stderr(), "editing... row = ", row, " col = ", col, " val = ", val, " pk1 = ", pk1, "pk2 = ",pk2 ,"\n")
-       if(is.na(pk2)){
+if(is.null(input$sessionsDT_select)) {
+	       rejectEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = "");
+} else {
+      colname <- names(focalsRV())[col]      
+      
+       if(is.na(pk2) & nrow(focalsRV())==1){
        	views$dat1[views$dat1$device_id==pk1 & views$dat1$session_start_time ==pk3, names(views$dat1)==colname] <- val
        	views$dat2[views$dat2$device_id==pk1 & views$dat2$session_start_time ==pk3, names(views$dat2)==colname] <- val
        } else {
-        
+       if((col==1 & (is.na(val) | val=="")) | 
+       	   (col==1 & val%in%focalsRV()$focal_start_time[-row]))
+        {
+       	rejectEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value= oldval)
+        cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
+       	} else {
        views$dat1[views$dat1$device_id==pk1 & views$dat1$focal_start_time==pk2, names(views$dat1)==colname] <- val
        views$dat2[views$dat2$device_id==pk1 & views$dat2$focal_start_time==pk2, names(views$dat2)==colname] <- val
               #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
+        }
+        }
         }
      })
   })
@@ -66,7 +76,6 @@ isolate({
       pk4 <- behaviorsRV()$subject[row]
       pk5 <- sessionsRV()$session_start_time[input$sessionsDT_select]
       pk6 <- focalsRV()$focal_start_time[input$focalsDT_select]
-
       if(is.null(input$focalsDT_select)) {
 	       rejectEdit(session, tbl = "behaviorsDT", row = row, col = col, id = id, value = "");
 } else {
