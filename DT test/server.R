@@ -1,21 +1,3 @@
-
-# library(shiny)
-# library(gtools)
-# library(RPostgreSQL)
-# con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = "aowinnie5433", host = "localhost", port = 5433, user = "postgres", password = "postgres")
-
-# library(htmlwidgets)
-# library(D3TableFilter)
-# timeToChar <- function(x){
-  		# temp <- format(x)
-  		# temp[grepl("NA", temp)] <- NA
-  		# return(temp)
-  	# }
-# dat1 <- data.frame(dbGetQuery(con, "select * from main_tables.all_focal_data_view;"))
-# dat1[,unlist(lapply(dat1, function(x) inherits(x, "POSIXt")))] <- apply(dat1[,unlist(lapply(dat1, function(x) inherits(x, "POSIXt")))], 2, timeToChar)
-# dat2 <- data.frame(dbGetQuery(con, "select * from main_tables.all_scan_data_view;"))
-# dat2[,unlist(lapply(dat2, function(x) inherits(x, "POSIXt")))] <- apply(dat2[,unlist(lapply(dat2, function(x) inherits(x, "POSIXt")))], 2, timeToChar)  
-        
 shinyServer(function(input, output, session) {
 test_existance <- function(x){
 	if(exists(x)) return(get(x)) else return(NULL)}
