@@ -1,4 +1,4 @@
-shinyServer(function(input, output, session) {
+function(input, output) {
 ###########################
 ###########################
 ###########################
@@ -9,27 +9,28 @@ json.output.file.input <- reactive({
 		return(NULL)
 	} else {
 		temp <- readLines(input$json.output.file$datapath, warn=F)
-    cat(file=stderr(), paste0("loading json.output.file with names:", names(temp),"\n"))
+    cat(file=stderr(), paste0("loading json.output.file\n"))
 	}
 })
 
 
 dataOutput2 <- eventReactive(input$reacButton, {
- temp <- readLines(input$json.output.file$datapath, warn=F)
-    cat(file=stderr(), paste0("loading json.output.file with names:", names(temp),"\n"))
+			output$value <- renderPrint("test")
+
+ #temp <- readLines(input$json.output.file$datapath, warn=F)
+    cat(file=stderr(), paste0("loading json.output.file with names:\n"))
 })	
 
 dataOutput <- reactive({
-		if(is.null(json.output.file.input())) {return(NULL)} else {
-			temp <- json.output.file.input()[1,1]
-			
-		cat(file=stderr(), paste0("reacting:",  temp, "\n"))
-		print("yo")
-		}
+		#cat(file=stderr(), paste0("reacting:",  temp, "\n"))
+		#print("yo")
+
 })
 
+
+
 }
-)
+
 
 
 
