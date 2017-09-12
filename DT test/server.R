@@ -14,6 +14,52 @@ removeDuplicates <- function(dat, vec){
 ###########################
 ###########################
 ###########################
+
+json.output.file.input <- reactive({
+	if (is.null(input$json.output.file)){
+		cat(file=stderr(), paste0("no json.output.file yet\n"))
+		return(NULL)
+	} else {
+		readLines(input$json.output.file$datapath, warn=F)
+    cat(file=stderr(), paste0("loading json.output.file\n"))
+	}
+})	
+
+
+# json.output.file.input <- reactive({
+	# cat(file=stderr(), paste0("about to load json.output.file\n"))
+   # if (is.null(input$json.output.file))
+      # return(NULL)
+    # readLines(input$json.output.file$datapath, warn=F)
+    # cat(file=stderr(), paste0("loading json.output.file\n"))
+  # })
+
+behaviors.json.input <- reactive({
+    if (is.null(input$behaviors.json))
+      return(NULL)
+    readLines(input$behaviors.json$datapath, warn=F)
+    cat(file=stderr(), paste0("loading behaviors.json.output\n"))
+  })
+
+layout_info.json.input <- reactive({
+    if (is.null(input$layout_info.json))
+      return(NULL)
+    readLines(input$layout_info.json$datapath, warn=F)
+    cat(file=stderr(), paste0("loading layout_info.json.output\n"))
+  })
+
+dataOutput <- reactive({
+		if(is.null(json.output.file.input()) | is.null(behaviors.json.input()) | is.null(layout_info.json.input())) {return(NULL)} else {
+		jsonOutputConversion(json.output.file.input(), behaviors.json.input(), layout_info.json.input(), colmerge=input$colmerge)
+		cat(file=stderr(), paste0("dataOutput()$sessionsTable : ", names(dataOutput()$sessionsTable),"\n"))
+		}
+})
+
+
+
+###########################
+###########################
+###########################
 source("create_empty_tables.R", local=TRUE)
 source("tablesRV.R", local=TRUE)
 

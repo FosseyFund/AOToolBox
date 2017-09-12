@@ -1,7 +1,9 @@
 library(DT)
-
 library(shiny)
 library(RPostgreSQL)
+source("../jsonOutputConversion.R")
+options(shiny.maxRequestSize=20*1024^2)
+
 con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname = "aotest2", host = "localhost", port = 5432, user = "postgres", password = "postgres")
 
 library(htmlwidgets)
