@@ -21,6 +21,7 @@ shinyUI(fluidPage(
   	  downloadButton('downloadScanVarsTable', 'Download scan variables')
     ),
     mainPanel(
+    fluidRow(column(3, verbatimTextOutput("value"))),
       br(),
   	downloadButton("downloadBehaviorsView", "Download behaviors", icon=icon('download'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
   	downloadButton("downloadScansView", "Download scans", icon=icon('download'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),

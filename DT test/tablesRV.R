@@ -1,39 +1,51 @@
 sessionsRV <-  reactive({
-    	#temp <- is.null(input$addBlankSessionRow)+clicked$addBlankSessionRow
-    	if (is.null(views$dat1)) return(emptySessionRow())
-    	if (nrow(views$dat1)==0) return(emptySessionRow())
+    	if (is.null(tableValues$dataOutput$sessionsTable)) return(emptySessionRow())
+    	if (nrow(tableValues$dataOutput$sessionsTable)==0) return(emptySessionRow())
 
-    	#temp <- is.null(input$sessionsDT_edit) & is.null(clicked$deleteSession)
-    	res <- removeDuplicates((views$dat1), c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "layout_info_json_version", "behaviors_json_version", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold"))
-    	cat(file=stderr(), paste0("sessionsRV updated : ", nrow(res), " nrow(views$dat1) = ", nrow(views$dat1), "\n"))
-    return(res)
-    	})
+    	res <- tableValues$dataOutput$sessionsTable
+    	cat(file=stderr(), paste0("sessionsRV updated : ", nrow(res), "\n"))
+	    return(res)
+})
+
 
 focalsRV <- reactive({
 		if(isolate(is.null(input$sessionsDT_select))) return(emptyFocalListRow())##checks if a sessionsDT row has been selected
-		#temp <- is.null(input$focalsDT_edit)
-		res <-(removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select],],c("focal_start_time", "focal_end_time", "focal_individual_id", "set_duration", "set_scan_interval")))
+		res <-tableValues$dataOutput$focalsTable[tableValues$dataOutput$focalsTable$device_ID==sessionsRV()$device_ID[input$sessionsDT_select] & tableValues$dataOutput$focalsTable$session_start_timeStamp==sessionsRV()$session_start_timeStamp[input$sessionsDT_select],]
+		res <- res[,names(res)%in%names(emptyFocalListRow())]
 		cat(file=stderr(), paste0("focalsRV updated with sessionsDT_select = ",isolate(input$sessionsDT_select)," and ", res[1,1], " and input$focalsDT_select = ", isolate(input$focalsDT_select),"\n\n"))
 		return(res)
-	})
+})
 	
-	behaviorsRV <- reactive({
-		if((is.null(input$sessionsDT_select) | is.null(input$focalsDT_select))) return(emptyBehaviorRow())
-		#temp <- is.null(input$behaviorDT_edit)
-		cat(file=stderr(), paste0("behaviorsRV updated with sessionsDT_select = ",input$sessionsDT_select," and input$focalsDT_select = ", input$focalsDT_select, "\n\n"))
-		return((removeDuplicates(views$dat1[views$dat1$device_id==sessionsRV()$device_id[input$sessionsDT_select] & views$dat1$focal_start_time==focalsRV()$focal_start_time[input$focalsDT_select] & views$dat1$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select],],c("behavior_time", "actor", "subject", names(views$dat1)[!names(views$dat1)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "behavior_time", "actor","subject","gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")]))))
-	})
-	
-	scanListRV <- reactive({
-		if((is.null(input$sessionsDT_select) | is.null(input$focalsDT_select))) return(emptyScanListRow())
-				#temp <- is.null(input$scanListDT_edit)
-		return((removeDuplicates(views$dat2[views$dat2$device_id==sessionsRV()$device_id[isolate(input$sessionsDT_select)] & views$dat2$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select] & views$dat2$focal_start_time==focalsRV()$focal_start_time[isolate(input$focalsDT_select)],],c("scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude")))	)
-	})
 
-	scansRV <- reactive({
+behaviorsRV <- reactive({
+		if((is.null(input$sessionsDT_select) | is.null(input$focalsDT_select))) return(emptyBehaviorRow())
+
+		cat(file=stderr(), paste0("behaviorsRV updated with sessionsDT_select = ",input$sessionsDT_select," and input$focalsDT_select = ", input$focalsDT_select, "\n\n"))
+		res <- tableValues$dataOutput$behaviorsTable[tableValues$dataOutput$behaviorsTable$device_ID==sessionsRV()$device_ID[input$sessionsDT_select] & tableValues$dataOutput$behaviorsTable$focal_start_timeStamp==focalsRV()$focal_start_timeStamp[input$focalsDT_select] & tableValues$dataOutput$behaviorsTable$session_start_timeStamp==sessionsRV()$session_start_timeStamp[input$sessionsDT_select],]
+		res <- res[,names(res)%in%names(emptyBehaviorRow())]
+		return(res)
+})
+	
+
+scanListRV <- reactive({
+		if((is.null(input$sessionsDT_select) | is.null(input$focalsDT_select))) return(emptyScanListRow())
+
+		res <- tableValues$dataOutput$scansTable[tableValues$dataOutput$scansTable$device_ID==sessionsRV()$device_ID[isolate(input$sessionsDT_select)] & tableValues$dataOutput$scansTable$session_start_time==sessionsRV()$session_start_timeStamp[input$sessionsDT_select] & tableValues$dataOutput$scansTable$focal_start_timeStamp==focalsRV()$focal_start_timeStamp[isolate(input$focalsDT_select)],]
+		res <- res[,names(res)%in%names(emptyScanListRow())]
+		res <- res[!duplicated(res),]
+		return(res)
+})
+
+
+scansRV <- reactive({
 		if((is.null(input$scanListDT_select))) return(emptyScanRow())
 		#temp <- is.null(input$scansDT_edit)
 		
-		res <-(removeDuplicates(views$dat2[views$dat2$device_id==sessionsRV()$device_id[isolate(input$sessionsDT_select)] & views$dat2$session_start_time==sessionsRV()$session_start_time[input$sessionsDT_select] & views$dat2$scan_time== scanListRV()$scan_time[isolate(input$scanListDT_select)] & !is.na(views$dat2$scan_time),],c("scanned_individual_id", names(views$dat2)[!names(views$dat2)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "scan_time", "scanned_individual_id","scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")])))
+		res <-tableValues$dataOutput$scansTable[tableValues$dataOutput$scansTable$device_ID==sessionsRV()$device_ID[isolate(input$sessionsDT_select)] & tableValues$dataOutput$scansTable$session_start_timeStamp==sessionsRV()$session_start_timeStamp[input$sessionsDT_select] & tableValues$dataOutput$scansTable$scan_timeStamp==scanListRV()$scan_timeStamp[isolate(input$scanListDT_select)] & !is.na(tableValues$dataOutput$scansTable$scan_timeStamp),]
+		res <- res[,names(res)%in%names(emptyScanRow())]
 		return(res)
-	})
+})
+
+
+
+

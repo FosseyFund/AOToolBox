@@ -14,8 +14,8 @@ json.output.file.input <- reactive({
 })
 
 
-dataOutput2 <- eventReactive(input$reacButton, {
-			output$value <- renderPrint("test")
+dataOutput2 <- observeEvent(input$reacButton, {
+			#output$value <- renderPrint("test")
 
  #temp <- readLines(input$json.output.file$datapath, warn=F)
     cat(file=stderr(), paste0("loading json.output.file with names:\n"))

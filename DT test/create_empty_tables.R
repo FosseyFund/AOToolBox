@@ -1,42 +1,57 @@
 emptySessionRow <- function(){
-    	sessionColnames <- c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "layout_info_json_version", "behaviors_json_version", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold")
+		if(is.null(tableValues$dataOutput$sessionsTable)) return(data.frame(empty="", stringsAsFactors=F))
+    	sessionColnames <- names(tableValues$dataOutput$sessionsTable)
     	dat <- data.frame(matrix(NA,nrow=1, ncol=length(sessionColnames)))
     	for(i in 1:ncol(dat))  dat[,i] <- as.character(dat[,i])
     	names(dat) <- sessionColnames
     	return(dat)
     	}
     	
-    	emptyFocalListRow <- function(){
-    focalListColnames <- c("focal_start_time", "focal_end_time", "focal_individual_id", "set_duration", "set_scan_interval")
+emptyFocalListRow <- function(){
+		if(is.null(tableValues$dataOutput$focalsTable)) return(data.frame(empty="", stringsAsFactors=F))
+
+    	focalListColnames <- names(tableValues$dataOutput$focalsTable)
+    	cat(file=stderr(), paste0("focalListColnames = ", focalListColnames,"\n"))
+
+    	focalListColnames <- focalListColnames[,c(length(focalListColnames), 3:(length(focalListColnames)-1))]
     	dat <- data.frame(matrix("",nrow=1, ncol=length(focalListColnames)))
     	for(i in 1:ncol(dat))  dat[,i] <- as.character(dat[,i])
     	names(dat) <- focalListColnames
     	return(dat)
     	}
     	
-    	
-    emptyBehaviorRow <- function(){
-    behaviorColnames <- c("behavior_time", "actor", "subject", names(views$dat1)[!names(views$dat1)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "behavior_time", "actor","subject","gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")])
+emptyBehaviorRow <- function(){
+		if(is.null(tableValues$dataOutput$behaviorsTable)) return(data.frame(empty="", stringsAsFactors=F))
+
+    	behaviorColnames <- names(tableValues$dataOutput$behaviorsTable)
+    	behaviorColnames <- behaviorColnames[!behaviorColnames%in%c("device_ID","session_start_timeStamp","focal_start_timeStamp")]
     	dat <- data.frame(matrix("",nrow=1, ncol=length(behaviorColnames)))
     	for(i in 1:ncol(dat))  dat[,i] <- as.character(dat[,i])
     	names(dat) <- behaviorColnames
     	return(dat)
     	}
     	
-    	emptyScanListRow <- function(){
-    scanListColnames <- c("scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude")
+emptyScanListRow <- function(){
+				if(is.null(tableValues$dataOutput$scansTable)) return(data.frame(empty="", stringsAsFactors=F))
+
+		scanListColnames <- names(tableValues$dataOutput$scansTable)[c(4,(length(names(tableValues$dataOutput$scansTable))-4):(length(names(tableValues$dataOutput$scansTable))))]
     	dat <- data.frame(matrix("",nrow=1, ncol=length(scanListColnames)))
     	for(i in 1:ncol(dat))  dat[,i] <- as.character(dat[,i])
     	names(dat) <- scanListColnames
     	return(dat)
     	}
 
+emptyScanRow <- function(){
+					if(is.null(tableValues$dataOutput$scansTable)) return(data.frame(empty="", stringsAsFactors=F))
 
-    emptyScanRow <- function(){
-    scanColnames <- c("scanned_individual_id", names(views$dat2)[!names(views$dat2)%in%c("device_id", "session_start_time", "session_end_time", "group_id", "pin_code_name", "focal_start_time", "focal_end_time","focal_individual_id", "scan_time", "scanned_individual_id","scan_time", "latitude", "longitude", "gps_horizontal_precision", "altitude", "gps_on", "compass_on", "map_mode_on", "physical_contact_threshold","layout_info_json_version" , "behaviors_json_version", "set_duration", "set_scan_interval")])
+		scanColnames <- names(tableValues$dataOutput$scansTable)[5:(length(names(tableValues$dataOutput$scansTable))-6)]
     	dat <- data.frame(matrix("",nrow=1, ncol=length(scanColnames)))
     	for(i in 1:ncol(dat))  dat[,i] <- as.character(dat[,i])
     	names(dat) <- scanColnames
     	return(dat)
     	}
+    	
+    	
+    	
+    	
     	

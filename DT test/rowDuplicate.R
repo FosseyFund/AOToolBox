@@ -1,14 +1,13 @@
 observeEvent(input$duplicateSessionRow, {
 		if(!is.null(input$sessionsDT_select)) {
-      	 if(!sessionsRV()$session_start_time[input$sessionsDT_select]=="" &
-      	    !sessionsRV()$device_id[input$sessionsDT_select]==""
+      	 if(!sessionsRV()$session_start_timeStamp[input$sessionsDT_select]=="" &
+      	    !sessionsRV()$device_ID[input$sessionsDT_select]==""
       	 ){
 
       cat(file=stderr(), paste0("duplicating... "))
       dupRow <- sessionsRV()[input$sessionsDT_select,]
-      dupRow$session_start_time <- paste(dupRow$session_start_time, "EDIT !")
-      views$dat1 <- smartbind(views$dat1, dupRow)
-      views$dat2 <- smartbind(views$dat2, dupRow)
+      dupRow$session_start_timeStamp <- paste(dupRow$session_start_timeStamp, "EDIT !")
+      tableValues$dataOutput$sessionsTable <- smartbind(tableValues$dataOutput$sessionsTable, dupRow)
 
       output$sessionsDT <- renderD3tf({
 						     cat(file=stderr(), paste0("render sessionsDT RowDuplicate", "\n"))
@@ -114,19 +113,18 @@ observeEvent(input$duplicateSessionRow, {
  	observeEvent(input$duplicateFocalRow, {
     		
 		if(!is.null(input$focalsDT_select)) {
-		 if(!focalsRV()$focal_start_time[input$focalsDT_select]==""){
+		 if(!focalsRV()$focal_start_timeStamp[input$focalsDT_select]==""){
 
 		
 	  cat(file=stderr(), paste0("duplicating... "))
       dupRowSession <- sessionsRV()[input$sessionsDT_select,]
       dupRowFocal <- focalsRV()[input$focalsDT_select,]
       dupRow <- cbind(dupRowSession, dupRowFocal)
-      dupRow$focal_start_time <- paste(dupRow$focal_start_time, "EDIT !")
-      dupRow$focal_end_time <- paste(dupRow$focal_end_time, "EDIT !")
-      dupRow$focal_individual_id <- "ENTER FOCAL INDIV ID"
+      dupRow$focal_start_timeStamp <- paste(dupRow$focal_start_timeStamp, "EDIT !")
+      dupRow$focal_end_timeStamp <- paste(dupRow$focal_end_timeStamp, "EDIT !")
+      dupRow$focal_individual_ID <- "ENTER FOCAL INDIV ID"
+      tableValues$dataOutput$focalsTable <- smartbind(tableValues$dataOutput$focalsTable, dupRow)
 
-      views$dat1 <- smartbind(views$dat1, dupRow)
-      views$dat2 <- smartbind(views$dat2, dupRow)
 		
       output$focalsDT <- renderD3tf({
 				     cat(file=stderr(), paste0("render focalsDTDuplicate", "\n"))
@@ -226,7 +224,7 @@ observeEvent(input$duplicateSessionRow, {
       dupRow$actor <- "ENTER ACTOR"
       dupRow$subject <- "ENTER SUBJECT"
 
-      views$dat1 <- smartbind(views$dat1, dupRow)
+      tableValues$dataOutput$behaviorsTable <- smartbind(tableValues$dataOutput$behaviorsTable, dupRow)
       
      output$behaviorsDT <- renderD3tf({
 						     cat(file=stderr(), paste0("render behaviorsDTDuplicate", "\n"))
@@ -263,7 +261,7 @@ observeEvent(input$duplicateSessionRow, {
       dupRow <- cbind(dupRowSession, dupRowFocal, dupRowScanList)
       dupRow$scan_time <- paste(dupRow$scan_time, "EDIT !")
 
-      views$dat2 <- smartbind(views$dat2, dupRow)
+      tableValues$dataOutput$scansTable <- smartbind(tableValues$dataOutput$scansTable, dupRow)
       
      output$scanListDT <- renderD3tf({
 						     cat(file=stderr(), paste0("render scanListDTDuplicate", "\n"))
@@ -312,7 +310,7 @@ observeEvent(input$duplicateSessionRow, {
  	observeEvent(input$duplicateScanRow, {
     		
 		if(!is.null(input$scansDT_select)){
-			if(!scansRV()$scanned_individual_id[input$scansDT_select]=="") {
+			if(!scansRV()$scanned_individual_ID[input$scansDT_select]=="") {
 		
 	  cat(file=stderr(), paste0("duplicating... "))
       dupRowSession <- sessionsRV()[input$sessionsDT_select,]
@@ -321,9 +319,11 @@ observeEvent(input$duplicateSessionRow, {
       dupRowScan <- scansRV()[input$scansDT_select,]
 
       dupRow <- cbind(dupRowSession, dupRowFocal, dupRowScanList, dupRowScan)
-      dupRow$scanned_individual_id <- paste(dupRow$scanned_individual_id, "EDIT !")
+      dupRow$scanned_individual_ID <- paste(dupRow$scanned_individual_ID, "EDIT !")
 
-      views$dat2 <- smartbind(views$dat2, dupRow)		
+      tableValues$dataOutput$scansTable <- smartbind(tableValues$dataOutput$scansTable, dupRow)
+  	  tableValues$dataOutput$scansTable <- tableValues$dataOutput$scansTable[!duplicated(tableValues$dataOutput$scansTable),]
+  
   
   	output$scansDT <- renderD3tf({
 								     cat(file=stderr(), paste0("render scansDTDuplicate", "\n"))

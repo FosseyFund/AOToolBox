@@ -2,6 +2,7 @@
 		     cat(file=stderr(), paste0("is.null(input$sessionsDT_select) = ", is.null(input$sessionsDT_select), "\n"))
 	output$focalsDT <- renderD3tf({
 				     cat(file=stderr(), paste0("render focalsDT", "\n"))
+				     cat(file=stderr(), paste0("ncol(emptyFocalListRow()) = ", ncol(emptyFocalListRow()),"\n"))
     tableProps <- list(
       btn_reset = TRUE,
       col_types = rep("string", ncol(emptyFocalListRow())));
