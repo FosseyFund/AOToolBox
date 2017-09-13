@@ -1,12 +1,19 @@
-	observeEvent(input$deleteSessionRow, {
+observeEvent(input$deleteSessionRow, {
 		if(!is.null(input$sessionsDT_select) & nrow(sessionsRV())>1) {
-      pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
-      pk2 <- sessionsRV()$session_start_time[input$sessionsDT_select]
-      cat(file=stderr(), paste0("pk1 = ", pk1," pk2 = ", pk2, " nb rows to delete = ", sum(views$dat1$device_id==pk1 & views$dat1$session_start_time==pk2), "\n"))
-      views$dat1 <- views$dat1[!(views$dat1$device_id==pk1 & views$dat1$session_start_time==pk2),]
-      views$dat2 <- views$dat2[!(views$dat2$device_id==pk1 & views$dat2$session_start_time==pk2),]
-      #clicked$deleteSession <- !clicked$deleteSession
-      #output$focalDT <- NULL
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+      tableValues$sessionsTable <- tableValues$sessionsTable[!(tableValues$sessionsTable$device_ID==pk1 & tableValues$sessionsTable$session_start_timeStamp==pk2),]
+      tableValues$focalsTable <- tableValues$focalsTable[!(tableValues$focalsTable$device_ID==pk1 & tableValues$focalsTable$session_start_timeStamp==pk2),]
+      tableValues$behaviorsTable <- tableValues$behaviorsTable[!(tableValues$behaviorsTable$device_ID==pk1 & tableValues$behaviorsTable$session_start_timeStamp==pk2),]
+      tableValues$scansTable <- tableValues$scansTable[!(tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$session_start_timeStamp==pk2),]     
+      tableValues$backgroundTapsTable <- tableValues$backgroundTapsTable[!(tableValues$backgroundTapsTable$device_ID==pk1 & tableValues$backgroundTapsTable$session_start_timeStamp==pk2),] 
+      tableValues$commentsTable <- tableValues$commentsTable[!(tableValues$commentsTable$device_ID==pk1 & tableValues$commentsTable$session_start_timeStamp==pk2),]
+      tableValues$continuousVarsTable <- tableValues$continuousVarsTable[!(tableValues$continuousVarsTable$device_ID==pk1 & tableValues$continuousVarsTable$session_start_timeStamp==pk2),]
+      tableValues$dayVarsTable <- tableValues$dayVarsTable[!(tableValues$dayVarsTable$device_ID==pk1 & tableValues$dayVarsTable$session_start_timeStamp==pk2),]
+      tableValues$focalVarsTable <- tableValues$focalVarsTable[!(tableValues$focalVarsTable$device_ID==pk1 & tableValues$focalVarsTable$session_start_timeStamp==pk2),]
+      tableValues$scanVarsTable <- tableValues$scanVarsTable[!(tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$session_start_timeStamp==pk2),]
+
+                      
       output$sessionsDT <- renderD3tf({
 						     cat(file=stderr(), paste0("render sessionsDTDelete", "\n"))
 
@@ -110,36 +117,37 @@
       
       }
 	})   
-    
-    	observeEvent(input$deleteFocalRow, {
+################################  
+################################  
+################################  
+
+observeEvent(input$deleteFocalRow, {
     	cat(file=stderr(), paste0("deleting focal row : ", input$focalsDT_select, "\n"))
     		
 		if(!is.null(input$focalsDT_select)) {
 			
-      pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
-      pk2 <- focalsRV()$focal_start_time[input$focalsDT_select]
-      pk3 <- sessionsRV()$session_start_time[input$sessionsDT_select]
-      cat(file=stderr(), paste0("pk1 = ", pk1," pk2 = ", pk2, " nb rows to delete = ",sum(views$dat1$device_id==pk1 & views$dat1$focal_start_time==pk2), "\n"))
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
+      pk3 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+ 
+tableValues$focalsTable <- tableValues$focalsTable[!(tableValues$focalsTable$device_ID==pk1 & tableValues$focalsTable$focal_start_timeStamp==pk2),]
 
-
-if(length(unique(views$dat1$focal_start_time[views$dat1$device_id==pk1 & views$dat1$session_start_time ==pk3]))==1) {
-      	cat(file=stderr(), paste0("pk1 = ", pk1," pk2 = ", pk2, " only one focal row left", "\n"))
-      	views$dat1[views$dat1$device_id==pk1 & views$dat1$focal_start_time==pk2, -c(1:5, (ncol(views$dat1)-7):(ncol(views$dat1)-2))] <- NA
-     	views$dat1 <- views$dat1[!duplicated(views$dat1),]
-
-		cat(file=stderr(), paste0("nrow scan to delete = ", sum(views$dat2$device_id==pk1 & views$dat2$focal_start_time==pk2), "\n"))
-		
-      	views$dat2[views$dat2$device_id==pk1 & views$dat2$focal_start_time==pk2, -c(1:5, (ncol(views$dat2)-7):(ncol(views$dat2)-2))] <- NA
-      	views$dat2 <- views$dat2[!duplicated(views$dat2),]
-
-      } else {
-
-
-       views$dat1 <- views$dat1[!(views$dat1$device_id==pk1 & views$dat1$focal_start_time==pk2),]
-       cat(file=stderr(), paste0("nrow scan to delete = ", sum(views$dat2$device_id==pk1 & views$dat2$focal_start_time==pk2), "\n"))
-       views$dat2 <- views$dat2[!(views$dat2$device_id==pk1 & views$dat2$focal_start_time==pk2),]
-      }
-      	output$focalsDT <- renderD3tf({
+tableValues$behaviorsTable <- tableValues$behaviorsTable[!(tableValues$behaviorsTable$device_ID==pk1 & tableValues$behaviorsTable$focal_start_timeStamp==pk2),]
+ 
+tableValues$scansTable <- tableValues$scansTable[!(tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$focal_start_timeStamp==pk2),]
+ 
+tableValues$backgroundTapsTable <- tableValues$backgroundTapsTable[!(tableValues$backgroundTapsTable$device_ID==pk1 & tableValues$backgroundTapsTable$focal_start_timeStamp==pk2),]
+  
+tableValues$commentsTable <- tableValues$commentsTable[!(tableValues$commentsTable$device_ID==pk1 & tableValues$commentsTable$focal_start_timeStamp==pk2),]
+  
+tableValues$continuousVarsTable <- tableValues$continuousVarsTable[!(tableValues$continuousVarsTable$device_ID==pk1 & tableValues$continuousVarsTable$focal_start_timeStamp==pk2),]
+        
+tableValues$focalVarsTable <- tableValues$focalVarsTable[!(tableValues$focalVarsTable$device_ID==pk1 & tableValues$focalVarsTable$focal_start_timeStamp==pk2),]
+    
+tableValues$scanVarsTable <- tableValues$scanVarsTable[!(tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$focal_start_timeStamp==pk2),]
+    
+               
+	output$focalsDT <- renderD3tf({
 				     cat(file=stderr(), paste0("render focalsDTDelete", "\n"))
     tableProps <- list(
       btn_reset = TRUE,
@@ -218,23 +226,22 @@ if(length(unique(views$dat1$focal_start_time[views$dat1$device_id==pk1 & views$d
       }
 	})  
     
-    
-    observeEvent(input$deleteBehaviorRow, {
+#############################    
+#############################    
+#############################    
+
+observeEvent(input$deleteBehaviorRow, {
     	    	cat(file=stderr(), paste0("deleting behavior row : ", input$behaviorsDT_select, "\n"))
 	if(!is.null(input$behaviorsDT_select)) {
-      pk1 <- sessionsRV()$device_id[input$sessionsDT_select]		
-      pk2 <- behaviorsRV()$behavior_time[input$behaviorsDT_select]
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]		
+      pk2 <- behaviorsRV()$behavior_timeStamp[input$behaviorsDT_select]
       pk3 <- behaviorsRV()$actor[input$behaviorsDT_select]
       pk4 <- behaviorsRV()$subject[input$behaviorsDT_select]
-      pk5 <- focalsRV()$focal_start_time[input$focalsDT_select]
-      if(sum(views$dat1$device_id==pk1 & views$dat1$focal_start_time==pk5)==1) {
-      	views$dat1[views$dat1$device_id==pk1 & views$dat1$focal_start_time==pk5, -c(1:8, (ncol(views$dat1)-7):ncol(views$dat1))] <- NA
-      } else {
-       views$dat1 <- views$dat1[!(views$dat1$device_id==pk1 & views$dat1$behavior_time==pk2 & views$dat1$actor==pk3 & views$dat1$subject==pk4),]
-       }
-       ###EXCEPT IF ONLY ONE ROW FOR THE FOCAL
-      #cat(file=stderr(), paste0("set row class for focalsDT row : ", focalsDTSelectedRow, "\n"))
-
+      pk5 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
+ 
+tableValues$behaviorsTable <- tableValues$behaviorsTable[!(tableValues$behaviorsTable$device_ID==pk1 & tableValues$behaviorsTable$behavior_timeStamp==pk2 & tableValues$behaviorsTable$actor==pk3 & tableValues$behaviorsTable$subject==pk4),]
+ 
+     
    output$behaviorsDT <- renderD3tf({
 						     cat(file=stderr(), paste0("render behaviorsDTDelete", "\n"))
 
@@ -259,28 +266,22 @@ if(length(unique(views$dat1$focal_start_time[views$dat1$device_id==pk1 & views$d
       }
 	})
 	
+#####################################	
+#####################################	
+#####################################	
 	
-	
-	    	observeEvent(input$deleteScanListRow, {
+observeEvent(input$deleteScanListRow, {
     	cat(file=stderr(), paste0("deleting scanListDT row : ", input$scanListDT_select, "\n"))
     		
-		if(!is.null(input$scanListDT_select)) {
+	if(!is.null(input$scanListDT_select)) {
 			
-      pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
-      pk2 <- scanListRV()$scan_time[input$scanListDT_select]
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- scanListRV()$scan_timeStamp[input$scanListDT_select]
+      pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
+
+tableValues$scansTable <- tableValues$scansTable[!(tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2 & !is.na(tableValues$scansTable$scan_timeStamp)),]
       
-      cat(file=stderr(), paste0("pk1 = ", pk1," pk2 = ", pk2, " nb rows to delete = ",sum(views$dat2$device_id==pk1 & views$dat2$scan_time ==pk2 & !is.na(views$dat2$scan_time)), "\n"))
-
-      pk3 <- focalsRV()$focal_start_time[input$focalsDT_select]
-      if(length(unique(views$dat2$scan_time[views$dat2$device_id==pk1 & views$dat2$focal_start_time==pk3]))==1) {
-      	cat(file=stderr(), paste0("pk1 = ", pk1," pk3 = ", pk3, " only one scan row left", "\n"))
-      	views$dat2[views$dat2$device_id==pk1 & views$dat2$focal_start_time==pk3, -c(1:8, (ncol(views$dat2)-7):ncol(views$dat2))] <- NA
-      	views$dat2 <- views$dat2[!duplicated(views$dat2),]
-
-      } else {
-       views$dat2 <- views$dat2[!(views$dat2$device_id==pk1 & views$dat2$scan_time==pk2 & !is.na(views$dat2$scan_time)),]      
-      }
-      	output$scanListDT <- renderD3tf({
+    output$scanListDT <- renderD3tf({
 				     cat(file=stderr(), paste0("render scanListDTDelete", "\n"))
     tableProps <- list(
       btn_reset = TRUE,
@@ -320,23 +321,23 @@ if(length(unique(views$dat1$focal_start_time[views$dat1$device_id==pk1 & views$d
       }
 	})  
 
+######################
+######################
+######################
+
 observeEvent(input$deleteScanRow, {
     	cat(file=stderr(), paste0("deleting scansDT row : ", input$scansDT_select, "\n"))
     		
 		if(!is.null(input$scansDT_select)) {
 			
- 	  pk1 <- sessionsRV()$device_id[input$sessionsDT_select]
-      pk2 <- scanListRV()$scan_time[input$scanListDT_select]
-      pk3 <- scansRV()$scanned_individual_id[input$scansDT_select]
+ 	  pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- scanListRV()$scan_timeStamp[input$scanListDT_select]
+      pk3 <- scansRV()$scanned_individual_ID[input$scansDT_select]
             
-      cat(file=stderr(), paste0("pk1 = ", pk1," pk2 = ", pk2," pk3 = ", pk3, " nb rows to delete = ", sum(views$dat2$device_id==pk1 & views$dat2$scan_time ==pk2 & views$dat2$scanned_individual_id ==pk3 & !is.na(views$dat2$scan_time)), "\n"))
 
-     if(sum(views$dat2$device_id==pk1 & views$dat2$scan_time ==pk2 & !is.na(views$dat2$scan_time))==1) {
-      	cat(file=stderr(), paste0("pk1 = ", pk1," pk2 = ", pk2, " only one scan row left", "\n"))
-      	views$dat2[views$dat2$device_id==pk1 & views$dat2$scan_time==pk2 & !is.na(views$dat2$scan_time), -c(1:9, (ncol(views$dat2)-11):ncol(views$dat2))] <- NA
-      } else {
-       views$dat2 <- views$dat2[!(views$dat2$device_id==pk1 & views$dat2$scan_time==pk2 & views$dat2$scanned_individual_id==pk3 & !is.na(views$dat2$scan_time)),]      
-      }
+tableValues$scansTable <- tableValues$scansTable[!(tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2 & tableValues$scansTable$scanned_individual_ID==pk3 & !is.na(tableValues$scansTable$scan_timeStamp)),]      
+      
+            
     output$scansDT <- renderD3tf({
 				     cat(file=stderr(), paste0("render scansDTDelete", "\n"))
     tableProps <- list(

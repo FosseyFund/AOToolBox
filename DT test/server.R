@@ -55,15 +55,9 @@ observeEvent({
 	tableValues$focalVarsTable <- dataOutput$focalVarsTable
 	tableValues$continuousVarsTable <- dataOutput$continuousVarsTable
 	tableValues$scanVarsTable <- dataOutput$scanVarsTable
-	
 }
 }
 )
-
-# observeEvent(dataOutput(), {
-	# output$value <- renderPrint({paste0("dataOutput()$sessionsTable : ", paste(names(dataOutput()$sessionsTable), collapse="; "))
-		# })
-# })	    
 
 
 
