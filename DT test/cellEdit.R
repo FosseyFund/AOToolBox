@@ -12,33 +12,36 @@ isolate({
       oldval <- sessionsRV()[row, col]
       pk1 <- sessionsRV()$device_ID[row]
       pk2 <- sessionsRV()$session_start_timeStamp[row]
-
       colname <- names(sessionsRV())[col]
       if((col%in%c(1,2) & (is.na(val) | val=="")) | 
        	   (col==1 & sum(duplicated(rbind(sessionsRV()[-row, 1:2], data.frame(device_ID=val, session_start_timeStamp=sessionsRV()[row, 2]))))>0)  | 
-       	   (col==2 & sum(duplicated(rbind(sessionsRV()[-row, 1:2], data.frame(device_ID=sessionsRV()[row, 1], session_start_timeStamp=val))))>0)
-       	   )
+       	   (col==2 & sum(duplicated(rbind(sessionsRV()[-row, 1:2], data.frame(device_ID=sessionsRV()[row, 1], session_start_timeStamp=val))))>0))
        {
+
        	rejectEdit(session, tbl = "sessionsDT", row = row, col = col, id = id, value= oldval)
-        cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
+        cat(file=stderr(), paste0("Rejecting value ", class(val), " and rolling back to value ",oldval," with row=",row," and col=",col, "\n"))
+        setCellValue(session, tbl = "sessionsDT", row = row, col = col, value="toto", feedback = TRUE)
+        setRowClass(session, tbl = "sessionsDT", row = row, "warning")
+        setCellValue(session, tbl = "sessionsDT", row = row, col = col, value="toto", feedback = FALSE)
+
        	} else {	    
        tableValues$sessionsTable[tableValues$sessionsTable$device_ID==pk1 & tableValues$sessionsTable$session_start_timeStamp==pk2, colname] <- val
-       if(colname%in%names(tableValues$focalsTable)) tableValues$focalsTable[tableValues$focalsTable$device_ID==pk1 & tableValues$focalsTable$session_start_timeStamp==pk2, colname] <- val
-       if(colname%in%names(tableValues$behaviorsTable))
+if(colname%in%names(tableValues$focalsTable) & sum(tableValues$focalsTable$device_ID==pk1 & tableValues$focalsTable$session_start_timeStamp==pk2)>0) tableValues$focalsTable[tableValues$focalsTable$device_ID==pk1 & tableValues$focalsTable$session_start_timeStamp==pk2, colname] <- val
+       if(colname%in%names(tableValues$behaviorsTable) & sum(tableValues$behaviorsTable$device_ID==pk1 & tableValues$behaviorsTable$session_start_timeStamp==pk2)>0)
 tableValues$behaviorsTable[tableValues$behaviorsTable$device_ID==pk1 & tableValues$behaviorsTable$session_start_timeStamp==pk2, colname] <- val
-       if(colname%in%names(tableValues$scansTable))
+       if(colname%in%names(tableValues$scansTable) & sum(tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$session_start_timeStamp==pk2)>0)
 tableValues$scansTable[tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$session_start_timeStamp==pk2, colname] <- val
-       if(colname%in%names(tableValues$backgroundTapsTable))
+       if(colname%in%names(tableValues$backgroundTapsTable) & sum(tableValues$backgroundTapsTable$device_ID==pk1 & tableValues$backgroundTapsTable$session_start_timeStamp==pk2)>0)
 tableValues$backgroundTapsTable[tableValues$backgroundTapsTable$device_ID==pk1 & tableValues$backgroundTapsTable$session_start_timeStamp==pk2, colname] <- val
-       if(colname%in%names(tableValues$commentsTable))
+       if(colname%in%names(tableValues$commentsTable) & sum(tableValues$commentsTable$device_ID==pk1 & tableValues$commentsTable$session_start_timeStamp==pk2))
 tableValues$commentsTable[tableValues$commentsTable$device_ID==pk1 & tableValues$commentsTable$session_start_timeStamp==pk2, colname] <- val
-       if(colname%in%names(tableValues$continuousVarsTable))
+       if(colname%in%names(tableValues$continuousVarsTable) & sum(tableValues$continuousVarsTable$device_ID==pk1 & tableValues$continuousVarsTable$session_start_timeStamp==pk2)>0)
 tableValues$continuousVarsTable[tableValues$continuousVarsTable$device_ID==pk1 & tableValues$continuousVarsTable$session_start_timeStamp==pk2, colname] <- val       
-       if(colname%in%names(tableValues$dayVarsTable))
+       if(colname%in%names(tableValues$dayVarsTable) & sum(tableValues$dayVarsTable$device_ID==pk1 & tableValues$dayVarsTable$session_start_timeStamp==pk2)>0)
 tableValues$dayVarsTable[tableValues$dayVarsTable$device_ID==pk1 & tableValues$dayVarsTable$session_start_timeStamp==pk2, colname] <- val
-       if(colname%in%names(tableValues$focalVarsTable))
+       if(colname%in%names(tableValues$focalVarsTable) & sum(tableValues$focalVarsTable$device_ID==pk1 & tableValues$focalVarsTable$session_start_timeStamp==pk2)>0)
 tableValues$focalVarsTable[tableValues$focalVarsTable$device_ID==pk1 & tableValues$focalVarsTable$session_start_timeStamp==pk2, colname] <- val
-       if(colname%in%names(tableValues$scanVarsTable))
+       if(colname%in%names(tableValues$scanVarsTable) & sum(tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$session_start_timeStamp==pk2)>0)
 tableValues$scanVarsTable[tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$session_start_timeStamp==pk2, colname] <- val
 
          }  
@@ -64,44 +67,42 @@ isolate({
       pk2 <- focalsRV()$focal_start_timeStamp[row]
       pk3 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
 if(is.null(input$sessionsDT_select)) {
-	       rejectEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = "");
+	       rejectEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = "");###rejects edit if no session is selected
 } else {
       colname <- names(focalsRV())[col]      
       
-       if((is.na(pk2) | pk2=="") & nrow(focalsRV())==1 & colname=="focal_start_timeStamp" & !(is.na(val) | val=="")){##adding new focal
-       	
+      
+      if(sum(tableValues$focalsTable$device_ID==pk1 & tableValues$focalsTable$focal_start_timeStamp==pk2)==0 & !(is.na(val) | val==""))##add new row
+         {  	
       dupRowSession <- isolate(sessionsRV()[isolate(input$sessionsDT_select),])
       dupRowFocal <- isolate(emptyFocalListRow())
       dupRow <- cbind(dupRowSession, dupRowFocal)
-      dupRow$focal_start_timeStamp <- val
-      colnames <- names(dupRowFocal)
-      tableValues$focalsTable <- smartbind(tableValues$focalsTable, dupRow)[,colnames]
+      dupRow[,colname] <- val
+      tableValues$focalsTable <- smartbind(tableValues$focalsTable, dupRow)[, names(dupRowFocal)]
       	
        } else {
        if((colname=="focal_start_timeStamp" & (is.na(val) | val=="")) | 
-       	   (colname=="focal_start_timeStamp" & val%in%focalsRV()$focal_start_timeStamp[-row]))
+       	   (colname=="focal_start_timeStamp" & val%in%focalsRV()$focal_start_timeStamp[-row]))##primary key "unique" violation or missing primary key value
         {
        	rejectEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value= oldval)
         cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
        	} else {
               		
-       tableValues$focalsTable[tableValues$focalsTable$device_ID==pk1 & tableValues$focalsTable$focal_start_timeStamp==pk2, names(tableValues$focalsTable)==colname] <- val
+       tableValues$focalsTable[tableValues$focalsTable$device_ID==pk1 & tableValues$focalsTable$focal_start_timeStamp==pk2, colname] <- val
 
-       if(colname%in%names(tableValues$behaviorsTable)) tableValues$behaviorsTable[tableValues$behaviorsTable$device_ID==pk1 & tableValues$behaviorsTable$focal_start_timeStamp==pk2, names(tableValues$behaviorsTable)==colname] <- val
+       if(colname%in%names(tableValues$behaviorsTable)) tableValues$behaviorsTable[tableValues$behaviorsTable$device_ID==pk1 & tableValues$behaviorsTable$focal_start_timeStamp==pk2, colname] <- val
        
-        if(colname%in%names(tableValues$scansTable)) tableValues$scansTable[tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$focal_start_timeStamp==pk2, names(tableValues$scansTable)==colname] <- val
+        if(colname%in%names(tableValues$scansTable)) tableValues$scansTable[tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$focal_start_timeStamp==pk2, colname] <- val
         
-        if(colname%in%names(tableValues$backgroundTapsTable)) tableValues$backgroundTapsTable[tableValues$backgroundTapsTable$device_ID==pk1 & tableValues$backgroundTapsTable$focal_start_timeStamp==pk2, names(tableValues$backgroundTapsTable)==colname] <- val
+        if(colname%in%names(tableValues$backgroundTapsTable)) tableValues$backgroundTapsTable[tableValues$backgroundTapsTable$device_ID==pk1 & tableValues$backgroundTapsTable$focal_start_timeStamp==pk2, colname] <- val
 
-        if(colname%in%names(tableValues$commentsTable)) tableValues$commentsTable[tableValues$commentsTable$device_ID==pk1 & tableValues$commentsTable$focal_start_timeStamp==pk2, names(tableValues$commentsTable)==colname] <- val
+        if(colname%in%names(tableValues$commentsTable)) tableValues$commentsTable[tableValues$commentsTable$device_ID==pk1 & tableValues$commentsTable$focal_start_timeStamp==pk2, colname] <- val
 
-        if(colname%in%names(tableValues$continuousVarsTable)) tableValues$continuousVarsTable[tableValues$continuousVarsTable$device_ID==pk1 & tableValues$continuousVarsTable$focal_start_timeStamp==pk2, names(tableValues$continuousVarsTable)==colname] <- val
+        if(colname%in%names(tableValues$continuousVarsTable)) tableValues$continuousVarsTable[tableValues$continuousVarsTable$device_ID==pk1 & tableValues$continuousVarsTable$focal_start_timeStamp==pk2, colname] <- val
         
-        if(colname%in%names(tableValues$dayVarsTable)) tableValues$dayVarsTable[tableValues$dayVarsTable$device_ID==pk1 & tableValues$dayVarsTable$focal_start_timeStamp==pk2, names(tableValues$dayVarsTable)==colname] <- val
-
-        if(colname%in%names(tableValues$focalVarsTable)) tableValues$focalVarsTable[tableValues$focalVarsTable$device_ID==pk1 & tableValues$focalVarsTable$focal_start_timeStamp==pk2, names(tableValues$focalVarsTable)==colname] <- val
+        if(colname%in%names(tableValues$focalVarsTable)) tableValues$focalVarsTable[tableValues$focalVarsTable$device_ID==pk1 & tableValues$focalVarsTable$focal_start_timeStamp==pk2, colname] <- val
         
-        if(colname%in%names(tableValues$scanVarsTable)) tableValues$scanVarsTable[tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$focal_start_timeStamp==pk2, names(tableValues$scanVarsTable)==colname] <- val
+        if(colname%in%names(tableValues$scanVarsTable)) tableValues$scanVarsTable[tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$focal_start_timeStamp==pk2, colname] <- val
 
      #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
         }
@@ -129,24 +130,21 @@ isolate({
       pk2 <- behaviorsRV()$behavior_timeStamp[row]
       pk3 <- behaviorsRV()$actor[row]
       pk4 <- behaviorsRV()$subject[row]
-      pk5 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
-      pk6 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
-      if(is.null(input$focalsDT_select)) {
+      #pk6 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
+      if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select)) {
 	       rejectEdit(session, tbl = "behaviorsDT", row = row, col = col, id = id, value = "");
 } else {
-      colname <- names(behaviorsRV())[col]          
-        if((is.na(pk2) | is.na(pk3) | is.na(pk4)) & nrow(behaviorsRV())==1){##add new row
- 
+      colname <- names(behaviorsRV())[col]     
+      
+      
+      if(sum(tableValues$behaviorsTable$device_ID==pk1 & tableValues$behaviorsTable$behavior_timeStamp==pk2 & tableValues$behaviorsTable$actor==pk3 & tableValues$behaviorsTable$subject==pk4)==0 & !(is.na(val) | val==""))##add new row
+         {
       dupRowSession <- isolate(sessionsRV()[isolate(input$sessionsDT_select),])
-      dupRowFocal <- isolate(focalsRV()[isolate(input$sessionsDT_select),])
+      dupRowFocal <- isolate(focalsRV()[isolate(input$focalsDT_select),])
       dupRowBehav <- isolate(behaviorsRV()[input$behaviorsDT_select,])
       dupRow <- cbind(dupRowSession, dupRowFocal, dupRowBehav)
-      dupRow[,colname] <- val####NEED to wait until all 3 columns are filled to write them
-      colnames <- names(dupRowFocal)
-      tableValues$focalsTable <- smartbind(tableValues$focalsTable, dupRow)[,colnames]
-
- 
-       	views$dat1[views$dat1$device_ID==pk1 & views$dat1$session_start_timeStamp ==pk5 & views$dat1$focal_start_timeStamp==pk6, names(views$dat1)==colname] <- val
+      dupRow[,colname] <- val
+      tableValues$behaviorsTable <- smartbind(tableValues$behaviorsTable, dupRow)[,names(dupRowBehav)]
        } else {
        if((col%in%c(1,2,3) & (is.na(val) | val=="")) | 
        	   (col==1 & sum(duplicated(rbind(behaviorsRV()[-row, 1:3], data.frame(behavior_timeStamp=val, behaviorsRV()[row, c(2,3)])))>0))  | 
@@ -157,13 +155,16 @@ isolate({
         cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
        	} else {
        #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
-       views$dat1[views$dat1$device_ID==pk1 & views$dat1$behavior_timeStamp==pk2 & views$dat1$actor==pk3 & views$dat1$subject==pk4, names(views$dat1)==colname] <- val
+       tableValues$behaviorsTable[tableValues$behaviorsTable$device_ID==pk1 & tableValues$behaviorsTable$behavior_timeStamp==pk2 & tableValues$behaviorsTable$actor==pk3 & tableValues$behaviorsTable$subject==pk4, colname] <- val
        }
        }
      }})
   }) 
+
+############################
+############################
+############################
          
-        
 observeEvent(input$scanListDT_edit,{
     if(is.null(input$scanListDT_edit)) return(NULL);
      edit <- input$scanListDT_edit;
@@ -174,31 +175,42 @@ isolate({
       val <- edit$val;
       pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
       pk2 <- scanListRV()$scan_timeStamp[row]
-      pk3 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
-	  #oldval <- scanListRV()[row, col]
-if(is.null(input$focalsDT_select)) {
+      #pk3 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+	  oldval <- scanListRV()[row, col]
+if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select)) {
 	       rejectEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value = "");
 } else {
-
-      colname <- names(scanListRV())[col]      
-      if(is.na(pk2) & nrow(scanListRV())==1){
-       	views$dat2[views$dat2$device_ID==pk1 & views$dat2$session_start_timeStamp ==pk3, names(views$dat2)==colname] <- val
+      colname <- names(scanListRV())[col]   
+      
+      
+      if(sum(tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2)==0 & !(is.na(val) | val==""))##add new row
+         {
+      dupRowSession <- isolate(sessionsRV()[isolate(input$sessionsDT_select),])
+      dupRowFocal <- isolate(focalsRV()[isolate(input$focalsDT_select),])
+      dupRowScanList <- isolate(scanListRV()[input$scanListDT_select,])##which is an empty table
+      dupRow <- cbind(dupRowSession, dupRowFocal, dupRowScanList)
+      dupRow[,colname] <- val
+      tableValues$scanListTable <- smartbind(tableValues$scanListTable, dupRow)[,names(dupRowScanList)]
+     
        } else {
-       if(col==1 & (is.na(val) | val %in% scansRV()$scanned_individual_ID[-row] | val=="" )) {
-       	rejectEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value= pk2)
+       	
+       if((colname=="focal_start_timeStamp" & (is.na(val) | val=="")) | 
+       	   (colname=="focal_start_timeStamp" & val%in%scanListRV()$scan_timeStamp[-row]))
+ {
+       	rejectEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value= oldval)
             cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
        	} else {
-       #cat(file=stderr(), "editing... row = ", row, " col = ", col, " val = ", val, " pk1 = ", pk1, "pk2 = ",pk2 ,"pk3= ",pk3 , "colname = ", colname,"oldval = ",oldval, "\n")
-       #confirmEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value = val);
-     
-      #if (colname=="scan_timeStamp") pk2 <- oldval
-      views$dat2[views$dat2$device_ID==pk1 & views$dat2$scan_timeStamp==pk2 & !is.na(views$dat2$scan_timeStamp), names(views$dat2)==colname] <- val
+      	tableValues$scansTable[tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2, colname] <- val
       }}}    
      }
      )
   })
+
+############################
+############################
+############################
     
-     observeEvent(input$scansDT_edit,{
+observeEvent(input$scansDT_edit,{
     if(is.null(input$scansDT_edit)) return(NULL);
      edit <- input$scansDT_edit;
 isolate({
@@ -213,23 +225,27 @@ isolate({
       pk2 <- scanListRV()$scan_timeStamp[input$scanListDT_select]
       pk3 <- scansRV()$scanned_individual_ID[row]
       cat(file=stderr(), paste0("pk1 = ", pk1,"pk2 = ", pk2,"pk3 = ", pk3, "\n"))
- if(is.null(input$scanListDT_select)) {
+ if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select) | is.null(input$scanListDT_select)) {
 	       rejectEdit(session, tbl = "scansDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(scansRV())[col]
-       if(is.na(pk3) & nrow(scansRV())==1){
-        cat(file=stderr(), paste0("pk3 is NA, pk1 = ", pk1,"; pk2 = ", pk2,"; pk3 = ", pk3, "\n")) 
-        cat(file=stderr(), paste0("scanned_individual_ID is NA. Nb rows from dat2 to edit : ", sum(views$dat2$device_ID==pk1 & views$dat2$scan_timeStamp ==pk2  & !is.na(views$dat2$scan_timeStamp)), "\n")) 
-       	views$dat2[views$dat2$device_ID==pk1 & views$dat2$scan_timeStamp ==pk2 & !is.na(views$dat2$scan_timeStamp), names(views$dat2)==colname] <- val
+      
+       if(sum(tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2 & tableValues$scansTable$scanned_individual_ID ==pk3)==0 & !(is.na(val) | val=="")){
+
+      dupRowSession <- isolate(sessionsRV()[isolate(input$sessionsDT_select),])
+      dupRowFocal <- isolate(focalsRV()[isolate(input$focalsDT_select),])
+      dupRowScanList <- isolate(scanListRV()[input$scanListDT_select,])
+      dupRowScan <- isolate(scansRV()[input$scansDT_select,])##which is an empty table
+      dupRow <- cbind(dupRowSession, dupRowFocal, dupRowScanList, dupRowScan)
+      dupRow[,colname] <- val
+      tableValues$scansTable <- smartbind(tableValues$scansTable, dupRow)[,names(dupRowScan)]
+
        } else {
        	if(col==1 & (is.na(val) | val %in% scansRV()$scanned_individual_ID[-row] | val=="" )) {
             rejectEdit(session, tbl = "scansDT", row = row, col = col, id = id, value= oldval)
             cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
        	} else {
-       	cat(file=stderr(), paste0("nb rows from dat2 to edit : ", sum(views$dat2$device_ID==pk1 & views$dat2$scan_timeStamp ==pk2 & views$dat2$scanned_individual_ID==pk3   & !is.na(views$dat2$scan_timeStamp)), "\n"))
-      cat(file=stderr(), paste0("pk3 = ", pk3, "\n"))
-       #confirmEdit(session, tbl = "scansDT", row = row, col = col, id = id, value = val);
-      views$dat2[views$dat2$device_ID==pk1 & views$dat2$scan_timeStamp==pk2 & views$dat2$scanned_individual_ID==pk3 & !is.na(views$dat2$scan_timeStamp), names(views$dat2)==colname] <- val
+      	tableValues$scansTable[tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2 & tableValues$scansTable$scanned_individual_ID ==pk3, colname] <- val
       }
      }}})
   }) 
