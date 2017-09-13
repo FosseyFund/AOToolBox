@@ -356,5 +356,5 @@ tableValues$scansTable <- tableValues$scansTable[!(tableValues$scansTable$device
 	);
   })	
     }
-	})  	  
+	})
 

@@ -1,4 +1,4 @@
-	observeEvent(input$sessionsDT_select, {
+observeEvent(input$sessionsDT_select, {
 		     cat(file=stderr(), paste0("is.null(input$sessionsDT_select) = ", is.null(input$sessionsDT_select), "\n"))
 	output$focalsDT <- renderD3tf({
 				     cat(file=stderr(), paste0("render focalsDT", "\n"))
