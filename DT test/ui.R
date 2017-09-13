@@ -1,14 +1,28 @@
-shinyUI(fluidPage(   
-    sidebarLayout(
-    sidebarPanel(
-    #helpText("Upload collected data"),
-    fileInput('json.output.file', '1. Upload "Username_Date_Time.dat"'),
-	fileInput('behaviors.json', '2. Upload "behaviors.json"'),
-    fileInput('layout_info.json', '3. Upload "layout_info.json"'),
+fluidPage(
+
+h1("Animal Observer data editor"),
+    wellPanel(
+    fluidRow(
+    column(3,
+     h5('1. Upload "Username_Date_Time.dat"'),
+     fileInput('json.output.file', label=NULL),
+    HTML('<hr style="height:1px;border:none;color:#333;background-color:#333;" />'),
+    h5('2. Upload "behaviors.json"'),
+	fileInput('behaviors.json', label=NULL),
+    HTML('<hr style="height:1px;border:none;color:#333;background-color:#333;" />'),
+    h5('3. Upload "layout_info.json"'),
+    fileInput('layout_info.json', label=NULL)
+    ),
+    column(5,
+    h5("4. Ready to edit (can take a few seconds)?"),
+   
     checkboxInput("colmerge", "Merge identically-named columns from dyadic and self-directed/health data", FALSE),
-	    HTML('<hr style="height:1px;border:none;color:#333;background-color:#333;" />'),
+    actionButton("VisualizeData", label = "Run", icon=icon("play")),
+	HTML('<hr style="height:1px;border:none;color:#333;background-color:#333;" />'),
+    
+    h5("5. Edit using tables below and download results here"),
     downloadButton("downloadZip", label = "Download all data as zip"),
-    br(), br(), h5("    OR"), br(),      
+     br(), h5("    OR"),      
       downloadButton('downloadSessionsTable', 'Download list of sessions'),
       downloadButton('downloadFocalsTable', 'Download list of focals'),
       downloadButton('downloadBehaviorsTable', 'Download list of behaviors'),
@@ -19,8 +33,9 @@ shinyUI(fluidPage(
 	  downloadButton('downloadFocalVarsTable', 'Download focal variables'),
 	  downloadButton('downloadContinuousVarsTable', 'Download global variables'),
   	  downloadButton('downloadScanVarsTable', 'Download scan variables')
-    ),
-    mainPanel(
+  	  )
+  )) , 
+    
     fluidRow(column(3, verbatimTextOutput("value"))),
       br(),
   	# downloadButton("downloadBehaviorsView", "Download behaviors", icon=icon('download'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
@@ -71,6 +86,5 @@ shinyUI(fluidPage(
     hr(),
     hr()
 )
-)
-)
-)
+
+
