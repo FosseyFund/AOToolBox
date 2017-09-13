@@ -22,7 +22,7 @@ isolate({
        	rejectEdit(session, tbl = "sessionsDT", row = row, col = col, id = id, value= oldval)
         cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
        	} else {	    
-       tableValues$dataOutput$sessionsTable[tableValues$dataOutput$sessionsTable$device_ID==pk1 & tableValues$dataOutput$sessionsTable$session_start_time==pk2, names(tableValues$dataOutput$sessionsTable)==colname] <- val
+       tableValues$sessionsTable[tableValues$sessionsTable$device_ID==pk1 & tableValues$sessionsTable$session_start_time==pk2, names(tableValues$sessionsTable)==colname] <- val
         }  
      })
   })
@@ -47,7 +47,7 @@ if(is.null(input$sessionsDT_select)) {
       colname <- names(focalsRV())[col]      
       
        if(is.na(pk2) & nrow(focalsRV())==1){
-       	tableValues$dataOutput$focalsTable[tableValues$dataOutput$focalsTable$device_ID==pk1 & tableValues$dataOutput$focalsTable$session_start_time ==pk3, names(tableValues$dataOutput$focalsTable)==colname] <- val
+       	tableValues$focalsTable[tableValues$focalsTable$device_ID==pk1 & tableValues$focalsTable$session_start_time ==pk3, names(tableValues$focalsTable)==colname] <- val
        } else {
        if((col==1 & (is.na(val) | val=="")) | 
        	   (col==1 & val%in%focalsRV()$focal_start_time[-row]))
@@ -55,7 +55,7 @@ if(is.null(input$sessionsDT_select)) {
        	rejectEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value= oldval)
         cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
        	} else {
-       tableValues$dataOutput$focalsTable[tableValues$dataOutput$focalsTable$device_ID==pk1 & tableValues$dataOutput$focalsTable$focal_start_time==pk2, names(tableValues$dataOutput$focalsTable)==colname] <- val
+       tableValues$focalsTable[tableValues$focalsTable$device_ID==pk1 & tableValues$focalsTable$focal_start_time==pk2, names(tableValues$focalsTable)==colname] <- val
         #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
         }
         }

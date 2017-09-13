@@ -435,16 +435,16 @@ for (i in 1:length(dat$data$sessions)){
 }
 }
 
-sessionsTable <- data.frame(sessionsTable, row.names=NULL, check.names=F)
-focalsTable <- data.frame(focalsTable, row.names=NULL, check.names=F)
-behaviorsTable <- data.frame(behaviorsTable, row.names=NULL, check.names=F)
-scansTable <- data.frame(scansTable, row.names=NULL, check.names=F)
-backgroundTapsTable <- data.frame(backgroundTapsTable, row.names=NULL, check.names=F)
-commentsTable <- data.frame(commentsTable, row.names=NULL, check.names=F)
-dayVarsTable <- data.frame(dayVarsTable, row.names=NULL, check.names=F)
-focalVarsTable <- data.frame(focalVarsTable, row.names=NULL, check.names=F)
-continuousVarsTable <- data.frame(continuousVarsTable, row.names=NULL, check.names=F)
-scanVarsTable <- data.frame(scanVarsTable, row.names=NULL, check.names=F)
+sessionsTable <- data.frame(sessionsTable, row.names=NULL, check.names=F, stringsAsFactors=F)
+focalsTable <- data.frame(focalsTable, row.names=NULL, check.names=F, stringsAsFactors=F)
+behaviorsTable <- data.frame(behaviorsTable, row.names=NULL, check.names=F, stringsAsFactors=F)
+scansTable <- data.frame(scansTable, row.names=NULL, check.names=F, stringsAsFactors=F)
+backgroundTapsTable <- data.frame(backgroundTapsTable, row.names=NULL, check.names=F, stringsAsFactors=F)
+commentsTable <- data.frame(commentsTable, row.names=NULL, check.names=F, stringsAsFactors=F)
+dayVarsTable <- data.frame(dayVarsTable, row.names=NULL, check.names=F, stringsAsFactors=F)
+focalVarsTable <- data.frame(focalVarsTable, row.names=NULL, check.names=F, stringsAsFactors=F)
+continuousVarsTable <- data.frame(continuousVarsTable, row.names=NULL, check.names=F, stringsAsFactors=F)
+scanVarsTable <- data.frame(scanVarsTable, row.names=NULL, check.names=F, stringsAsFactors=F)
 
 return(list(sessionsTable= sessionsTable,
 focalsTable= focalsTable,

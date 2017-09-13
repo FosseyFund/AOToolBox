@@ -23,8 +23,8 @@ shinyUI(fluidPage(
     mainPanel(
     fluidRow(column(3, verbatimTextOutput("value"))),
       br(),
-  	downloadButton("downloadBehaviorsView", "Download behaviors", icon=icon('download'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
-  	downloadButton("downloadScansView", "Download scans", icon=icon('download'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
+  	# downloadButton("downloadBehaviorsView", "Download behaviors", icon=icon('download'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
+  	# downloadButton("downloadScansView", "Download scans", icon=icon('download'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
   	HTML("<h3><b>    Sessions</b></h3>"),
 	br(),
     d3tfOutput('sessionsDT', height = "auto"),
