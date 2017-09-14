@@ -33,12 +33,19 @@ layout_info.json.input <- reactive({
     else return(readLines(input$layout_info.json$datapath, warn=F))
 })
 
-observeEvent({
-	json.output.file.input()
-	behaviors.json.input()
-	layout_info.json.input()
-	}, {
-	if(is.null(json.output.file.input()) | is.null(behaviors.json.input()) | is.null(layout_info.json.input())) {
+
+###########################
+###########################
+###########################
+source("create_empty_tables.R", local=TRUE)
+source("tablesRV.R", local=TRUE)
+
+###########################
+###########################
+###########################
+observeEvent(input$VisualizeData, {
+
+if(is.null(json.output.file.input()) | is.null(behaviors.json.input()) | is.null(layout_info.json.input())) {
 	tableValues$sessionsTable <- NULL
 	tableValues$focalsTable <- NULL
 	tableValues$behaviorsTable <- NULL
@@ -55,22 +62,8 @@ observeEvent({
 	tableValues$focalVarsTable <- dataOutput$focalVarsTable
 	tableValues$continuousVarsTable <- dataOutput$continuousVarsTable
 	tableValues$scanVarsTable <- dataOutput$scanVarsTable
-}
-}
-)
 
-
-
-###########################
-###########################
-###########################
-source("create_empty_tables.R", local=TRUE)
-source("tablesRV.R", local=TRUE)
-
-###########################
-###########################
-###########################
-observeEvent(tableValues$sessionsTable, {
+	
 output$sessionsDT <- isolate(renderD3tf({
 						     cat(file=stderr(), paste0("render sessionsDTServer", "\n"))
 
@@ -90,6 +83,7 @@ output$sessionsDT <- isolate(renderD3tf({
          selectableRowsClass='success'
 	);
   }))
+  }
 })
 ###########################    		
 ###########################

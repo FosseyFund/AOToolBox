@@ -16,7 +16,7 @@ h1("Animal Observer data editor"),
     column(5,
     h5("4. Ready to edit (can take a few seconds)?"),
    
-    checkboxInput("colmerge", "Merge identically-named columns from dyadic and self-directed/health data", FALSE),
+    checkboxInput("colmerge", "Merge identically-named columns from dyadic and self-directed/health data", TRUE),
     actionButton("VisualizeData", label = "Run", icon=icon("play")),
 	HTML('<hr style="height:1px;border:none;color:#333;background-color:#333;" />'),
     

@@ -13,7 +13,6 @@ emptyFocalListRow <- function(){
     	focalListColnames <- names(tableValues$focalsTable)
     	focalListColnames <- focalListColnames[c(length(focalListColnames), 3:(length(focalListColnames)-1))]
     	dat <- data.frame(matrix("",nrow=1, ncol=length(focalListColnames)))
-    	cat(file=stderr(), paste0("focalListColnames = ", focalListColnames,"\n"))
     	for(i in 1:ncol(dat))  dat[,i] <- as.character(dat[,i])
     	names(dat) <- focalListColnames
     	return(dat)

@@ -20,7 +20,7 @@ observeEvent(input$deleteSessionRow, {
 	#temp <- is.null(input$deleteSessionRow)###makes function reactive to deletion
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", ncol(emptySessionRow())
+      col_types = rep("string", ncol(isolate(emptySessionRow()))
     ));
     d3tf(isolate(sessionsRV()),
          tableProps = isolate(tableProps),
@@ -39,7 +39,7 @@ observeEvent(input$deleteSessionRow, {
 				     cat(file=stderr(), paste0("render focalsDTDelete", "\n"))
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", ncol(emptyFocalListRow())));
+      col_types = rep("string", ncol(isolate(emptyFocalListRow()))));
     d3tf(isolate(emptyFocalListRow()),
          tableProps = isolate(tableProps),
          extensions = list(
@@ -151,7 +151,7 @@ tableValues$scanVarsTable <- tableValues$scanVarsTable[!(tableValues$scanVarsTab
 				     cat(file=stderr(), paste0("render focalsDTDelete", "\n"))
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", ncol(emptyFocalListRow())));
+      col_types = rep("string", ncol(isolate(emptyFocalListRow()))));
     d3tf(isolate(focalsRV()),
          tableProps = isolate(tableProps),
          extensions = list(
@@ -172,7 +172,7 @@ tableValues$scanVarsTable <- tableValues$scanVarsTable[!(tableValues$scanVarsTab
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
     ));
-    d3tf(emptyBehaviorRow(),
+    d3tf(isolate(emptyBehaviorRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -192,7 +192,7 @@ tableValues$scanVarsTable <- tableValues$scanVarsTable[!(tableValues$scanVarsTab
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanListRow()))
     ));
-    d3tf(emptyScanListRow(),
+    d3tf(isolate(emptyScanListRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -211,7 +211,7 @@ tableValues$scanVarsTable <- tableValues$scanVarsTable[!(tableValues$scanVarsTab
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanRow()))
     ));
-    d3tf(emptyScanRow(),
+    d3tf(isolate(emptyScanRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -285,7 +285,7 @@ tableValues$scansTable <- tableValues$scansTable[!(tableValues$scansTable$device
 				     cat(file=stderr(), paste0("render scanListDTDelete", "\n"))
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", ncol(emptyScanListRow())));
+      col_types = rep("string", ncol(isolate(emptyScanListRow()))));
     d3tf(isolate(scanListRV()),
          tableProps = isolate(tableProps),
          extensions = list(
@@ -306,7 +306,7 @@ tableValues$scansTable <- tableValues$scansTable[!(tableValues$scansTable$device
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanRow()))
     ));
-    d3tf(emptyScanRow(),
+    d3tf(isolate(emptyScanRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -342,7 +342,7 @@ tableValues$scansTable <- tableValues$scansTable[!(tableValues$scansTable$device
 				     cat(file=stderr(), paste0("render scansDTDelete", "\n"))
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", ncol(emptyScanRow())));
+      col_types = rep("string", ncol(isolate(emptyScanRow()))));
     d3tf(isolate(scansRV()),
          tableProps = isolate(tableProps),
          extensions = list(

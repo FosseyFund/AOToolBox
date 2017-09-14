@@ -2,10 +2,10 @@ observeEvent(input$sessionsDT_select, {
 		     cat(file=stderr(), paste0("is.null(input$sessionsDT_select) = ", is.null(input$sessionsDT_select), "\n"))
 	output$focalsDT <- renderD3tf({
 				     cat(file=stderr(), paste0("render focalsDT", "\n"))
-				     cat(file=stderr(), paste0("ncol(emptyFocalListRow()) = ", ncol(emptyFocalListRow()),"\n"))
+				     cat(file=stderr(), paste0("ncol(emptyFocalListRow()) = ", ncol(isolate(emptyFocalListRow())),"\n"))
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", ncol(emptyFocalListRow())));
+      col_types = rep("string", ncol(isolate(emptyFocalListRow()))));
     d3tf(isolate(focalsRV()),
          tableProps = isolate(tableProps),
          extensions = list(
@@ -25,9 +25,9 @@ observeEvent(input$sessionsDT_select, {
 
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
+      col_types = rep("string", isolate(ncol(isolate(emptyBehaviorRow())))
     ));
-    d3tf(emptyBehaviorRow(),
+    d3tf(isolate(emptyBehaviorRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -45,9 +45,9 @@ observeEvent(input$sessionsDT_select, {
 
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyScanListRow()))
+      col_types = rep("string", isolate(ncol(isolate(emptyScanListRow())))
     ));
-    d3tf(emptyScanListRow(),
+    d3tf(isolate(emptyScanListRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -65,9 +65,9 @@ observeEvent(input$sessionsDT_select, {
 
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyScanRow()))
+      col_types = rep("string", isolate(ncol(isolate(emptyScanRow())))
     ));
-    d3tf(emptyScanRow(),
+    d3tf(isolate(emptyScanRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -82,6 +82,9 @@ observeEvent(input$sessionsDT_select, {
 
 		
 	})    	    
+############################### 
+############################### 
+############################### 
     	  
 	observeEvent(input$focalsDT_select, {
 			#if(is.null(input$focalsDT_select)) output$behaviorsDT <- NULL
@@ -91,7 +94,7 @@ observeEvent(input$sessionsDT_select, {
 
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
+      col_types = rep("string", isolate(ncol(isolate(emptyBehaviorRow())))
     ));
     d3tf(isolate(behaviorsRV()),
          tableProps = isolate(tableProps),
@@ -110,7 +113,7 @@ observeEvent(input$sessionsDT_select, {
 
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyScanListRow()))
+      col_types = rep("string", isolate(ncol(isolate(emptyScanListRow())))
     ));
     d3tf(isolate(scanListRV()),
          tableProps = isolate(tableProps),
@@ -130,7 +133,7 @@ observeEvent(input$sessionsDT_select, {
 
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyScanRow()))
+      col_types = rep("string", isolate(ncol(isolate(emptyScanRow())))
     ));
     d3tf(isolate(emptyScanRow()),
          tableProps = isolate(tableProps),
@@ -146,7 +149,10 @@ observeEvent(input$sessionsDT_select, {
   })	
   
 	})      	  
- 
+############################### 
+############################### 
+############################### 
+
 	observeEvent(input$scanListDT_select, {
 	output$scansDT <- renderD3tf({
 		  							     cat(file=stderr(), paste0("render scansDTter", "\n"))

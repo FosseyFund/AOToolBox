@@ -13,7 +13,7 @@ observeEvent(input$duplicateSessionRow, {
 						     cat(file=stderr(), paste0("render sessionsDT RowDuplicate", "\n"))
 	  tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", ncol(emptySessionRow())
+      col_types = rep("string", ncol(isolate(emptySessionRow()))
     ));
     d3tf(isolate(sessionsRV()),
          tableProps = isolate(tableProps),
@@ -31,7 +31,7 @@ observeEvent(input$duplicateSessionRow, {
 				     cat(file=stderr(), paste0("render focalsDTDuplicate", "\n"))
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", ncol(emptyFocalListRow())));
+      col_types = rep("string", ncol(isolate(emptyFocalListRow()))));
     d3tf(isolate(emptyFocalListRow()),
          tableProps = isolate(tableProps),
          extensions = list(
@@ -51,7 +51,7 @@ observeEvent(input$duplicateSessionRow, {
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
     ));
-    d3tf(emptyBehaviorRow(),
+    d3tf(isolate(emptyBehaviorRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -71,7 +71,7 @@ observeEvent(input$duplicateSessionRow, {
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanListRow()))
     ));
-    d3tf(emptyScanListRow(),
+    d3tf(isolate(emptyScanListRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -91,7 +91,7 @@ observeEvent(input$duplicateSessionRow, {
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanRow()))
     ));
-    d3tf(emptyScanRow(),
+    d3tf(isolate(emptyScanRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -151,7 +151,7 @@ observeEvent(input$duplicateFocalRow, {
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
     ));
-    d3tf(emptyBehaviorRow(),
+    d3tf(isolate(emptyBehaviorRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -171,7 +171,7 @@ observeEvent(input$duplicateFocalRow, {
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanListRow()))
     ));
-    d3tf(emptyScanListRow(),
+    d3tf(isolate(emptyScanListRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -190,7 +190,7 @@ observeEvent(input$duplicateFocalRow, {
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanRow()))
     ));
-    d3tf(emptyScanRow(),
+    d3tf(isolate(emptyScanRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -297,7 +297,7 @@ observeEvent(input$duplicateScanListRow, {
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(emptyScanRow()))
     ));
-    d3tf(emptyScanRow(),
+    d3tf(isolate(emptyScanRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")

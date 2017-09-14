@@ -19,11 +19,11 @@ isolate({
        {
 
        	rejectEdit(session, tbl = "sessionsDT", row = row, col = col, id = id, value= oldval)
-        cat(file=stderr(), paste0("Rejecting value ", class(val), " and rolling back to value ",oldval," with row=",row," and col=",col, "\n"))
-        setCellValue(session, tbl = "sessionsDT", row = row, col = col, value="toto", feedback = TRUE)
-        setRowClass(session, tbl = "sessionsDT", row = row, "warning")
-        setCellValue(session, tbl = "sessionsDT", row = row, col = col, value="toto", feedback = FALSE)
-
+        cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval," with row=",row," and col=",col, "\n"))
+        #setCellValue(session, tbl = "sessionsDT", row = row, col = col, value="toto", feedback = TRUE)
+        #setRowClass(session, tbl = "sessionsDT", row = row, "warning")
+        #setCellValue(session, tbl = "sessionsDT", row = row, col = col, value="toto", feedback = FALSE)
+return(NULL)
        	} else {	    
        tableValues$sessionsTable[tableValues$sessionsTable$device_ID==pk1 & tableValues$sessionsTable$session_start_timeStamp==pk2, colname] <- val
 if(colname%in%names(tableValues$focalsTable) & sum(tableValues$focalsTable$device_ID==pk1 & tableValues$focalsTable$session_start_timeStamp==pk2)>0) tableValues$focalsTable[tableValues$focalsTable$device_ID==pk1 & tableValues$focalsTable$session_start_timeStamp==pk2, colname] <- val
@@ -78,7 +78,7 @@ if(is.null(input$sessionsDT_select)) {
       dupRowFocal <- isolate(emptyFocalListRow())
       dupRow <- cbind(dupRowSession, dupRowFocal)
       dupRow[,colname] <- val
-      tableValues$focalsTable <- smartbind(tableValues$focalsTable, dupRow)[, names(dupRowFocal)]
+      tableValues$focalsTable <- smartbind(tableValues$focalsTable, dupRow)[, names(tableValues$focalsTable)]
       	
        } else {
        if((colname=="focal_start_timeStamp" & (is.na(val) | val=="")) | 
@@ -144,7 +144,7 @@ isolate({
       dupRowBehav <- isolate(behaviorsRV()[input$behaviorsDT_select,])
       dupRow <- cbind(dupRowSession, dupRowFocal, dupRowBehav)
       dupRow[,colname] <- val
-      tableValues$behaviorsTable <- smartbind(tableValues$behaviorsTable, dupRow)[,names(dupRowBehav)]
+      tableValues$behaviorsTable <- smartbind(tableValues$behaviorsTable, dupRow)[,names(tableValues$behaviorsTable)]
        } else {
        if((col%in%c(1,2,3) & (is.na(val) | val=="")) | 
        	   (col==1 & sum(duplicated(rbind(behaviorsRV()[-row, 1:3], data.frame(behavior_timeStamp=val, behaviorsRV()[row, c(2,3)])))>0))  | 
@@ -178,6 +178,7 @@ isolate({
       #pk3 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
 	  oldval <- scanListRV()[row, col]
 if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select)) {
+	       cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to ''","\n"))
 	       rejectEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(scanListRV())[col]   
@@ -185,12 +186,14 @@ if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select)) {
       
       if(sum(tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2)==0 & !(is.na(val) | val==""))##add new row
          {
+       cat(file=stderr(), paste0("Should add new scanList row\n"))
+
       dupRowSession <- isolate(sessionsRV()[isolate(input$sessionsDT_select),])
       dupRowFocal <- isolate(focalsRV()[isolate(input$focalsDT_select),])
       dupRowScanList <- isolate(scanListRV()[input$scanListDT_select,])##which is an empty table
       dupRow <- cbind(dupRowSession, dupRowFocal, dupRowScanList)
       dupRow[,colname] <- val
-      tableValues$scanListTable <- smartbind(tableValues$scanListTable, dupRow)[,names(dupRowScanList)]
+      tableValues$scansTable <- smartbind(tableValues$scansTable, dupRow)[,names(tableValues$scansTable)]
      
        } else {
        	
@@ -238,7 +241,7 @@ isolate({
       dupRowScan <- isolate(scansRV()[input$scansDT_select,])##which is an empty table
       dupRow <- cbind(dupRowSession, dupRowFocal, dupRowScanList, dupRowScan)
       dupRow[,colname] <- val
-      tableValues$scansTable <- smartbind(tableValues$scansTable, dupRow)[,names(dupRowScan)]
+      tableValues$scansTable <- smartbind(tableValues$scansTable, dupRow)[,tableValues$scansTable]
 
        } else {
        	if(col==1 & (is.na(val) | val %in% scansRV()$scanned_individual_ID[-row] | val=="" )) {
