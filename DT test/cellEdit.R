@@ -90,19 +90,19 @@ if(is.null(input$sessionsDT_select)) {
               		
        tableValues$focalsTable[tableValues$focalsTable$device_ID==pk1 & tableValues$focalsTable$focal_start_timeStamp==pk2, colname] <- val
 
-       if(colname%in%names(tableValues$behaviorsTable)) tableValues$behaviorsTable[tableValues$behaviorsTable$device_ID==pk1 & tableValues$behaviorsTable$focal_start_timeStamp==pk2, colname] <- val
+       if(colname%in%names(tableValues$behaviorsTable) & sum(tableValues$behaviorsTable$device_ID==pk1 & tableValues$behaviorsTable$focal_start_timeStamp==pk2)>0) tableValues$behaviorsTable[tableValues$behaviorsTable$device_ID==pk1 & tableValues$behaviorsTable$focal_start_timeStamp==pk2, colname] <- val
        
-        if(colname%in%names(tableValues$scansTable)) tableValues$scansTable[tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$focal_start_timeStamp==pk2, colname] <- val
+        if(colname%in%names(tableValues$scansTable) & sum(tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$focal_start_timeStamp==pk2)>0) tableValues$scansTable[tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$focal_start_timeStamp==pk2, colname] <- val
         
-        if(colname%in%names(tableValues$backgroundTapsTable)) tableValues$backgroundTapsTable[tableValues$backgroundTapsTable$device_ID==pk1 & tableValues$backgroundTapsTable$focal_start_timeStamp==pk2, colname] <- val
+        if(colname%in%names(tableValues$backgroundTapsTable) & sum(tableValues$backgroundTapsTable$device_ID==pk1 & tableValues$backgroundTapsTable$focal_start_timeStamp==pk2)>0) tableValues$backgroundTapsTable[tableValues$backgroundTapsTable$device_ID==pk1 & tableValues$backgroundTapsTable$focal_start_timeStamp==pk2, colname] <- val
 
-        if(colname%in%names(tableValues$commentsTable)) tableValues$commentsTable[tableValues$commentsTable$device_ID==pk1 & tableValues$commentsTable$focal_start_timeStamp==pk2, colname] <- val
+        if(colname%in%names(tableValues$commentsTable) & sum(tableValues$commentsTable$device_ID==pk1 & tableValues$commentsTable$focal_start_timeStamp==pk2)>0) tableValues$commentsTable[tableValues$commentsTable$device_ID==pk1 & tableValues$commentsTable$focal_start_timeStamp==pk2, colname] <- val
 
-        if(colname%in%names(tableValues$continuousVarsTable)) tableValues$continuousVarsTable[tableValues$continuousVarsTable$device_ID==pk1 & tableValues$continuousVarsTable$focal_start_timeStamp==pk2, colname] <- val
+        if(colname%in%names(tableValues$continuousVarsTable) & sum(tableValues$continuousVarsTable$device_ID==pk1 & tableValues$continuousVarsTable$focal_start_timeStamp==pk2)>0) tableValues$continuousVarsTable[tableValues$continuousVarsTable$device_ID==pk1 & tableValues$continuousVarsTable$focal_start_timeStamp==pk2, colname] <- val
         
-        if(colname%in%names(tableValues$focalVarsTable)) tableValues$focalVarsTable[tableValues$focalVarsTable$device_ID==pk1 & tableValues$focalVarsTable$focal_start_timeStamp==pk2, colname] <- val
+        if(colname%in%names(tableValues$focalVarsTable) & sum(tableValues$focalVarsTable$device_ID==pk1 & tableValues$focalVarsTable$focal_start_timeStamp==pk2)>0) tableValues$focalVarsTable[tableValues$focalVarsTable$device_ID==pk1 & tableValues$focalVarsTable$focal_start_timeStamp==pk2, colname] <- val
         
-        if(colname%in%names(tableValues$scanVarsTable)) tableValues$scanVarsTable[tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$focal_start_timeStamp==pk2, colname] <- val
+        if(colname%in%names(tableValues$scanVarsTable) & sum(tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$focal_start_timeStamp==pk2)>0) tableValues$scanVarsTable[tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$focal_start_timeStamp==pk2, colname] <- val
 
      #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
         }
@@ -131,7 +131,9 @@ isolate({
       pk3 <- behaviorsRV()$actor[row]
       pk4 <- behaviorsRV()$subject[row]
       #pk6 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
-      if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select)) {
+ 
+      if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select) | sum(focalsRV()$focal_individual_ID[input$focalsDT_select]=="")==1 | sum(focalsRV()$focal_start_timeStamp[input$focalsDT_select]=="")==1)  {
+           cat(file=stderr(),"rejecting\n")
 	       rejectEdit(session, tbl = "behaviorsDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(behaviorsRV())[col]     
@@ -227,12 +229,11 @@ isolate({
       pk2 <- scanListRV()$scan_timeStamp[row]
       #pk3 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
 	  oldval <- scanListRV()[row, col]
-if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select)) {
+if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select)  | sum(focalsRV()$focal_individual_ID[input$focalsDT_select]=="")==1 | sum(focalsRV()$focal_start_timeStamp[input$focalsDT_select]=="")==1) {
 	       cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to ''","\n"))
 	       rejectEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value = "");
 } else {
-      colname <- names(scanListRV())[col]   
-      
+      colname <- names(scanListRV())[col]
       
       if(sum(tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2)==0 & !(is.na(val) | val==""))##add new row
          {
@@ -278,8 +279,8 @@ isolate({
       pk2 <- scanListRV()$scan_timeStamp[input$scanListDT_select]
       pk3 <- scansRV()$scanned_individual_ID[row]
       cat(file=stderr(), paste0("pk1 = ", pk1,"pk2 = ", pk2,"pk3 = ", pk3, "\n"))
- if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select) | is.null(input$scanListDT_select)) {
-	       rejectEdit(session, tbl = "scansDT", row = row, col = col, id = id, value = "");
+ if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select) | is.null(input$scanListDT_select) | sum(scanListRV()$scan_timeStamp[input$scanListDT_select]=="")==1) {
+	  rejectEdit(session, tbl = "scansDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(scansRV())[col]
       
@@ -324,7 +325,7 @@ isolate({
       pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
       pk4 <- commentsRV()$comment_timeStamp[input$commentsDT_select]
      
-      if(is.null(input$commentsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) {
+      if(is.null(input$commentsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select) | sum(focalsRV()$focal_individual_ID[input$focalsDT_select]=="")==1 | sum(focalsRV()$focal_start_timeStamp[input$focalsDT_select]=="")==1) {
 	       rejectEdit(session, tbl = "commentsDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(commentsRV())[col]     
@@ -374,7 +375,7 @@ isolate({
       pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
       pk4 <- backgroundTapsRV()$backgroundTap_timeStamp[input$backgroundTapsDT_select]
      
-      if(is.null(input$backgroundTapsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) {
+      if(is.null(input$backgroundTapsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select) | sum(focalsRV()$focal_individual_ID[input$focalsDT_select]=="")==1 | sum(focalsRV()$focal_start_timeStamp[input$focalsDT_select]=="")==1) {
 	       rejectEdit(session, tbl = "backgroundTapsDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(backgroundTapsRV())[col]     
@@ -425,7 +426,7 @@ isolate({
       pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
       pk4 <- focalVarsRV()$focalVars[input$focalVarsDT_select]
      
-      if(is.null(input$focalVarsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) {
+      if(is.null(input$focalVarsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select) | sum(focalsRV()$focal_individual_ID[input$focalsDT_select]=="")==1 | sum(focalsRV()$focal_start_timeStamp[input$focalsDT_select]=="")==1) {
 	       rejectEdit(session, tbl = "focalVarsDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(focalVarsRV())[col]     
@@ -475,7 +476,7 @@ isolate({
       pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
       pk4 <- continuousVarsRV()$continuousVars[input$continuousVarsDT_select]
      
-      if(is.null(input$continuousVarsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) {
+      if(is.null(input$continuousVarsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select) | sum(focalsRV()$focal_individual_ID[input$focalsDT_select]=="")==1 | sum(focalsRV()$focal_start_timeStamp[input$focalsDT_select]=="")==1) {
 	       rejectEdit(session, tbl = "continuousVarsDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(continuousVarsRV())[col]     
@@ -527,7 +528,7 @@ isolate({
       pk4 <- scanListRV()$scan_timeStamp[input$scanListDT_select]
       pk5 <- scanVarsRV()$scanVars[input$scanVarsDT_select]
      
-      if(is.null(input$scanVarsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select) | is.null(input$scanListDT_select)) {
+      if(is.null(input$scanVarsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select) | is.null(input$scanListDT_select) | sum(scanListRV()$scan_timeStamp[input$scanListDT_select]=="")==1) {
 	       rejectEdit(session, tbl = "scanVarsDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(scanVarsRV())[col]     
@@ -539,7 +540,7 @@ isolate({
 	  
 	  dupRowSession <- isolate(sessionsRV()[isolate(input$sessionsDT_select),])
 	  dupRowFocal <- isolate(focalsRV()[isolate(input$focalsDT_select),])
-	  dupRowScanList <- isolate(ScanListRV()[isolate(input$scanListDT_select),])
+	  dupRowScanList <- isolate(scanListRV()[isolate(input$scanListDT_select),])
 	  dupRowScanVars <- isolate(scanVarsRV()[input$scanVarsDT_select,])
       dupRow <- cbind(dupRowSession, dupRowFocal, dupRowScanList, dupRowScanVars)
       dupRow[,colname] <- val
