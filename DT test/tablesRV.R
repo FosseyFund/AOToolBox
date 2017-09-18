@@ -8,6 +8,17 @@ sessionsRV <-  function(){
 	    return(res)
 }
 
+dayVarsRV <- function(){
+		if(isolate(is.null(input$sessionsDT_select))) return(emptyDayVarsRow())##checks if a sessionsDT row has been selected
+		res <- tableValues$dayVarsTable
+		for (i in 1:ncol(res)) res[,i] <- as.character(res[,i])
+		res <- res[res$device_ID==sessionsRV()$device_ID[input$sessionsDT_select] & res$session_start_timeStamp==sessionsRV()$session_start_timeStamp[input$sessionsDT_select],]
+		dayVarsColnames <- names(tableValues$dayVarsTable)
+		res <- res[,3:(length(dayVarsColnames))]
+		if(nrow(res)==0) res <- emptyDayVarsRow()
+		cat(file=stderr(), paste0("focalsRV updated with sessionsDT_select = ",isolate(input$sessionsDT_select)," and ", res[1,1], " and input$focalsDT_select = ", isolate(input$focalsDT_select),"\n\n"))
+		return(res)
+}
 
 focalsRV <- function(){
 		if(isolate(is.null(input$sessionsDT_select))) return(emptyFocalListRow())##checks if a sessionsDT row has been selected
@@ -34,18 +45,84 @@ behaviorsRV <- function(){
 		if(nrow(res)==0) res <- emptyBehaviorRow()
 		return(res)
 }
-	
+
+commentsRV <- function(){
+		if((is.null(input$sessionsDT_select) | is.null(input$focalsDT_select))) return(emptyCommentRow())
+		cat(file=stderr(), paste0("commentsRV about to be created\n"))
+		res <- tableValues$commentsTable
+		for (i in 1:ncol(res)) res[,i] <- as.character(res[,i])
+		res <- res[res$device_ID==sessionsRV()$device_ID[isolate(input$sessionsDT_select)] & res$session_start_timeStamp==sessionsRV()$session_start_timeStamp[input$sessionsDT_select] & res$focal_start_timeStamp==focalsRV()$focal_start_timeStamp[isolate(input$focalsDT_select)],]
+		cat(file=stderr(), paste0("commentsRV created\n"))
+		res <- res[,4:length(names(res))]
+		res <- res[!duplicated(res),]
+		if(nrow(res)==0) res <- emptyCommentRow()
+		return(res)
+}
+
+backgroundTapsRV <- function(){
+		if((is.null(input$sessionsDT_select) | is.null(input$focalsDT_select))) return(emptyBackgroundTapsRow())
+		cat(file=stderr(), paste0("backgroundTapsRV about to be created\n"))
+		res <- tableValues$backgroundTapsTable
+		for (i in 1:ncol(res)) res[,i] <- as.character(res[,i])
+		res <- res[res$device_ID==sessionsRV()$device_ID[isolate(input$sessionsDT_select)] & res$session_start_timeStamp==sessionsRV()$session_start_timeStamp[input$sessionsDT_select] & res$focal_start_timeStamp==focalsRV()$focal_start_timeStamp[isolate(input$focalsDT_select)],]
+		cat(file=stderr(), paste0("backgroundTapsRV created\n"))
+		res <- res[,4:length(names(res))]
+		res <- res[!duplicated(res),]
+		if(nrow(res)==0) res <- emptyBackgroundTapsRow()
+		return(res)
+}
+
+focalVarsRV <- function(){
+		if((is.null(input$sessionsDT_select) | is.null(input$focalsDT_select))) return(emptyFocalVarsRow())
+		cat(file=stderr(), paste0("focalVarsRV about to be created\n"))
+		res <- tableValues$focalVarsTable
+		for (i in 1:ncol(res)) res[,i] <- as.character(res[,i])
+		res <- res[res$device_ID==sessionsRV()$device_ID[isolate(input$sessionsDT_select)] & res$session_start_timeStamp==sessionsRV()$session_start_timeStamp[input$sessionsDT_select] & res$focal_start_timeStamp==focalsRV()$focal_start_timeStamp[isolate(input$focalsDT_select)],]
+		cat(file=stderr(), paste0("focalVarsRV created\n"))
+		res <- res[,4:length(names(res))]
+		res <- res[!duplicated(res),]
+		if(nrow(res)==0) res <- emptyFocalVarsRow()
+		return(res)
+}
+
+continuousVarsRV <- function(){
+		if(is.null(input$sessionsDT_select) | is.null(input$focalsDT_select) | is.null(tableValues$continuousVarsTable) | ncol(tableValues$continuousVarsTable)==3 ) return(emptyContinuousVarsRow())
+		cat(file=stderr(), paste0("continuousVarsRV about to be created\n"))
+		res <- tableValues$continuousVarsTable
+		for (i in 1:ncol(res)) res[,i] <- as.character(res[,i])
+		res <- res[res$device_ID==sessionsRV()$device_ID[isolate(input$sessionsDT_select)] & res$session_start_timeStamp==sessionsRV()$session_start_timeStamp[input$sessionsDT_select] & res$focal_start_timeStamp==focalsRV()$focal_start_timeStamp[isolate(input$focalsDT_select)],]
+		cat(file=stderr(), paste0("continuousVarsRV created\n"))
+		res <- res[,4:length(names(res))]
+		res <- res[!duplicated(res),]
+		if(nrow(res)==0) res <- emptyContinuousVarsRow()
+		return(res)
+}
 
 scanListRV <- function(){
 		if((is.null(input$sessionsDT_select) | is.null(input$focalsDT_select))) return(emptyScanListRow())
 		cat(file=stderr(), paste0("scanListRV about to be created\n"))
 		res <- tableValues$scansTable
+				cat(file=stderr(), paste0("nrow1 (scanListRV) = ",nrow(res),"\n"))
+
 		for (i in 1:ncol(res)) res[,i] <- as.character(res[,i])
 		res <- res[res$device_ID==sessionsRV()$device_ID[isolate(input$sessionsDT_select)] & res$session_start_timeStamp==sessionsRV()$session_start_timeStamp[input$sessionsDT_select] & res$focal_start_timeStamp==focalsRV()$focal_start_timeStamp[isolate(input$focalsDT_select)],]
 		cat(file=stderr(), paste0("scanListRV created\n"))
+		cat(file=stderr(), paste0("nrow2 (scanListRV) = ",nrow(res),"\n"))
 		res <- res[,c(4,(length(names(res))-4):(length(names(res))))]
 		res <- res[!duplicated(res),]
+		cat(file=stderr(), paste0("nrow3 (scanListRV) = ",nrow(res),"\n"))
 		if(nrow(res)==0) res <- emptyScanListRow()
+		return(res)
+}
+
+scanVarsRV <- function(){
+		if((is.null(input$scanListDT_select))) return(emptyScanVarsRow())
+		#temp <- is.null(input$scansDT_edit)
+		res <-tableValues$scanVarsTable
+		for (i in 1:ncol(res)) res[,i] <- as.character(res[,i])
+		res <- res[res$device_ID==sessionsRV()$device_ID[isolate(input$sessionsDT_select)] & res$session_start_timeStamp==sessionsRV()$session_start_timeStamp[input$sessionsDT_select] & res$scan_timeStamp==scanListRV()$scan_timeStamp[isolate(input$scanListDT_select)] & !is.na(res$scan_timeStamp),]
+		res <- res[,5:length(names(res))]
+		if(nrow(res)==0) res <- emptyScanVarsRow()
 		return(res)
 }
 
