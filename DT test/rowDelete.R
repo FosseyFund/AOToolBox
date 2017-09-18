@@ -14,7 +14,7 @@ observeEvent(input$deleteSessionRow, {
       tableValues$scanVarsTable <- tableValues$scanVarsTable[!(tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$session_start_timeStamp==pk2),]
 
                       
-      output$sessionsDT <- renderD3tf({
+output$sessionsDT <- renderD3tf({
 						     cat(file=stderr(), paste0("render sessionsDTDelete", "\n"))
 
 	#temp <- is.null(input$deleteSessionRow)###makes function reactive to deletion
@@ -34,7 +34,26 @@ observeEvent(input$deleteSessionRow, {
          selectableRowsClass='success'
 	);
   })
-      
+
+output$dayVarsDT <- renderD3tf({
+				     cat(file=stderr(), paste0("render dayVarsDT", "\n"))
+				     cat(file=stderr(), paste0("ncol(emptyDayVarsRow()) = ", ncol(isolate(emptyDayVarsRow())),"\n"))
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", ncol(isolate(emptyDayVarsRow()))));
+    d3tf(isolate(emptyDayVarsRow()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })	
+
       output$focalsDT <- renderD3tf({
 				     cat(file=stderr(), paste0("render focalsDTDelete", "\n"))
     tableProps <- list(
@@ -73,8 +92,89 @@ observeEvent(input$deleteSessionRow, {
          selectableRowsClass='success'
 	);
   })
-		
-	output$scanListDT <- renderD3tf({
+  
+output$commentsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render commentsDT", "\n"))
+	if(is.null(isolate(emptyCommentRow()))) return(NULL)
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(isolate(emptyCommentRow())))
+    ));
+    d3tf(isolate(emptyCommentRow()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+
+output$backgroundTapsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render backgroundTapsDT", "\n"))
+	if(is.null(isolate(emptyBackgroundTapsRow()))) return(NULL)
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(isolate(emptyBackgroundTapsRow())))
+    ));
+    d3tf(isolate(emptyBackgroundTapsRow()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+
+output$focalVarsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render focalVarsDT", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(isolate(emptyFocalVarsRow())))
+    ));
+    d3tf(isolate(emptyFocalVarsRow()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  }) 
+
+output$continuousVarsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render continuousVarsDT", "\n"))
+if(is.null(isolate(emptyContinuousVarsRow()))) return(NULL)
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(isolate(emptyContinuousVarsRow())))
+    ));
+    d3tf(isolate(emptyContinuousVarsRow()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+  
+output$scanListDT <- renderD3tf({
 								     cat(file=stderr(), paste0("render scanListsDTDelete", "\n"))
 
     tableProps <- list(
@@ -94,7 +194,29 @@ observeEvent(input$deleteSessionRow, {
 	);
   })
 
-	output$scansDT <- renderD3tf({
+output$scanVarsDT <- renderD3tf({
+		cat(file=stderr(), paste0("render scanVarsDT", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanVarsRow()))
+    ));
+    d3tf(isolate(emptyScanVarsRow()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+
+
+
+output$scansDT <- renderD3tf({
 								     cat(file=stderr(), paste0("render scansDTDelete", "\n"))
 
     tableProps <- list(
@@ -147,7 +269,7 @@ tableValues$focalVarsTable <- tableValues$focalVarsTable[!(tableValues$focalVars
 tableValues$scanVarsTable <- tableValues$scanVarsTable[!(tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$focal_start_timeStamp==pk2),]
     
                
-	output$focalsDT <- renderD3tf({
+output$focalsDT <- renderD3tf({
 				     cat(file=stderr(), paste0("render focalsDTDelete", "\n"))
     tableProps <- list(
       btn_reset = TRUE,
@@ -165,7 +287,7 @@ tableValues$scanVarsTable <- tableValues$scanVarsTable[!(tableValues$scanVarsTab
 	);
   })	
       
-     output$behaviorsDT <- renderD3tf({
+output$behaviorsDT <- renderD3tf({
 						     cat(file=stderr(), paste0("render behaviorsDTDelete", "\n"))
 
     tableProps <- list(
@@ -184,8 +306,90 @@ tableValues$scanVarsTable <- tableValues$scanVarsTable[!(tableValues$scanVarsTab
          selectableRowsClass='success'
 	);
   })
-		
-	output$scanListDT <- renderD3tf({
+  
+output$commentsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render commentsDT", "\n"))
+	if(is.null(isolate(emptyCommentRow()))) return(NULL)
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(isolate(emptyCommentRow())))
+    ));
+    d3tf(isolate(emptyCommentRow()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+
+output$backgroundTapsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render backgroundTapsDT", "\n"))
+	if(is.null(isolate(emptyBackgroundTapsRow()))) return(NULL)
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(isolate(emptyBackgroundTapsRow())))
+    ));
+    d3tf(isolate(emptyBackgroundTapsRow()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+  
+output$focalVarsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render focalVarsDT", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(isolate(emptyFocalVarsRow())))
+    ));
+    d3tf(isolate(emptyFocalVarsRow()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  }) 
+
+output$continuousVarsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render continuousVarsDT", "\n"))
+if(is.null(isolate(emptyContinuousVarsRow()))) return(NULL)
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(isolate(emptyContinuousVarsRow())))
+    ));
+    d3tf(isolate(emptyContinuousVarsRow()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  }) 
+	
+output$scanListDT <- renderD3tf({
 								     cat(file=stderr(), paste0("render scanListsDTDelete", "\n"))
 
     tableProps <- list(
@@ -193,6 +397,26 @@ tableValues$scanVarsTable <- tableValues$scanVarsTable[!(tableValues$scanVarsTab
       col_types = rep("string", isolate(ncol(emptyScanListRow()))
     ));
     d3tf(isolate(emptyScanListRow()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+
+output$scanVarsDT <- renderD3tf({
+		cat(file=stderr(), paste0("render scanVarsDT", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanVarsRow()))
+    ));
+    d3tf(isolate(emptyScanVarsRow()),
          tableProps = isolate(tableProps),
          extensions = list(
            list(name = "sort")
@@ -299,7 +523,26 @@ tableValues$scansTable <- tableValues$scansTable[!(tableValues$scansTable$device
 	);
   })	
       
-     
+output$scanVarsDT <- renderD3tf({
+		cat(file=stderr(), paste0("render scanVarsDT", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanVarsRow()))
+    ));
+    d3tf(isolate(emptyScanVarsRow()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
+   
 	output$scansDT <- renderD3tf({
 								     cat(file=stderr(), paste0("render scansDTDelete", "\n"))
     tableProps <- list(
@@ -356,5 +599,239 @@ tableValues$scansTable <- tableValues$scansTable[!(tableValues$scansTable$device
 	);
   })	
     }
+	})
+
+
+##########################
+##########################
+##########################
+
+observeEvent(input$deleteDayVarsRow, {
+    	    	cat(file=stderr(), paste0("deleting dayVars row : ", input$dayVarsDT_select, "\n"))
+	if(!is.null(input$dayVarsDT_select)) {
+		
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+      pk3 <- dayVarsRV()$dayVars[input$dayVarsDT_select]
+
+      tableValues$dayVarsTable <- tableValues$dayVarsTable[!(tableValues$dayVarsTable$device_ID==pk1 & tableValues$dayVarsTable$session_start_timeStamp==pk2 & tableValues$dayVarsTable$dayVars==pk3),]
+
+		    
+   output$dayVarsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render dayVarsDTDelete", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyDayVarsRow()))
+    ));
+    d3tf(isolate(dayVarsRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })      
+      }
+	})
+
+##########################
+##########################
+##########################
+
+observeEvent(input$deleteCommentsRow, {
+    	    	cat(file=stderr(), paste0("deleting comment row : ", input$commentsDT_select, "\n"))
+	if(!is.null(input$commentsDT_select)) {
+		
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+      pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
+      pk4 <- commentsRV()$comment_timeStamp[input$commentsDT_select]
+
+      tableValues$commentsTable <- tableValues$commentsTable[!(tableValues$commentsTable$device_ID==pk1 & tableValues$commentsTable $session_start_timeStamp==pk2 & tableValues$commentsTable$focal_start_timeStamp ==pk3 & tableValues$commentsTable$comment_timeStamp ==pk4),]
+
+		    
+   output$commentsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render commentsDTDelete", "\n"))
+  	if(is.null(isolate(emptyCommentRow()))) return(NULL)
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyCommentRow()))
+    ));
+    d3tf(isolate(commentsRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })      
+      }
+	})
+	
+##########################
+##########################
+##########################
+
+observeEvent(input$deleteBackgroundTapsRow, {
+    	    	cat(file=stderr(), paste0("deleting backgroundTaps row : ", input$backgroundTapsDT_select, "\n"))
+	if(!is.null(input$backgroundTapsDT_select)) {
+		
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+      pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
+      pk4 <- backgroundTapsRV()$backgroundTap_timeStamp[input$backgroundTapsDT_select]
+
+      tableValues$backgroundTapsTable <- tableValues$backgroundTapsTable[!(tableValues$backgroundTapsTable$device_ID==pk1 & tableValues$backgroundTapsTable$session_start_timeStamp==pk2 & tableValues$backgroundTapsTable$focal_start_timeStamp ==pk3 & tableValues$backgroundTapsTable$backgroundTap_timeStamp==pk4),]
+
+		    
+output$backgroundTapsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render backgroundTapsDTDelete", "\n"))
+  	if(is.null(isolate(emptyBackgroundTapsRow()))) return(NULL)
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyBackgroundTapsRow()))
+    ));
+    d3tf(isolate(backgroundTapsRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })      
+      }
+	})
+	
+##########################
+##########################
+##########################
+
+observeEvent(input$deleteFocalVarsRow, {
+    	    	cat(file=stderr(), paste0("deleting focalVars row : ", input$focalVarsDT_select, "\n"))
+	if(!is.null(input$focalVarsDT_select)) {
+		
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+      pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
+      pk4 <- focalVarsRV()$focalVars[input$focalVarsDT_select]
+
+      tableValues$focalVarsTable <- tableValues$focalVarsTable[!(tableValues$focalVarsTable$device_ID==pk1 & tableValues$focalVarsTable$session_start_timeStamp==pk2 & tableValues$focalVarsTable$focal_start_timeStamp ==pk3 & tableValues$focalVarsTable$focalVars ==pk4),]
+
+		    
+output$focalVarsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render focalVarsDTDelete", "\n"))
+  	if(is.null(isolate(emptyFocalVarsRow()))) return(NULL)
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyFocalVarsRow()))
+    ));
+    d3tf(isolate(focalVarsRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })      
+      }
+	})
+	
+##########################
+##########################
+##########################
+
+observeEvent(input$deleteContinuousVarsRow, {
+    	    	cat(file=stderr(), paste0("deleting ContinuousVars row : ", input$continuousVarsDT_select, "\n"))
+	if(!is.null(input$continuousVarsDT_select)) {
+		
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+      pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
+      pk4 <- continuousVarsRV()$continuousVars[input$continuousVarsDT_select]
+
+      tableValues$continuousVarsTable <- tableValues$continuousVarsTable[!(tableValues$continuousVarsTable$device_ID==pk1 & tableValues$continuousVarsTable$session_start_timeStamp==pk2 & tableValues$continuousVarsTable$focal_start_timeStamp ==pk3 & tableValues$continuousVarsTable$continuousVars ==pk4),]
+
+		    
+output$continuousVarsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render continuousVarsDTDelete", "\n"))
+  	if(is.null(isolate(emptyContinuousVarsRow()))) return(NULL)
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyContinuousVarsRow()))
+    ));
+    d3tf(isolate(continuousVarsRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })      
+      }
+	})
+
+##########################
+##########################
+##########################
+
+observeEvent(input$deleteScanVarsRow, {
+    	    	cat(file=stderr(), paste0("deleting ScanVars row : ", input$scanVarsDT_select, "\n"))
+	if(!is.null(input$scanVarsDT_select)) {
+		
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+      pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
+      pk4 <- scanListRV()$scan_timeStamp[input$scanListDT_select]
+      pk5 <- scanVarsRV()$scanVars[input$scanVarsDT_select]
+
+      tableValues$scanVarsTable <- tableValues$scanVarsTable[!(tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$session_start_timeStamp==pk2 & tableValues$scanVarsTable$focal_start_timeStamp ==pk3 & tableValues$scanVarsTable$scan_timeStamp ==pk4 & tableValues$scanVarsTable$scanVars ==pk5),]
+
+		    
+output$scanVarsDT <- renderD3tf({
+						     cat(file=stderr(), paste0("render scanVarsDTDelete", "\n"))
+  	if(is.null(isolate(emptyScanVarsRow()))) return(NULL)
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanVarsRow()))
+    ));
+    d3tf(isolate(scanVarsRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })      
+      }
 	})
 

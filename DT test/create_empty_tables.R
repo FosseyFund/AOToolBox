@@ -19,7 +19,7 @@ emptyDayVarsRow <- function(){
     	}
     	
 emptyFocalListRow <- function(){
-		if(is.null(tableValues$focalsTable)) return(data.frame(empty="", stringsAsFactors=F))
+		if(is.null(tableValues$focalsTable)) return(NULL)
 
     	focalListColnames <- names(tableValues$focalsTable)
     	focalListColnames <- focalListColnames[c(length(focalListColnames), 3:(length(focalListColnames)-1))]
@@ -41,7 +41,7 @@ emptyBehaviorRow <- function(){
     	}
  
 emptyCommentRow <- function(){
-		if(is.null(tableValues$commentsTable) | ncol(tableValues$commentsTable)==3) return(data.frame(empty="", stringsAsFactors=F))
+		if(is.null(tableValues$commentsTable) | ncol(tableValues$commentsTable)==3) return(NULL)
 
     	commentsColnames <- names(tableValues$commentsTable)
     	commentsColnames <- commentsColnames[4:length(commentsColnames)]

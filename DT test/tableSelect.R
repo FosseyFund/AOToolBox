@@ -2,7 +2,7 @@ observeEvent(input$sessionsDT_select, {
 		     cat(file=stderr(), paste0("is.null(input$sessionsDT_select) = ", is.null(input$sessionsDT_select), "\n"))
 	output$focalsDT <- renderD3tf({
 				     cat(file=stderr(), paste0("render focalsDT", "\n"))
-				     cat(file=stderr(), paste0("ncol(emptyFocalListRow()) = ", ncol(isolate(emptyFocalListRow())),"\n"))
+				     #cat(file=stderr(), paste0("ncol(emptyFocalListRow()) = ", ncol(isolate(emptyFocalListRow())),"\n"))
     tableProps <- list(
       btn_reset = TRUE,
       col_types = rep("string", ncol(isolate(emptyFocalListRow()))));
@@ -22,7 +22,7 @@ observeEvent(input$sessionsDT_select, {
 
 output$dayVarsDT <- renderD3tf({
 				     cat(file=stderr(), paste0("render dayVarsDT", "\n"))
-				     cat(file=stderr(), paste0("ncol(emptyDayVarsRow()) = ", ncol(isolate(emptyDayVarsRow())),"\n"))
+				     #cat(file=stderr(), paste0("ncol(emptyDayVarsRow()) = ", ncol(isolate(emptyDayVarsRow())),"\n"))
     tableProps <- list(
       btn_reset = TRUE,
       col_types = rep("string", ncol(isolate(emptyDayVarsRow()))));
@@ -62,6 +62,7 @@ output$behaviorsDT <- renderD3tf({
   
 output$commentsDT <- renderD3tf({
 						     cat(file=stderr(), paste0("render commentsDT", "\n"))
+	if(is.null(isolate(emptyCommentRow()))) return(NULL)
 
     tableProps <- list(
       btn_reset = TRUE,
@@ -82,6 +83,7 @@ output$commentsDT <- renderD3tf({
 
 output$backgroundTapsDT <- renderD3tf({
 						     cat(file=stderr(), paste0("render backgroundTapsDT", "\n"))
+	if(is.null(isolate(emptyBackgroundTapsRow()))) return(NULL)
 
     tableProps <- list(
       btn_reset = TRUE,
@@ -160,28 +162,28 @@ output$scanListDT <- renderD3tf({
 	);
   })
 
-# output$scanVarsDT <- renderD3tf({
-		# cat(file=stderr(), paste0("render scanVarsDT", "\n"))
+output$scanVarsDT <- renderD3tf({
+		cat(file=stderr(), paste0("render scanVarsDT", "\n"))
 
-    # tableProps <- list(
-      # btn_reset = TRUE,
-      # col_types = rep("string", isolate(ncol(isolate(emptyScanVarsRow())))
-    # ));
-    # d3tf(isolate(emptyScanVarsRow()),
-         # tableProps = isolate(tableProps),
-         # extensions = list(
-           # list(name = "sort")
-         # ),
-         # showRowNames = FALSE,
-         # tableStyle = "table table-bordered",
-         # edit = TRUE,
-         # selectableRows='single',
-         # selectableRowsClass='success'
-	# );
-  # })
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", isolate(ncol(emptyScanVarsRow()))
+    ));
+    d3tf(isolate(emptyScanVarsRow()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  })
 
 
-	output$scansDT <- renderD3tf({
+output$scansDT <- renderD3tf({
 								     cat(file=stderr(), paste0("render scansDT", "\n"))
 
     tableProps <- list(
@@ -207,9 +209,9 @@ output$scanListDT <- renderD3tf({
 ############################### 
 ############################### 
     	  
-	observeEvent(input$focalsDT_select, {
+observeEvent(input$focalsDT_select, {
 		
-		output$behaviorsDT <- renderD3tf({
+output$behaviorsDT <- renderD3tf({
 									     cat(file=stderr(), paste0("render behaviorsDTbis", "\n"))
 
     tableProps <- list(
@@ -250,6 +252,7 @@ output$scanListDT <- renderD3tf({
   
    output$commentsDT <- renderD3tf({
   							     cat(file=stderr(), paste0("render commentsDTbis", "\n"))
+  	if(is.null(isolate(emptyCommentRow()))) return(NULL)
     tableProps <- list(
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(isolate(emptyCommentRow())))
@@ -269,6 +272,8 @@ output$scanListDT <- renderD3tf({
   
    output$backgroundTapsDT <- renderD3tf({
   							     cat(file=stderr(), paste0("render backgroundTapsDTbis", "\n"))
+  	if(is.null(isolate(emptyBackgroundTapsRow()))) return(NULL)
+
     tableProps <- list(
       btn_reset = TRUE,
       col_types = rep("string", isolate(ncol(isolate(emptyBackgroundTapsRow())))
@@ -287,7 +292,7 @@ output$scanListDT <- renderD3tf({
   })  
 
    output$continuousVarsDT <- renderD3tf({
-  							     cat(file=stderr(), paste0("attempting to render continuousVarsDTbis", "\n"))
+  							    # cat(file=stderr(), paste0("attempting to render continuousVarsDTbis", "\n"))
   	if(is.null(isolate(emptyContinuousVarsRow()))) return(NULL)
   	cat(file=stderr(), paste0("rendering continuousVarsDTbis", "\n"))
     tableProps <- list(
@@ -396,7 +401,7 @@ cat(file=stderr(), paste0("scansRV dim : ", paste(isolate(dim(scansRV())), colla
   })
   
 output$scanVarsDT <- renderD3tf({
-		  							     cat(file=stderr(), paste0("render scanVarsDTter", "\n"))
+		 cat(file=stderr(), paste0("render scanVarsDTter", "\n"))
 cat(file=stderr(), paste0("scanVarsRV dim : ", paste(isolate(dim(scanVarsRV())), collapse=", "), "\n"))
     tableProps <- list(
       btn_reset = TRUE,
