@@ -160,6 +160,56 @@ isolate({
        }
      }})
   }) 
+  
+  
+############################
+############################
+############################
+
+observeEvent(input$dayVarsDT_edit,{
+    if(is.null(input$dayVarsDT_edit)) return(NULL);
+     edit <- input$dayVarsDT_edit;
+isolate({
+      # need isolate, otherwise this observer would run twice
+      # for each edit
+      id <- edit$id;
+      row <- as.integer(edit$row);
+      col <- as.integer(edit$col);
+      val <- edit$val;
+      oldval <- dayVarsRV()[row, col]
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+      pk3 <- dayVarsRV()$dayVars[input$dayVarsDT_select]
+      
+      if(is.null(input$dayVarsDT_select) | is.null(input$sessionsDT_select)) {
+	       rejectEdit(session, tbl = "dayVarsDT", row = row, col = col, id = id, value = "");
+} else {
+      colname <- names(dayVarsRV())[col]     
+      
+      
+      if(sum(tableValues$dayVarsTable$device_ID==pk1 & tableValues$dayVarsTable$session_start_timeStamp==pk2 & tableValues$dayVarsTable$dayVars==pk3)==0 & !(is.na(val) | val==""))##add new row
+         {
+      cat(file=stderr(), paste0("adding row!\n"))
+	
+      dupRowSession <- isolate(sessionsRV()[isolate(input$sessionsDT_select),])
+      dupRowDayVar <- isolate(dayVarsRV()[input$dayVarsDT_select,])
+      dupRow <- cbind(dupRowSession, dupRowDayVar)
+      dupRow[,colname] <- val
+      tableValues$dayVarsTable <- smartbind(tableValues$dayVarsTable, dupRow)[,names(tableValues$dayVarsTable)]
+       } else {
+       	
+       	
+ 	   if(col==1 & (is.na(val) | val%in%dayVarsRV()$dayVars[-row] | val=="" )) {
+       	rejectEdit(session, tbl = "dayVarsDT", row = row, col = col, id = id, value= oldval)
+        cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
+       	} else {
+       #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
+       cat(file=stderr(), paste0("editing!\n"))
+       tableValues$dayVarsTable[(tableValues$dayVarsTable$device_ID==pk1 & tableValues$dayVarsTable$session_start_timeStamp==pk2 & tableValues$dayVarsTable$dayVars==pk3), colname] <- val
+       }
+       }
+     }})
+ })
 
 ############################
 ############################
@@ -253,3 +303,257 @@ isolate({
      }}})
   }) 
     
+############################
+############################
+############################
+
+observeEvent(input$commentsDT_edit,{
+    if(is.null(input$commentsDT_edit)) return(NULL);
+     edit <- input$commentsDT_edit;
+isolate({
+      # need isolate, otherwise this observer would run twice
+      # for each edit
+      id <- edit$id;
+      row <- as.integer(edit$row);
+      col <- as.integer(edit$col);
+      val <- edit$val;
+      cat(file=stderr(), paste0("Val = ", val,"\n"))
+      oldval <- commentsRV()[row, col]
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+      pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
+      pk4 <- commentsRV()$comment_timeStamp[input$commentsDT_select]
+     
+      if(is.null(input$commentsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) {
+	       rejectEdit(session, tbl = "commentsDT", row = row, col = col, id = id, value = "");
+} else {
+      colname <- names(commentsRV())[col]     
+      
+      
+      if(sum(tableValues$commentsTable$device_ID==pk1 & tableValues$commentsTable$session_start_timeStamp==pk2 & tableValues$commentsTable$focal_start_timeStamp ==pk3  & tableValues$commentsTable$comment_timeStamp ==pk4)==0 & !(is.na(val) | val==""))##add new row
+         {
+      cat(file=stderr(), paste0("adding row!\n"))
+	  
+	  dupRowSession <- isolate(sessionsRV()[isolate(input$sessionsDT_select),])
+	  dupRowFocal <- isolate(focalsRV()[isolate(input$focalsDT_select),])
+      dupRowComment <- isolate(commentsRV()[input$commentsDT_select,])
+      dupRow <- cbind(dupRowSession, dupRowFocal, dupRowComment)
+      dupRow[,colname] <- val
+      tableValues$commentsTable <- smartbind(tableValues$commentsTable, dupRow)[,names(tableValues$commentsTable)]
+       } else {
+       	
+ 	   if(col==1 & (is.na(val) | val%in%commentsRV()$comment_timeStamp[-row] | val=="" )) {
+       	rejectEdit(session, tbl = "commentsDT", row = row, col = col, id = id, value= oldval)
+        cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
+       	} else {
+       #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
+       cat(file=stderr(), paste0("editing!\n"))
+       tableValues$commentsTable[(tableValues$commentsTable$device_ID==pk1 & tableValues$commentsTable$session_start_timeStamp==pk2 & tableValues$commentsTable$focal_start_timeStamp ==pk3 & tableValues$commentsTable$comment_timeStamp ==pk4), colname] <- val
+       }
+       }
+     }})
+ })
+ 
+############################
+############################
+############################
+
+observeEvent(input$backgroundTapsDT_edit,{
+    if(is.null(input$backgroundTapsDT_edit)) return(NULL);
+     edit <- input$backgroundTapsDT_edit;
+isolate({
+      # need isolate, otherwise this observer would run twice
+      # for each edit
+      id <- edit$id;
+      row <- as.integer(edit$row);
+      col <- as.integer(edit$col);
+      val <- edit$val;
+      oldval <- backgroundTapsRV()[row, col]
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+      pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
+      pk4 <- backgroundTapsRV()$backgroundTap_timeStamp[input$backgroundTapsDT_select]
+     
+      if(is.null(input$backgroundTapsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) {
+	       rejectEdit(session, tbl = "backgroundTapsDT", row = row, col = col, id = id, value = "");
+} else {
+      colname <- names(backgroundTapsRV())[col]     
+      
+      
+      if(sum(tableValues$backgroundTapsTable$device_ID==pk1 & tableValues$backgroundTapsTable$session_start_timeStamp==pk2 & tableValues$backgroundTapsTable$focal_start_timeStamp ==pk3  & tableValues$backgroundTapsTable$backgroundTap_timeStamp ==pk4)==0 & !(is.na(val) | val==""))##add new row
+         {
+      cat(file=stderr(), paste0("adding row!\n"))
+	  
+	  dupRowSession <- isolate(sessionsRV()[isolate(input$sessionsDT_select),])
+	  dupRowFocal <- isolate(focalsRV()[isolate(input$focalsDT_select),])
+      dupRowBackgroundTap <- isolate(backgroundTapsRV()[input$backgroundTapsDT_select,])
+      dupRow <- cbind(dupRowSession, dupRowFocal, dupRowBackgroundTap)
+      dupRow[,colname] <- val
+      tableValues$backgroundTapsTable <- smartbind(tableValues$backgroundTapsTable, dupRow)[,names(tableValues$backgroundTapsTable)]
+       } else {
+       	
+ 	   if(col==1 & (is.na(val) | val%in%backgroundTapsRV()$backgroundTap_timeStamp[-row] | val=="" )) {
+       	rejectEdit(session, tbl = "backgroundTapsDT", row = row, col = col, id = id, value= oldval)
+        cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
+       	} else {
+       #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
+       cat(file=stderr(), paste0("editing!\n"))
+       tableValues$backgroundTapsTable[(tableValues$backgroundTapsTable$device_ID==pk1 & tableValues$backgroundTapsTable$session_start_timeStamp==pk2 & tableValues$backgroundTapsTable$focal_start_timeStamp ==pk3 & tableValues$backgroundTapsTable$backgroundTap_timeStamp ==pk4), colname] <- val
+       }
+       }
+     }})
+ })
+ 
+ 
+############################
+############################
+############################
+
+observeEvent(input$focalVarsDT_edit,{
+    if(is.null(input$focalVarsDT_edit)) return(NULL);
+     edit <- input$focalVarsDT_edit;
+isolate({
+      # need isolate, otherwise this observer would run twice
+      # for each edit
+      id <- edit$id;
+      row <- as.integer(edit$row);
+      col <- as.integer(edit$col);
+      val <- edit$val;
+      oldval <- focalVarsRV()[row, col]
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+      pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
+      pk4 <- focalVarsRV()$focalVars[input$focalVarsDT_select]
+     
+      if(is.null(input$focalVarsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) {
+	       rejectEdit(session, tbl = "focalVarsDT", row = row, col = col, id = id, value = "");
+} else {
+      colname <- names(focalVarsRV())[col]     
+      
+      
+      if(sum(tableValues$focalVarsTable$device_ID==pk1 & tableValues$focalVarsTable$session_start_timeStamp==pk2 & tableValues$focalVarsTable$focal_start_timeStamp ==pk3  & tableValues$focalVarsTable$focalVars==pk4)==0 & !(is.na(val) | val==""))##add new row
+         {
+      cat(file=stderr(), paste0("adding row!\n"))
+	  
+	  dupRowSession <- isolate(sessionsRV()[isolate(input$sessionsDT_select),])
+	  dupRowFocal <- isolate(focalsRV()[isolate(input$focalsDT_select),])
+      dupRowFocalVars <- isolate(focalVarsRV()[input$focalVarsDT_select,])
+      dupRow <- cbind(dupRowSession, dupRowFocal, dupRowFocalVars)
+      dupRow[,colname] <- val
+      tableValues$focalVarsTable <- smartbind(tableValues$focalVarsTable, dupRow)[,names(tableValues$focalVarsTable)]
+       } else {
+       	
+ 	   if(col==1 & (is.na(val) | val%in%focalVarsRV()$focalVars[-row] | val=="" )) {
+       	rejectEdit(session, tbl = "focalVarsDT", row = row, col = col, id = id, value= oldval)
+        cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
+       	} else {
+       #confirmEdit(session, tbl = "focalsDT", row = row, col = col, id = id, value = val);
+       cat(file=stderr(), paste0("editing!\n"))
+       tableValues$focalVarsTable[(tableValues$focalVarsTable$device_ID==pk1 & tableValues$focalVarsTable$session_start_timeStamp==pk2 & tableValues$focalVarsTable$focal_start_timeStamp ==pk3 & tableValues$focalVarsTable$focalVars ==pk4), colname] <- val
+       }
+       }
+     }})
+ })
+ 
+############################
+############################
+############################
+
+observeEvent(input$continuousVarsDT_edit,{
+    if(is.null(input$continuousVarsDT_edit)) return(NULL);
+     edit <- input$continuousVarsDT_edit;
+isolate({
+      # need isolate, otherwise this observer would run twice
+      # for each edit
+      id <- edit$id;
+      row <- as.integer(edit$row);
+      col <- as.integer(edit$col);
+      val <- edit$val;
+      oldval <- continuousVarsRV()[row, col]
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+      pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
+      pk4 <- continuousVarsRV()$continuousVars[input$continuousVarsDT_select]
+     
+      if(is.null(input$continuousVarsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select)) {
+	       rejectEdit(session, tbl = "continuousVarsDT", row = row, col = col, id = id, value = "");
+} else {
+      colname <- names(continuousVarsRV())[col]     
+      
+      
+      if(sum(tableValues$continuousVarsTable$device_ID==pk1 & tableValues$continuousVarsTable$session_start_timeStamp==pk2 & tableValues$continuousVarsTable$focal_start_timeStamp ==pk3  & tableValues$continuousVarsTable$continuousVars==pk4)==0 & !(is.na(val) | val==""))##add new row
+         {
+      cat(file=stderr(), paste0("adding row!\n"))
+	  
+	  dupRowSession <- isolate(sessionsRV()[isolate(input$sessionsDT_select),])
+	  dupRowFocal <- isolate(focalsRV()[isolate(input$focalsDT_select),])
+      dupRowContinuousVars <- isolate(continuousVarsRV()[input$continuousVarsDT_select,])
+      dupRow <- cbind(dupRowSession, dupRowFocal, dupRowContinuousVars)
+      dupRow[,colname] <- val
+      tableValues$continuousVarsTable <- smartbind(tableValues$continuousVarsTable, dupRow)[,names(tableValues$continuousVarsTable)]
+       } else {
+       	
+ 	   if(col==1 & (is.na(val) | val%in% continuousVarsRV()$continuousVars[-row] | val=="" )) {
+       	rejectEdit(session, tbl = "continuousVarsDT", row = row, col = col, id = id, value= oldval)
+        cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
+       	} else {
+
+       cat(file=stderr(), paste0("editing!\n"))
+       tableValues$continuousVarsTable[(tableValues$continuousVarsTable$device_ID==pk1 & tableValues$continuousVarsTable$session_start_timeStamp==pk2 & tableValues$continuousVarsTable$focal_start_timeStamp ==pk3 & tableValues$continuousVarsTable$continuousVars ==pk4), colname] <- val
+       }
+       }
+     }})
+ })
+ 
+ 
+############################
+############################
+############################
+
+observeEvent(input$scanVarsDT_edit,{
+    if(is.null(input$scanVarsDT_edit)) return(NULL);
+     edit <- input$scanVarsDT_edit;
+isolate({
+      # need isolate, otherwise this observer would run twice
+      # for each edit
+      id <- edit$id;
+      row <- as.integer(edit$row);
+      col <- as.integer(edit$col);
+      val <- edit$val;
+      oldval <- scanVarsRV()[row, col]
+      pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
+      pk2 <- sessionsRV()$session_start_timeStamp[input$sessionsDT_select]
+      pk3 <- focalsRV()$focal_start_timeStamp[input$focalsDT_select]
+      pk4 <- scanListRV()$scan_timeStamp[input$scanListDT_select]
+      pk5 <- scanVarsRV()$scanVars[input$scanVarsDT_select]
+     
+      if(is.null(input$scanVarsDT_select) | is.null(input$sessionsDT_select) | is.null(input$focalsDT_select) | is.null(input$scanListDT_select)) {
+	       rejectEdit(session, tbl = "scanVarsDT", row = row, col = col, id = id, value = "");
+} else {
+      colname <- names(scanVarsRV())[col]     
+      
+      
+      if(sum(tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$session_start_timeStamp==pk2 & tableValues$scanVarsTable$focal_start_timeStamp ==pk3  & tableValues$scanVarsTable$scan_timeStamp==pk4 & tableValues$scanVarsTable$scanVars==pk5)==0 & !(is.na(val) | val==""))##add new row
+         {
+      cat(file=stderr(), paste0("adding row!\n"))
+	  
+	  dupRowSession <- isolate(sessionsRV()[isolate(input$sessionsDT_select),])
+	  dupRowFocal <- isolate(focalsRV()[isolate(input$focalsDT_select),])
+	  dupRowScanList <- isolate(ScanListRV()[isolate(input$scanListDT_select),])
+	  dupRowScanVars <- isolate(scanVarsRV()[input$scanVarsDT_select,])
+      dupRow <- cbind(dupRowSession, dupRowFocal, dupRowScanList, dupRowScanVars)
+      dupRow[,colname] <- val
+      tableValues$scanVarsTable <- smartbind(tableValues$scanVarsTable, dupRow)[,names(tableValues$scanVarsTable)]
+       } else {
+       	
+ 	   if(col==1 & (is.na(val) | val%in%scanVarsRV()$scanVars[-row] | val=="" )) {
+       	rejectEdit(session, tbl = "scanVarsDT", row = row, col = col, id = id, value= oldval)
+        cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
+       	} else {
+
+       cat(file=stderr(), paste0("editing!\n"))
+       tableValues$scanVarsTable[(tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$session_start_timeStamp==pk2 & tableValues$scanVarsTable$focal_start_timeStamp ==pk3 & tableValues$scanVarsTable$scan_timeStamp==pk4 & tableValues$scanVarsTable$scanVars ==pk5), colname] <- val
+       }
+       }
+     }})
+ })
