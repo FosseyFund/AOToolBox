@@ -33,14 +33,32 @@ h1("Animal Observer data editor"),
 	  downloadButton('downloadFocalVarsTable', 'Download focal variables'),
 	  downloadButton('downloadContinuousVarsTable', 'Download global variables'),
   	  downloadButton('downloadScanVarsTable', 'Download scan variables')
+  	  ),
+  	column(3,
+    h5("6. PostgreSQL database connection"),
+   
+    textInput("postgresHost", label = "Host name or IP address", value = "localhost"),
+    textInput("postgresDBname", label = "Database name", value = "postgres"),
+	textInput("postgresUser", label = "User name", value = "postgres"),
+	numericInput("postgresPort", label = "Port", value = "5432"),
+	passwordInput("postgresPwd", label = "Password (non-encrypted, use a VPN for safer connection!)", value = "postgres"),
+	actionButton("postgresConnect", label = "Connect"),
+	textOutput("DoneConnect"),	
+	HTML('<hr style="height:1px;border:none;color:#333;background-color:#333;" />'),
+	h5("7. Upload Zip folder to database"),
+	fileInput('zipFolder', ''),
+	actionButton("runZipUpload", label = "Upload")
   	  )
-  )) , 
+  )), 
     
-    fluidRow(column(3, verbatimTextOutput("value"))),
+    #fluidRow(column(3, verbatimTextOutput("value"))),
       br(),
   	# downloadButton("downloadBehaviorsView", "Download behaviors", icon=icon('download'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
   	# downloadButton("downloadScansView", "Download scans", icon=icon('download'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
-  	HTML("<h3><b>    Sessions</b></h3>"),
+  		HTML("<div style='background-color:rgba(0, 0, 0, 0.0470588); text-align:center; vertical-align: middle; padding:40px 0;'><h3> Sessions </h3></div>"),
+
+  	
+  	#HTML("<h3><b>    Sessions</b></h3>"),
 	br(),
     d3tfOutput('sessionsDT', height = "auto"),
 	br(),
