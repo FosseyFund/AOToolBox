@@ -207,7 +207,6 @@ source("rowDuplicate.R", local=TRUE)
          initwd <- getwd()
          setwd(tempdir())
 
-
          	write.csv(tableValues$sessionsTable, file=paste0("sessionsTable", ".csv"), row.names=F, na="")
          	write.csv(tableValues$focalsTable, file=paste0("focalsTable", ".csv"), row.names=F, na="")
          	write.csv(tableValues$behaviorsTable, file=paste0("behaviorsTable", ".csv"), row.names=F, na="")
@@ -225,6 +224,96 @@ source("rowDuplicate.R", local=TRUE)
        },
        contentType = "application/zip"
      )
+     
+##############postgres connection
+DBname <- reactive({
+	return(input$postgresDBname)
+})
+
+DBuser <- reactive({
+	return(input$postgresUser)
+})
+
+DBhost <- reactive({
+	return(input$postgresHost)
+})
+
+DBpwd <- reactive({
+	return(input$postgresPwd)
+})
+
+DBport <- reactive({
+	return(input$postgresPort)
+})
+
+database <- eventReactive(input$postgresConnect, {
+	#cat(file=stderr(), paste(DBname(), DBhost(), DBport(), DBuser(), DBpwd(), collapse=", "))
+	if(is.null(DBname()) | is.null(DBuser()) | is.null(DBhost()) | is.null(DBpwd()) | is.null(DBport())) return(NULL)
+    
+    drv <- dbDriver("PostgreSQL")
+    	all_cons <- dbListConnections(drv)
+    for(con in all_cons) dbDisconnect(con)
+
+    con <- dbConnect(dbDriver("PostgreSQL"), dbname = tolower(DBname()), host = DBhost(), port = DBport(), user = DBuser(), password = DBpwd())
+#cat(file=stderr(), paste(DBname(), DBhost(), DBport(),DBuser(), DBpwd(), collapse=", "))
+    return(con)
+})
+
+connectionStatus <- reactiveValues(state=FALSE)
+
+output$DoneConnect <- renderText({
+	if(is.null(database())){
+		connectionStatus$state <- FALSE
+		return(NULL)
+		}
+		connectionStatus$state <- TRUE
+		return("SUCCESS!")	
+})
+
+#############unzip and upload
+
+
+observeEvent(input$runZipUpload, {
+   if (is.null(input$zipFolder)) return(NULL)
+   fileNames <- unzip(input$zipFolder$datapath)
+   ans <- list()
+   for(i in 1:length(fileNames)){
+   	ans[[i]] <- read.csv(fileNames[i], header=T)
+   }
+   names(ans) <- unlist(strsplit(unlist(strsplit(fileNames, split="./")), ".csv"))
+   cat(file=stderr(), paste0("files extracted: ", paste(names(ans), collapse=";"),"\n"))
+   if(connectionStatus$state==TRUE){
+   	    cat(file=stderr(), "Uploading file...\n")
+con <- database()
+   	if(nrow(ans$sessionsTable)>0) uploadSessionsTable(ans$sessionsTable, con)
+if(nrow(ans$focalsTable)>0) uploadFocalsTable(ans$focalsTable, con)
+if(nrow(ans$behaviorsTable)>0) uploadBehaviorsTable(ans$behaviorsTable, con)
+if(nrow(ans$scansTable)>0) uploadScansTable(ans$scansTable, con)
+if(nrow(ans$scansTable)>0) uploadScanData(ans$scansTable, con)
+if(nrow(ans$scansTable)>0) uploadScansIntermediateTables(ans$scansTable, con)
+if(nrow(ans$behaviorsTable)>0) uploadBehaviorsIntermediateTables(ans$behaviorsTable, con)
+if(nrow(ans$scanVarsTable)>0) uploadScanVariables(ans$scanVarsTable, con)
+if(nrow(ans$scanVarsTable)>0) uploadscanVarsIntermediateTables(ans$scanVarsTable, con)
+
+if("continuous_focal_variables" %in% dbListTables(con) & nrow(ans$continuousVarsTable)>0) {
+uploadContinuousVariables(ans$continuousVarsTable, con)
+uploadContinuousVarsIntermediateTables(ans$continuousVarsTable, con)
+}
+if(nrow(ans$scanVarsTable)>0) uploadFocalVariables(ans$focalVarsTable, con)
+if(nrow(ans$scanVarsTable)>0) uploadfocalVarsIntermediateTables(ans$focalVarsTable, con)
+if(nrow(ans$dayVarsTable)>0) uploadSessionVariables(ans$dayVarsTable, con)
+if(nrow(ans$dayVarsTable)>0) uploadSessionVarsIntermediateTables(ans$dayVarsTable, con)
+if(nrow(ans$backgroundTapsTable)>0) uploadBackgroundTapsTable(ans$backgroundTapsTable, con)
+if(nrow(ans$commentsTable)>0) uploadCommentTable(ans$commentsTable, con)
+
+output$DoneUploading <- renderText({
+		return("SUCCESS!")	
+})
+   }
+})
+
+
+##############
 }
 )
 

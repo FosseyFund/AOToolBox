@@ -680,8 +680,6 @@ all_cons <- dbListConnections(dbDriver("PostgreSQL"))
     for(con in all_cons) dbDisconnect(con)
 		return(ans)
 		}, include.rownames=F)
-  
-
 
 ############################################
 behaviors.json.input2 <- reactive({

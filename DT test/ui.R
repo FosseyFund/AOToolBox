@@ -48,8 +48,8 @@ HTML("<div style='background-color:rgba(63, 174, 191, 0.0); text-align:center; v
 	textOutput("DoneConnect"),	
 	HTML('<hr style="height:1px;border:none;color:#333;background-color:#333;" />'),
 	h5("7. Upload Zip folder to database"),
-	fileInput('zipFolder', ''),
-	actionButton("runZipUpload", label = "Upload")
+	fileInput('zipFolder', '', accept=),
+	actionButton("runZipUpload", label = "Upload"),	textOutput("DoneUploading")
   	  )
   )), 
     
