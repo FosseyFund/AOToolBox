@@ -11,6 +11,8 @@ install.load("markdown")
 install.load("RPostgreSQL")
 install.load("gtools")
 install.load("devtools")
+##install.load("shinythemes")
+
 if (!require("D3TableFilter", character.only=T)) devtools::install_github("ThomasSiegmund/D3TableFilter")
 library(D3TableFilter)
 library(shiny)
@@ -23,4 +25,4 @@ library(D3TableFilter)
   		temp <- format(x)
   		temp[grepl("NA", temp)] <- NA
   		return(temp)
-  	}
+}
