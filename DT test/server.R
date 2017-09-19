@@ -278,14 +278,14 @@ observeEvent(input$runZipUpload, {
    fileNames <- unzip(input$zipFolder$datapath)
    ans <- list()
    for(i in 1:length(fileNames)){
-   	ans[[i]] <- read.csv(fileNames[i], header=T)
+   	ans[[i]] <- read.csv(fileNames[i], header=T, check.names=F, stringsAsFactors=F)
    }
    names(ans) <- unlist(strsplit(unlist(strsplit(fileNames, split="./")), ".csv"))
    cat(file=stderr(), paste0("files extracted: ", paste(names(ans), collapse=";"),"\n"))
    if(connectionStatus$state==TRUE){
    	    cat(file=stderr(), "Uploading file...\n")
 con <- database()
-   	if(nrow(ans$sessionsTable)>0) uploadSessionsTable(ans$sessionsTable, con)
+if(nrow(ans$sessionsTable)>0) uploadSessionsTable(ans$sessionsTable, con)
 if(nrow(ans$focalsTable)>0) uploadFocalsTable(ans$focalsTable, con)
 if(nrow(ans$behaviorsTable)>0) uploadBehaviorsTable(ans$behaviorsTable, con)
 if(nrow(ans$scansTable)>0) uploadScansTable(ans$scansTable, con)
@@ -307,6 +307,7 @@ if(nrow(ans$backgroundTapsTable)>0) uploadBackgroundTapsTable(ans$backgroundTaps
 if(nrow(ans$commentsTable)>0) uploadCommentTable(ans$commentsTable, con)
 
 output$DoneUploading <- renderText({
+	cat(file=stderr(), "Success!\n")
 		return("SUCCESS!")	
 })
    }
