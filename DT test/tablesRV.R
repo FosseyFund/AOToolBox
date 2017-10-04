@@ -134,7 +134,7 @@ scansRV <- function(){
 		for (i in 1:ncol(res)) res[,i] <- as.character(res[,i])
 		res <- res[res$device_ID==sessionsRV()$device_ID[isolate(input$sessionsDT_select)] & res$session_start_timeStamp==sessionsRV()$session_start_timeStamp[input$sessionsDT_select] & res$scan_timeStamp==scanListRV()$scan_timeStamp[isolate(input$scanListDT_select)] & !is.na(res$scan_timeStamp),]
 		res <- res[,5:(length(names(res))-6)]
-		if(nrow(res)==0) res <- emptyScanRow()
+		if(nrow(res)==0 | (nrow(res)==1 & sum(is.na(res$scanned_individual_ID))==1)) res <- emptyScanRow()
 		return(res)
 }
 

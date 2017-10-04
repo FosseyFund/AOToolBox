@@ -448,7 +448,7 @@ observeEvent(input$duplicateBehaviorRow, {
       dupRowBehav <- behaviorsRV()[input$behaviorsDT_select,]
 
       dupRow <- cbind(dupRowSession, dupRowFocal, dupRowBehav)
-      dupRow$behavior_time <- paste(dupRow$behavior_time, "EDIT !")
+      dupRow$behavior_timeStamp <- paste(dupRow$behavior_timeStamp, "EDIT !")
       dupRow$actor <- "ENTER ACTOR"
       dupRow$subject <- "ENTER SUBJECT"
       colnames <- names(tableValues$behaviorsTable)
@@ -484,14 +484,15 @@ observeEvent(input$duplicateBehaviorRow, {
 observeEvent(input$duplicateScanListRow, {
 		if(!is.null(input$scanListDT_select)){
 			if(!scanListRV()$scan_time[input$scanListDT_select]==""){
-		
-	  cat(file=stderr(), paste0("duplicating... "))
+  cat(file=stderr(), paste0("duplicating... "))
       dupRowSession <- sessionsRV()[isolate(input$sessionsDT_select),]
       dupRowFocal <- focalsRV()[input$focalsDT_select,]
       dupRowScanList <- scanListRV()[input$scanListDT_select,]
 
       dupRow <- cbind(dupRowSession, dupRowFocal, dupRowScanList)
-      dupRow$scan_time <- paste(dupRow$scan_time, "EDIT !")
+      dupRow$scan_timeStamp <- paste(dupRow$scan_timeStamp, "EDIT !")
+      #dupRow$scanned_individual_ID <- paste(dupRow$scanned_individual_ID, "INSERT ID !")
+
       colnames <- names(tableValues$scansTable)
       tableValues$scansTable <- smartbind(tableValues$scansTable, dupRow)[,colnames]
       

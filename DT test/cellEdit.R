@@ -248,8 +248,8 @@ if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select)  | sum(foca
      
        } else {
        	
-       if((colname=="focal_start_timeStamp" & (is.na(val) | val=="")) | 
-       	   (colname=="focal_start_timeStamp" & val%in%scanListRV()$scan_timeStamp[-row]))
+       if((colname=="scan_timeStamp" & (is.na(val) | val=="")) | 
+       	   (colname=="scan_timeStamp" & val%in%scanListRV()$scan_timeStamp[-row]))
  {
        	rejectEdit(session, tbl = "scanListDT", row = row, col = col, id = id, value= oldval)
             cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
@@ -283,7 +283,10 @@ isolate({
 	  rejectEdit(session, tbl = "scansDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(scansRV())[col]
-      
+      cat(file=stderr(), paste0("tag1 with sum(tableValues$scansTable$device_ID==pk1)=", sum(tableValues$scansTable$device_ID==pk1)," \n"))
+      cat(file=stderr(), paste0("tag11 with sum(tableValues$scansTable$scan_timeStamp==pk2)=", sum(tableValues$scansTable$scan_timeStamp==pk2)," \n"))
+      cat(file=stderr(), paste0("tag12 with sum(tableValues$scansTable$scanned_individual_ID ==pk3)=", sum(tableValues$scansTable$scanned_individual_ID ==pk3)," \n"))
+
        if(sum(tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2 & tableValues$scansTable$scanned_individual_ID ==pk3)==0 & !(is.na(val) | val=="")){
 
       dupRowSession <- isolate(sessionsRV()[isolate(input$sessionsDT_select),])
@@ -295,11 +298,18 @@ isolate({
       tableValues$scansTable <- smartbind(tableValues$scansTable, dupRow)[,tableValues$scansTable]
 
        } else {
+       	cat(file=stderr(), paste0("tag2\n"))
        	if(col==1 & (is.na(val) | val %in% scansRV()$scanned_individual_ID[-row] | val=="" )) {
+                  cat(file=stderr(), paste0("tag3\n"))
             rejectEdit(session, tbl = "scansDT", row = row, col = col, id = id, value= oldval)
             cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
        	} else {
+       		                  cat(file=stderr(), paste0("tag4\n"))
+
+       	shouldBeOne <- (tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2 & tableValues$scansTable$scanned_individual_ID ==pk3)
+       	cat(file=stderr(), paste0("Replacing x values with x=", shouldBeOne, "\n"))
       	tableValues$scansTable[tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2 & tableValues$scansTable$scanned_individual_ID ==pk3, colname] <- val
+      	cat(file=stderr(), paste0("Successfully replaced value\n"))
       }
      }}})
   }) 
