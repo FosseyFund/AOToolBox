@@ -44,7 +44,21 @@ tableValues$focalVarsTable[tableValues$focalVarsTable$device_ID==pk1 & tableValu
        if(colname%in%names(tableValues$scanVarsTable) & sum(tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$session_start_timeStamp==pk2)>0)
 tableValues$scanVarsTable[tableValues$scanVarsTable$device_ID==pk1 & tableValues$scanVarsTable$session_start_timeStamp==pk2, colname] <- val
 
-         }  
+
+     if(col%in%c(1,2)){
+     if(!is.null(tableValues$sessionsTable)) {
+	if(nrow(tableValues$sessionsTable)>0) {
+	sessionList <- as.list(1:(nrow(tableValues$sessionsTable)+1))
+	names(sessionList) <- c("ALL", paste(tableValues$sessionsTable[,1], tableValues$sessionsTable[,2], sep=' | '))
+	sessionChoices$choiceList <- data.frame(tableValues$sessionsTable[,1], tableValues$sessionsTable[,2])
+	updateSelectInput(session=session, inputId='sessionSelect', label = "Select a session", choices = sessionList, selected = sessionSelected$index)
+	}
+	}
+    }
+     
+     
+         }
+       
      })
   })
 

@@ -51,6 +51,8 @@ layout_info.json.input <- reactive({
 
 ###########################
 observeEvent(input$sessionSelect, {
+	#if(is.null(input$sessionSelect) | is.null(sessionSelected$index)) return(NULL)
+	#if(as.numeric(input$sessionSelect)== sessionSelected$index) return(NULL)
 	#cat(file=stderr(), paste0("number of session rows0:", nrow(tableValues$sessionsTable),";\n"))
 	sessionSelected$index <- as.numeric(input$sessionSelect)
 

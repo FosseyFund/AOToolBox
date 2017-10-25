@@ -9,6 +9,19 @@ observeEvent(input$duplicateSessionRow, {
       dupRow$session_start_timeStamp <- paste(dupRow$session_start_timeStamp, "EDIT !")
       tableValues$sessionsTable <- rbind(tableValues$sessionsTable, dupRow)
 
+
+     
+     if(!is.null(tableValues$sessionsTable)) {
+	if(nrow(tableValues$sessionsTable)>0) {
+	sessionList <- as.list(1:(nrow(tableValues$sessionsTable)+1))
+	names(sessionList) <- c("ALL", paste(tableValues$sessionsTable[,1], tableValues$sessionsTable[,2], sep=' | '))
+	sessionChoices$choiceList <- data.frame(tableValues$sessionsTable[,1], tableValues$sessionsTable[,2])
+	updateSelectInput(session=session, inputId='sessionSelect', label = "Select a session", choices = sessionList, selected = sessionSelected$index)
+	}
+	}
+    
+
+
       output$sessionsDT <- renderD3tf({
 						     cat(file=stderr(), paste0("render sessionsDT RowDuplicate", "\n"))
 	  tableProps <- list(
