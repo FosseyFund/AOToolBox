@@ -15,7 +15,8 @@ isolate({
       colname <- names(sessionsRV())[col]
       if((col%in%c(1,2) & (is.na(val) | val=="")) | 
        	   (col==1 & sum(duplicated(rbind(sessionsRV()[-row, 1:2], data.frame(device_ID=val, session_start_timeStamp=sessionsRV()[row, 2]))))>0)  | 
-       	   (col==2 & sum(duplicated(rbind(sessionsRV()[-row, 1:2], data.frame(device_ID=sessionsRV()[row, 1], session_start_timeStamp=val))))>0))
+       	   (col==2 & sum(duplicated(rbind(sessionsRV()[-row, 1:2], data.frame(device_ID=sessionsRV()[row, 1], session_start_timeStamp=val))))>0) |
+       	    (col%in%c(1,2) & sessionSelected$index!=1))
        {
 
        	rejectEdit(session, tbl = "sessionsDT", row = row, col = col, id = id, value= oldval)
