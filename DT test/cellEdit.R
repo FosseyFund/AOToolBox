@@ -244,8 +244,10 @@ if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select)  | sum(foca
       dupRowScanList <- isolate(scanListRV()[input$scanListDT_select,])##which is an empty table
       dupRow <- cbind(dupRowSession, dupRowFocal, dupRowScanList)
       dupRow[,colname] <- val
+      
       tableValues$scansTable <- smartbind(tableValues$scansTable, dupRow)[,names(tableValues$scansTable)]
-     
+           tableValues$scansTable[is.na(tableValues$scansTable)] <- ""
+
        } else {
        	
        if((colname=="scan_timeStamp" & (is.na(val) | val=="")) | 
@@ -263,7 +265,7 @@ if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select)  | sum(foca
 ############################
 ############################
 ############################
-    
+
 observeEvent(input$scansDT_edit,{
     if(is.null(input$scansDT_edit)) return(NULL);
      edit <- input$scansDT_edit;
@@ -277,15 +279,15 @@ isolate({
       val <- edit$val;
       pk1 <- sessionsRV()$device_ID[input$sessionsDT_select]
       pk2 <- scanListRV()$scan_timeStamp[input$scanListDT_select]
-      pk3 <- scansRV()$scanned_individual_ID[row]
+      pk3 <- scansRV()$scanned_individual_ID[row]## is "" if no scan data
       cat(file=stderr(), paste0("pk1 = ", pk1,"pk2 = ", pk2,"pk3 = ", pk3, "\n"))
- if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select) | is.null(input$scanListDT_select) | sum(scanListRV()$scan_timeStamp[input$scanListDT_select]=="")==1) {
+ if(is.null(input$focalsDT_select) | is.null(input$sessionsDT_select) | is.null(input$scanListDT_select) | sum(scanListRV()$scan_timeStamp[input$scanListDT_select]=="")==1) { ##case where no parent table is selected
 	  rejectEdit(session, tbl = "scansDT", row = row, col = col, id = id, value = "");
 } else {
       colname <- names(scansRV())[col]
-      cat(file=stderr(), paste0("tag1 with sum(tableValues$scansTable$device_ID==pk1)=", sum(tableValues$scansTable$device_ID==pk1)," \n"))
-      cat(file=stderr(), paste0("tag11 with sum(tableValues$scansTable$scan_timeStamp==pk2)=", sum(tableValues$scansTable$scan_timeStamp==pk2)," \n"))
-      cat(file=stderr(), paste0("tag12 with sum(tableValues$scansTable$scanned_individual_ID ==pk3)=", sum(tableValues$scansTable$scanned_individual_ID ==pk3)," \n"))
+      #cat(file=stderr(), paste0("tag1 with sum(tableValues$scansTable$device_ID==pk1)=", sum(tableValues$scansTable$device_ID==pk1)," \n"))
+      #cat(file=stderr(), paste0("tag11 with sum(tableValues$scansTable$scan_timeStamp==pk2)=", sum(tableValues$scansTable$scan_timeStamp==pk2)," \n"))
+      #cat(file=stderr(), paste0("tag12 with sum(tableValues$scansTable$scanned_individual_ID ==pk3)=", sum(tableValues$scansTable$scanned_individual_ID ==pk3)," \n"))
 
        if(sum(tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2 & tableValues$scansTable$scanned_individual_ID ==pk3)==0 & !(is.na(val) | val=="")){
 
@@ -298,16 +300,16 @@ isolate({
       tableValues$scansTable <- smartbind(tableValues$scansTable, dupRow)[,tableValues$scansTable]
 
        } else {
-       	cat(file=stderr(), paste0("tag2\n"))
+       	#cat(file=stderr(), paste0("tag2\n"))
        	if(col==1 & (is.na(val) | val %in% scansRV()$scanned_individual_ID[-row] | val=="" )) {
-                  cat(file=stderr(), paste0("tag3\n"))
+                  #cat(file=stderr(), paste0("tag3\n"))
             rejectEdit(session, tbl = "scansDT", row = row, col = col, id = id, value= oldval)
             cat(file=stderr(), paste0("Rejecting value ", val, " and rolling back to value ",oldval,"\n"))
        	} else {
        		                  cat(file=stderr(), paste0("tag4\n"))
 
-       	shouldBeOne <- (tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2 & tableValues$scansTable$scanned_individual_ID ==pk3)
-       	cat(file=stderr(), paste0("Replacing x values with x=", shouldBeOne, "\n"))
+       	#shouldBeOne <- (tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2 & tableValues$scansTable$scanned_individual_ID ==pk3)
+       	#cat(file=stderr(), paste0("Replacing x values with x=", shouldBeOne, "\n"))
       	tableValues$scansTable[tableValues$scansTable$device_ID==pk1 & tableValues$scansTable$scan_timeStamp==pk2 & tableValues$scansTable$scanned_individual_ID ==pk3, colname] <- val
       	cat(file=stderr(), paste0("Successfully replaced value\n"))
       }

@@ -495,6 +495,7 @@ observeEvent(input$duplicateScanListRow, {
 
       colnames <- names(tableValues$scansTable)
       tableValues$scansTable <- smartbind(tableValues$scansTable, dupRow)[,colnames]
+      tableValues$scansTable[is.na(tableValues$scansTable)] <- ""
       
       output$scanListDT <- renderD3tf({
 						     cat(file=stderr(), paste0("render scanListDTDuplicate", "\n"))
