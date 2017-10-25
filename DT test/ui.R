@@ -57,11 +57,10 @@ HTML("<div style='background-color:rgba(63, 174, 191, 0.0); text-align:center; v
       br(),
   	# downloadButton("downloadBehaviorsView", "Download behaviors", icon=icon('download'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
   	# downloadButton("downloadScansView", "Download scans", icon=icon('download'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),
-  		HTML("<div style='background-color:rgba(63, 174, 191, 0.60); text-align:center; vertical-align: middle; padding:3px 0;'><h3> Sessions </h3></div>"),
-
-  	
-  	#HTML("<h3><b>    Sessions</b></h3>"),
-	br(),
+  	selectInput('sessionSelect', label = "Select a session", choices = list("ALL" = 1), selected = 1, width="50%"),
+  	HTML("<div style='background-color:rgba(63, 174, 191, 0.60); text-align:center; vertical-align: middle; padding:3px 0;'><h3> Sessions </h3></div>"),
+  
+  	br(),
     d3tfOutput('sessionsDT', height = "auto"),
 	br(),
 	actionButton('duplicateSessionRow', 'Duplicate selected row', icon=icon('copy'), style="color: #090909; background-color: #cdcdcd; border-color: #090909"),

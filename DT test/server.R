@@ -63,6 +63,13 @@ if(is.null(json.output.file.input()) | is.null(behaviors.json.input()) | is.null
 	tableValues$continuousVarsTable <- dataOutput$continuousVarsTable
 	tableValues$scanVarsTable <- dataOutput$scanVarsTable
 
+	if(!is.null(tableValues$sessionsTable)) {
+	if(nrow(tableValues$sessionsTable)>0) {
+	sessionList <- as.list(1:(nrow(tableValues$sessionsTable)+1))
+	names(sessionList) <- c("ALL", paste(tableValues$sessionsTable[,1], tableValues$sessionsTable[,2], sep=' | '))
+	updateSelectInput(session=session, inputId='sessionSelect', label = "Select a session", choices = sessionList, selected = 1)
+	}
+	}
 	
 output$sessionsDT <- isolate(renderD3tf({
 						     cat(file=stderr(), paste0("render sessionsDTServer", "\n"))
