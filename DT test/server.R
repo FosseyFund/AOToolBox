@@ -17,6 +17,22 @@ tableValues <- reactiveValues(
 						scanVarsTable=NULL
 				)
 
+tableValuesCopy <- reactiveValues(
+						sessionsTable=NULL, 
+						focalsTable=NULL, 
+						behaviorsTable=NULL, 
+						scansTable=NULL,
+						backgroundTapsTable=NULL,
+						commentsTable=NULL,
+						dayVarsTable=NULL,
+						focalVarsTable=NULL,
+						continuousVarsTable=NULL,
+						scanVarsTable=NULL
+				)
+
+sessionChoices <- reactiveValues(choiceList=NULL)
+sessionSelected <- reactiveValues(index=1)
+
 
 json.output.file.input <- reactive({
 	if (is.null(input$json.output.file)) return(NULL)
@@ -33,6 +49,98 @@ layout_info.json.input <- reactive({
     else return(readLines(input$layout_info.json$datapath, warn=F))
 })
 
+###########################
+observeEvent(input$sessionSelect, {
+	#cat(file=stderr(), paste0("number of session rows0:", nrow(tableValues$sessionsTable),";\n"))
+	sessionSelected$index <- as.numeric(input$sessionSelect)
+
+	tableValuesCopy$sessionsTable <-  rbind(tableValuesCopy$sessionsTable, tableValues$sessionsTable)
+	if(!is.null(tableValuesCopy$sessionsTable)) tableValuesCopy$sessionsTable <- tableValuesCopy$sessionsTable[order(tableValuesCopy$sessionsTable[,1], tableValuesCopy$sessionsTable[,2]),]
+	tableValuesCopy$focalsTable <- rbind(tableValuesCopy$focalsTable, tableValues$focalsTable)
+	tableValuesCopy$behaviorsTable <- rbind(tableValuesCopy$behaviorsTable, tableValues$behaviorsTable)
+	tableValuesCopy$scansTable <- rbind(tableValuesCopy$scansTable, tableValues$scansTable)
+	tableValuesCopy$backgroundTapsTable <- rbind(tableValuesCopy$backgroundTapsTable, tableValues$backgroundTapsTable)
+	tableValuesCopy$commentsTable <- rbind(tableValuesCopy$commentsTable, tableValues$commentsTable)
+	tableValuesCopy$dayVarsTable <- rbind(tableValuesCopy$dayVarsTable, tableValues$dayVarsTable)
+	tableValuesCopy$focalVarsTable <- rbind(tableValuesCopy$focalVarsTable, tableValues$focalVarsTable)
+	tableValuesCopy$continuousVarsTable <- rbind(tableValuesCopy$continuousVarsTable, tableValues$continuousVarsTable)
+	tableValuesCopy$scanVarsTable <- rbind(tableValuesCopy$scanVarsTable, tableValues$scanVarsTable)
+
+
+	if (!input$sessionSelect==1) {
+	device <- sessionChoices$choiceList[as.numeric(input$sessionSelect)-1,1]
+	sessionstarttime <- sessionChoices$choiceList[as.numeric(input$sessionSelect)-1,2]
+	
+	tableValues$sessionsTable <- tableValuesCopy$sessionsTable[tableValuesCopy$sessionsTable$device_ID==device & tableValuesCopy$sessionsTable$session_start_timeStamp== sessionstarttime,]
+	tableValues$focalsTable <- tableValuesCopy$focalsTable[tableValuesCopy$focalsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$focalsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
+	tableValues$behaviorsTable <- tableValuesCopy$behaviorsTable[tableValuesCopy$behaviorsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$behaviorsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
+	tableValues$scansTable <- tableValuesCopy$scansTable[tableValuesCopy$scansTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$scansTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
+	tableValues$backgroundTapsTable <- tableValuesCopy$backgroundTapsTable[tableValuesCopy$backgroundTapsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$backgroundTapsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
+	tableValues$commentsTable <- tableValuesCopy$commentsTable[tableValuesCopy$commentsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$commentsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
+	tableValues$dayVarsTable <- tableValuesCopy$dayVarsTable[tableValuesCopy$dayVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$dayVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
+	tableValues$focalVarsTable <- tableValuesCopy$focalVarsTable[tableValuesCopy$focalVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$focalVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
+	tableValues$continuousVarsTable <- tableValuesCopy$continuousVarsTable[tableValuesCopy$continuousVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$continuousVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
+	tableValues$scanVarsTable <- tableValuesCopy$scanVarsTable[tableValuesCopy$scanVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$scanVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
+	
+	tableValuesCopy$sessionsTable <- tableValuesCopy$sessionsTable[!(tableValuesCopy$sessionsTable$device_ID==device & tableValuesCopy$sessionsTable$session_start_timeStamp==sessionstarttime),]
+	tableValuesCopy$focalsTable <- tableValuesCopy$focalsTable[!(tableValuesCopy$focalsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$focalsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
+	tableValuesCopy$behaviorsTable <- tableValuesCopy$behaviorsTable[!(tableValuesCopy$behaviorsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$behaviorsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
+	tableValuesCopy$scansTable <- tableValuesCopy$scansTable[!(tableValuesCopy$scansTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$scansTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
+	tableValuesCopy$backgroundTapsTable <- tableValuesCopy$backgroundTapsTable[!(tableValuesCopy$backgroundTapsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$backgroundTapsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
+	tableValuesCopy$commentsTable <- tableValuesCopy$commentsTable[!(tableValuesCopy$commentsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$commentsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
+	tableValuesCopy$dayVarsTable <- tableValuesCopy$dayVarsTable[!(tableValuesCopy$dayVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$dayVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
+	tableValuesCopy$focalVarsTable <- tableValuesCopy$focalVarsTable[!(tableValuesCopy$focalVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$focalVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
+	tableValuesCopy$continuousVarsTable <- tableValuesCopy$continuousVarsTable[!(tableValuesCopy$continuousVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$continuousVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
+	tableValuesCopy$scanVarsTable <- tableValuesCopy$scanVarsTable[!(tableValuesCopy$scanVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$scanVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
+	
+} else {
+
+	tableValuesCopy$sessionsTable -> tableValues$sessionsTable
+	tableValuesCopy$focalsTable -> tableValues$focalsTable
+	tableValuesCopy$behaviorsTable -> tableValues$behaviorsTable
+	tableValuesCopy$scansTable -> tableValues$scansTable
+	tableValuesCopy$backgroundTapsTable -> tableValues$backgroundTapsTable
+	tableValuesCopy$commentsTable -> tableValues$commentsTable
+	tableValuesCopy$dayVarsTable -> tableValues$dayVarsTable
+	tableValuesCopy$focalVarsTable -> tableValues$focalVarsTable
+	tableValuesCopy$continuousVarsTable -> tableValues$continuousVarsTable
+	tableValuesCopy$scanVarsTable -> tableValues$scanVarsTable
+	
+	tableValuesCopy$sessionsTable <- tableValuesCopy$sessionsTable[0,]
+	tableValuesCopy$focalsTable <- tableValuesCopy$focalsTable[0,]
+	tableValuesCopy$behaviorsTable <- tableValuesCopy$behaviorsTable[0,]
+	tableValuesCopy$scansTable <- tableValuesCopy$scansTable[0,]
+	tableValuesCopy$backgroundTapsTable <- tableValuesCopy$backgroundTapsTable[0,]
+	tableValuesCopy$commentsTable <- tableValuesCopy$commentsTable[0,]
+	tableValuesCopy$dayVarsTable <- tableValuesCopy$dayVarsTable[0,]
+	tableValuesCopy$focalVarsTable <- tableValuesCopy$focalVarsTable[0,]
+	tableValuesCopy$continuousVarsTable <- tableValuesCopy$continuousVarsTable[0,]
+	tableValuesCopy$scanVarsTable <- tableValuesCopy$scanVarsTable[0,]
+
+	
+}
+
+output$sessionsDT <- isolate(renderD3tf({
+						     cat(file=stderr(), paste0("render sessionsDTServer", "\n"))
+
+    tableProps <- list(
+      btn_reset = TRUE,
+      col_types = rep("string", ncol(isolate(emptySessionRow()))
+    ));
+    d3tf(isolate(sessionsRV()),
+         tableProps = isolate(tableProps),
+         extensions = list(
+           list(name = "sort")
+         ),
+         showRowNames = FALSE,
+         tableStyle = "table table-bordered",
+         edit = TRUE,
+         selectableRows='single',
+         selectableRowsClass='success'
+	);
+  }))
+
+})
 
 ###########################
 ###########################
@@ -63,11 +171,26 @@ if(is.null(json.output.file.input()) | is.null(behaviors.json.input()) | is.null
 	tableValues$continuousVarsTable <- dataOutput$continuousVarsTable
 	tableValues$scanVarsTable <- dataOutput$scanVarsTable
 
+	tableValuesCopy$sessionsTable <- tableValues$sessionsTable[0,]
+	tableValuesCopy$focalsTable <- tableValues$focalsTable[0,]
+	tableValuesCopy$behaviorsTable <- tableValues$behaviorsTable[0,]
+	tableValuesCopy$scansTable <- tableValues$scansTable[0,]
+	tableValuesCopy$backgroundTapsTable <- tableValues$backgroundTapsTable[0,]
+	tableValuesCopy$commentsTable <- tableValues$commentsTable[0,]
+	tableValuesCopy$dayVarsTable <- tableValues$dayVarsTable[0,]
+	tableValuesCopy$focalVarsTable <- tableValues$focalVarsTable[0,]
+	tableValuesCopy$continuousVarsTable <- tableValues$continuousVarsTable[0,]
+	tableValuesCopy$scanVarsTable <- tableValues$scanVarsTable[0,]
+
+
+
 	if(!is.null(tableValues$sessionsTable)) {
 	if(nrow(tableValues$sessionsTable)>0) {
 	sessionList <- as.list(1:(nrow(tableValues$sessionsTable)+1))
 	names(sessionList) <- c("ALL", paste(tableValues$sessionsTable[,1], tableValues$sessionsTable[,2], sep=' | '))
+	sessionChoices$choiceList <- data.frame(tableValues$sessionsTable[,1], tableValues$sessionsTable[,2])
 	updateSelectInput(session=session, inputId='sessionSelect', label = "Select a session", choices = sessionList, selected = 1)
+	sessionSelected$index <- 1
 	}
 	}
 	

@@ -1,5 +1,5 @@
 emptySessionRow <- function(){
-		if(is.null(tableValues$sessionsTable)) return(data.frame(empty="", stringsAsFactors=F))
+		if(is.null(tableValues$sessionsTable)) return(NULL)
     	sessionColnames <- names(tableValues$sessionsTable)
     	dat <- data.frame(matrix(NA,nrow=1, ncol=length(sessionColnames)))
     	for(i in 1:ncol(dat))  dat[,i] <- as.character(dat[,i])
