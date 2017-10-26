@@ -144,7 +144,7 @@ output$sessionsDT <- isolate(renderD3tf({
   
 output$dayVarsDT <- renderD3tf({
 				     cat(file=stderr(), paste0("render dayVarsDT", "\n"))
-				     cat(file=stderr(), paste0("ncol(emptyDayVarsRow()) = ", ncol(isolate(emptyDayVarsRow())),"\n"))
+				     #cat(file=stderr(), paste0("ncol(emptyDayVarsRow()) = ", ncol(isolate(emptyDayVarsRow())),"\n"))
     tableProps <- list(
       btn_reset = TRUE,
       col_types = rep("string", ncol(isolate(emptyDayVarsRow()))));

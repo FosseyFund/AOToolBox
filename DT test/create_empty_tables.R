@@ -8,8 +8,7 @@ if(is.null(tableValues$sessionsTable)) return(data.frame(empty="", stringsAsFact
     	}
 
 emptyDayVarsRow <- function(){
-		if(is.null(tableValues$dayVarsTable)) return(NULL)
-		
+		if(is.null(tableValues$dayVarsTable)) return(data.frame(empty="", stringsAsFactors=F))	
     	dayVarsColnames <- names(tableValues$dayVarsTable)
     	dayVarsColnames <- dayVarsColnames[3:length(dayVarsColnames)]
     	dat <- data.frame(matrix(NA,nrow=1, ncol=length(dayVarsColnames)))
@@ -19,7 +18,7 @@ emptyDayVarsRow <- function(){
     	}
     	
 emptyFocalListRow <- function(){
-		if(is.null(tableValues$focalsTable)) return(NULL)
+		if(is.null(tableValues$focalsTable)) return(data.frame(empty="", stringsAsFactors=F))
 
     	focalListColnames <- names(tableValues$focalsTable)
     	focalListColnames <- focalListColnames[c(length(focalListColnames), 3:(length(focalListColnames)-1))]
@@ -41,8 +40,9 @@ emptyBehaviorRow <- function(){
     	}
  
 emptyCommentRow <- function(){
-		if(is.null(tableValues$commentsTable) | ncol(tableValues$commentsTable)==3) return(NULL)
-
+		if(is.null(tableValues$commentsTable)) return(data.frame(empty="", stringsAsFactors=F))
+		if(ncol(tableValues$commentsTable)==3) return(data.frame(empty="", stringsAsFactors=F))
+		
     	commentsColnames <- names(tableValues$commentsTable)
     	commentsColnames <- commentsColnames[4:length(commentsColnames)]
     	dat <- data.frame(matrix("",nrow=1, ncol=length(commentsColnames)))
@@ -74,8 +74,8 @@ emptyFocalVarsRow <- function(){
     	}
 
 emptyContinuousVarsRow <- function(){
-		if(is.null(tableValues$continuousVarsTable) | ncol(tableValues$continuousVarsTable)==3 ) return(NULL)
-
+		if(is.null(tableValues$continuousVarsTable)) return(data.frame(empty="", stringsAsFactors=F))
+		if(ncol(tableValues$continuousVarsTable)==3) return(data.frame(empty="", stringsAsFactors=F))
     	continuousVarsColnames <- names(tableValues$continuousVarsTable)
     	continuousVarsColnames <- continuousVarsColnames[4:length(continuousVarsColnames)]
     	dat <- data.frame(matrix("",nrow=1, ncol=length(continuousVarsColnames)))
@@ -95,8 +95,8 @@ emptyScanListRow <- function(){
     	}
 
 emptyScanVarsRow <- function(){
-		if(is.null(tableValues$scanVarsTable) | ncol(tableValues$scanVarsTable)==4 ) return(NULL)
-
+		if(is.null(tableValues$scanVarsTable)) return(data.frame(empty="", stringsAsFactors=F))
+		if(ncol(tableValues$scanVarsTable)==4) return(data.frame(empty="", stringsAsFactors=F))
     	scanVarsColnames <- names(tableValues$scanVarsTable)
     	 #cat(file=stderr(), paste0("scanVarsColnames1 = ", paste(scanVarsColnames, collapse=";"),"\n"))
     	scanVarsColnames <- scanVarsColnames[5:length(scanVarsColnames)]
@@ -108,8 +108,7 @@ emptyScanVarsRow <- function(){
     	}
     	
 emptyScanRow <- function(){
-					if(is.null(tableValues$scansTable)) return(data.frame(empty="", stringsAsFactors=F))
-
+		if(is.null(tableValues$scansTable)) return(data.frame(empty="", stringsAsFactors=F))
 		scanColnames <- names(tableValues$scansTable)[5:(length(names(tableValues$scansTable))-6)]
     	dat <- data.frame(matrix("",nrow=1, ncol=length(scanColnames)))
     	for(i in 1:ncol(dat))  dat[,i] <- as.character(dat[,i])
