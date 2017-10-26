@@ -50,297 +50,8 @@ layout_info.json.input <- reactive({
 })
 
 ###########################
-observeEvent(input$sessionSelect, {
-	#if(is.null(input$sessionSelect) | is.null(sessionSelected$index)) return(NULL)
-	#if(as.numeric(input$sessionSelect)== sessionSelected$index) return(NULL)
-	#cat(file=stderr(), paste0("number of session rows0:", nrow(tableValues$sessionsTable),";\n"))
-	sessionSelected$index <- as.numeric(input$sessionSelect)
+source("sessionSelect.R", local=TRUE)
 
-	tableValuesCopy$sessionsTable <-  rbind(tableValuesCopy$sessionsTable, tableValues$sessionsTable)
-	if(!is.null(tableValuesCopy$sessionsTable)) tableValuesCopy$sessionsTable <- tableValuesCopy$sessionsTable[order(tableValuesCopy$sessionsTable[,1], tableValuesCopy$sessionsTable[,2]),]
-	tableValuesCopy$focalsTable <- rbind(tableValuesCopy$focalsTable, tableValues$focalsTable)
-	tableValuesCopy$behaviorsTable <- rbind(tableValuesCopy$behaviorsTable, tableValues$behaviorsTable)
-	tableValuesCopy$scansTable <- rbind(tableValuesCopy$scansTable, tableValues$scansTable)
-	tableValuesCopy$backgroundTapsTable <- rbind(tableValuesCopy$backgroundTapsTable, tableValues$backgroundTapsTable)
-	tableValuesCopy$commentsTable <- rbind(tableValuesCopy$commentsTable, tableValues$commentsTable)
-	tableValuesCopy$dayVarsTable <- rbind(tableValuesCopy$dayVarsTable, tableValues$dayVarsTable)
-	tableValuesCopy$focalVarsTable <- rbind(tableValuesCopy$focalVarsTable, tableValues$focalVarsTable)
-	tableValuesCopy$continuousVarsTable <- rbind(tableValuesCopy$continuousVarsTable, tableValues$continuousVarsTable)
-	tableValuesCopy$scanVarsTable <- rbind(tableValuesCopy$scanVarsTable, tableValues$scanVarsTable)
-
-
-	if (!input$sessionSelect==1) {
-	device <- sessionChoices$choiceList[as.numeric(input$sessionSelect)-1,1]
-	sessionstarttime <- sessionChoices$choiceList[as.numeric(input$sessionSelect)-1,2]
-	
-	tableValues$sessionsTable <- tableValuesCopy$sessionsTable[tableValuesCopy$sessionsTable$device_ID==device & tableValuesCopy$sessionsTable$session_start_timeStamp== sessionstarttime,]
-	tableValues$focalsTable <- tableValuesCopy$focalsTable[tableValuesCopy$focalsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$focalsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
-	tableValues$behaviorsTable <- tableValuesCopy$behaviorsTable[tableValuesCopy$behaviorsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$behaviorsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
-	tableValues$scansTable <- tableValuesCopy$scansTable[tableValuesCopy$scansTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$scansTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
-	tableValues$backgroundTapsTable <- tableValuesCopy$backgroundTapsTable[tableValuesCopy$backgroundTapsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$backgroundTapsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
-	tableValues$commentsTable <- tableValuesCopy$commentsTable[tableValuesCopy$commentsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$commentsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
-	tableValues$dayVarsTable <- tableValuesCopy$dayVarsTable[tableValuesCopy$dayVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$dayVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
-	tableValues$focalVarsTable <- tableValuesCopy$focalVarsTable[tableValuesCopy$focalVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$focalVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
-	tableValues$continuousVarsTable <- tableValuesCopy$continuousVarsTable[tableValuesCopy$continuousVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$continuousVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
-	tableValues$scanVarsTable <- tableValuesCopy$scanVarsTable[tableValuesCopy$scanVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$scanVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp,]
-	
-	tableValuesCopy$sessionsTable <- tableValuesCopy$sessionsTable[!(tableValuesCopy$sessionsTable$device_ID==device & tableValuesCopy$sessionsTable$session_start_timeStamp==sessionstarttime),]
-	tableValuesCopy$focalsTable <- tableValuesCopy$focalsTable[!(tableValuesCopy$focalsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$focalsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
-	tableValuesCopy$behaviorsTable <- tableValuesCopy$behaviorsTable[!(tableValuesCopy$behaviorsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$behaviorsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
-	tableValuesCopy$scansTable <- tableValuesCopy$scansTable[!(tableValuesCopy$scansTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$scansTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
-	tableValuesCopy$backgroundTapsTable <- tableValuesCopy$backgroundTapsTable[!(tableValuesCopy$backgroundTapsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$backgroundTapsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
-	tableValuesCopy$commentsTable <- tableValuesCopy$commentsTable[!(tableValuesCopy$commentsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$commentsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
-	tableValuesCopy$dayVarsTable <- tableValuesCopy$dayVarsTable[!(tableValuesCopy$dayVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$dayVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
-	tableValuesCopy$focalVarsTable <- tableValuesCopy$focalVarsTable[!(tableValuesCopy$focalVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$focalVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
-	tableValuesCopy$continuousVarsTable <- tableValuesCopy$continuousVarsTable[!(tableValuesCopy$continuousVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$continuousVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
-	tableValuesCopy$scanVarsTable <- tableValuesCopy$scanVarsTable[!(tableValuesCopy$scanVarsTable$device_ID%in%tableValues$sessionsTable$device_ID & tableValuesCopy$scanVarsTable$session_start_timeStamp%in%tableValues$sessionsTable$session_start_timeStamp),]
-	
-} else {
-
-	tableValuesCopy$sessionsTable -> tableValues$sessionsTable
-	tableValuesCopy$focalsTable -> tableValues$focalsTable
-	tableValuesCopy$behaviorsTable -> tableValues$behaviorsTable
-	tableValuesCopy$scansTable -> tableValues$scansTable
-	tableValuesCopy$backgroundTapsTable -> tableValues$backgroundTapsTable
-	tableValuesCopy$commentsTable -> tableValues$commentsTable
-	tableValuesCopy$dayVarsTable -> tableValues$dayVarsTable
-	tableValuesCopy$focalVarsTable -> tableValues$focalVarsTable
-	tableValuesCopy$continuousVarsTable -> tableValues$continuousVarsTable
-	tableValuesCopy$scanVarsTable -> tableValues$scanVarsTable
-	
-	tableValuesCopy$sessionsTable <- tableValuesCopy$sessionsTable[0,]
-	tableValuesCopy$focalsTable <- tableValuesCopy$focalsTable[0,]
-	tableValuesCopy$behaviorsTable <- tableValuesCopy$behaviorsTable[0,]
-	tableValuesCopy$scansTable <- tableValuesCopy$scansTable[0,]
-	tableValuesCopy$backgroundTapsTable <- tableValuesCopy$backgroundTapsTable[0,]
-	tableValuesCopy$commentsTable <- tableValuesCopy$commentsTable[0,]
-	tableValuesCopy$dayVarsTable <- tableValuesCopy$dayVarsTable[0,]
-	tableValuesCopy$focalVarsTable <- tableValuesCopy$focalVarsTable[0,]
-	tableValuesCopy$continuousVarsTable <- tableValuesCopy$continuousVarsTable[0,]
-	tableValuesCopy$scanVarsTable <- tableValuesCopy$scanVarsTable[0,]
-
-	
-}
-
-output$sessionsDT <- isolate(renderD3tf({
-						     cat(file=stderr(), paste0("render sessionsDTServer", "\n"))
-
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", ncol(isolate(emptySessionRow()))
-    ));
-    d3tf(isolate(sessionsRV()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  }))
-  
-output$dayVarsDT <- renderD3tf({
-				     cat(file=stderr(), paste0("render dayVarsDT", "\n"))
-				     #cat(file=stderr(), paste0("ncol(emptyDayVarsRow()) = ", ncol(isolate(emptyDayVarsRow())),"\n"))
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", ncol(isolate(emptyDayVarsRow()))));
-    d3tf(isolate(emptyDayVarsRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })	  
- 
-  output$focalsDT <- renderD3tf({
-				     cat(file=stderr(), paste0("render focalsDTDuplicate", "\n"))
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", ncol(isolate(emptyFocalListRow()))));
-    d3tf(isolate(emptyFocalListRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })	
-  
-	output$behaviorsDT <- renderD3tf({
-						     cat(file=stderr(), paste0("render behaviorsDTDuplicate", "\n"))
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
-    ));
-    d3tf(isolate(emptyBehaviorRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })
-
-output$commentsDT <- renderD3tf({
-						     cat(file=stderr(), paste0("render commentsDT", "\n"))
-	if(is.null(isolate(emptyCommentRow()))) return(NULL)
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(isolate(emptyCommentRow())))
-    ));
-    d3tf(isolate(emptyCommentRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })
-
-output$backgroundTapsDT <- renderD3tf({
-						     cat(file=stderr(), paste0("render backgroundTapsDT", "\n"))
-	if(is.null(isolate(emptyBackgroundTapsRow()))) return(NULL)
-
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(isolate(emptyBackgroundTapsRow())))
-    ));
-    d3tf(isolate(emptyBackgroundTapsRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })
-
-output$focalVarsDT <- renderD3tf({
-						     cat(file=stderr(), paste0("render focalVarsDT", "\n"))
-
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(isolate(emptyFocalVarsRow())))
-    ));
-    d3tf(isolate(emptyFocalVarsRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  }) 
-
-output$continuousVarsDT <- renderD3tf({
-						     cat(file=stderr(), paste0("render continuousVarsDT", "\n"))
-if(is.null(isolate(emptyContinuousVarsRow()))) return(NULL)
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(isolate(emptyContinuousVarsRow())))
-    ));
-    d3tf(isolate(emptyContinuousVarsRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })
-	
-	output$scanListDT <- renderD3tf({
-								     cat(file=stderr(), paste0("render scanListsDTDuplicate", "\n"))
-
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyScanListRow()))
-    ));
-    d3tf(isolate(emptyScanListRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })
-
-output$scanVarsDT <- renderD3tf({
-		cat(file=stderr(), paste0("render scanVarsDT", "\n"))
-
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyScanVarsRow()))
-    ));
-    d3tf(isolate(emptyScanVarsRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })
-
-	output$scansDT <- renderD3tf({
-								     cat(file=stderr(), paste0("render scansDTDuplicate", "\n"))
-
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyScanRow()))
-    ));
-    d3tf(isolate(emptyScanRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })  
-
-
-})
 
 ###########################
 ###########################
@@ -352,12 +63,18 @@ source("tablesRV.R", local=TRUE)
 ###########################
 ###########################
 observeEvent(input$VisualizeData, {
-
+ #cat(file=stderr(), paste0("list of output objects: ", names(outputOptions(output)), "\n"))
 if(is.null(json.output.file.input()) | is.null(behaviors.json.input()) | is.null(layout_info.json.input())) {
 	tableValues$sessionsTable <- NULL
 	tableValues$focalsTable <- NULL
 	tableValues$behaviorsTable <- NULL
 	tableValues$scansTable <- NULL
+	tableValues$backgroundTapsTable <- NULL
+	tableValues$commentsTable <- NULL
+	tableValues$dayVarsTable <- NULL
+	tableValues$focalVarsTable <- NULL
+	tableValues$continuousVarsTable <- NULL
+	tableValues$scanVarsTable <- NULL
 	} else {
 	dataOutput <- jsonOutputConversion(json.output.file.input(), behaviors.json.input(), layout_info.json.input(), colmerge=input$colmerge)
 	tableValues$sessionsTable <- dataOutput$sessionsTable
@@ -396,10 +113,9 @@ if(is.null(json.output.file.input()) | is.null(behaviors.json.input()) | is.null
 	
 output$sessionsDT <- isolate(renderD3tf({
 						     cat(file=stderr(), paste0("render sessionsDTServer", "\n"))
-
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", ncol(isolate(emptySessionRow()))
+      col_types = rep("string", ncol(isolate(sessionsRV()))
     ));
     d3tf(isolate(sessionsRV()),
          tableProps = isolate(tableProps),
@@ -414,6 +130,9 @@ output$sessionsDT <- isolate(renderD3tf({
 	);
   }))
   }
+
+source("downloadCode.R", local=TRUE)##not sure why, but it won't be read if it's located with the other source statements...
+  
 })
 ###########################    		
 ###########################
@@ -446,115 +165,7 @@ source("rowDuplicate.R", local=TRUE)
 
 #########################   
     
-	output$downloadSessionsTable <- downloadHandler(
-    filename = function() { 
-		 paste('sessionsTable.csv', sep='') 
-	 },
-    content = function(file) {
-     write.csv(tableValues$sessionsTable, file, row.names=F, na="")
-    }
-  )
-	output$downloadFocalsTable <- downloadHandler(
-    filename = function() { 
-		 paste('focalsTable.csv', sep='') 
-	 },
-    content = function(file) {
-     write.csv(tableValues$focalsTable, file, row.names=F, na="")
-    }
-  )
-	output$downloadBehaviorsTable <- downloadHandler(
-    filename = function() { 
-		 paste('behaviorsTable.csv', sep='') 
-	 },
-    content = function(file) {
-     write.csv(tableValues$behaviorsTable, file, row.names=F, na="")
-    }
-  )
-	output$downloadScansTable <- downloadHandler(
-    filename = function() { 
-		 paste('scansTable.csv', sep='') 
-	 },
-    content = function(file) {
-     write.csv(tableValues$scansTable, file, row.names=F, na="")
-    }
-  )
-  	output$downloadBackgroundTapsTable <- downloadHandler(
-    filename = function() { 
-		 paste('backgroundTapsTable.csv', sep='') 
-	 },
-    content = function(file) {
-     write.csv(tableValues$backgroundTapsTable, file, row.names=F, na="")
-    }
-  )
-   	output$downloadCommentsTable <- downloadHandler(
-    filename = function() { 
-		 paste('commentsTable.csv', sep='') 
-	 },
-    content = function(file) {
-     write.csv(tableValues$commentsTable, file, row.names=F, na="")
-    }
-  )
-  output$downloadDayVarsTable <- downloadHandler(
-    filename = function() { 
-		 paste('dayVarsTable.csv', sep='') 
-	 },
-    content = function(file) {
-     write.csv(tableValues$dayVarsTable, file, row.names=F, na="")
-    }
-  )
-  output$downloadFocalVarsTable <- downloadHandler(
-    filename = function() { 
-		 paste('focalVarsTable.csv', sep='') 
-	 },
-    content = function(file) {
-     write.csv(tableValues$focalVarsTable, file, row.names=F, na="")
-    }
-  )
-  output$downloadContinuousVarsTable <- downloadHandler(
-    filename = function() { 
-		 paste('continuousVarsTable.csv', sep='') 
-	 },
-    content = function(file) {
-     write.csv(tableValues$continuousVarsTable, file, row.names=F, na="")
-    }
-  )
-  output$downloadScanVarsTable <- downloadHandler(
-    filename = function() { 
-		 paste('scanVarsTable.csv', sep='') 
-	 },
-    content = function(file) {
-     write.csv(tableValues$scanVarsTable, file, row.names=F, na="")
-    }
-  )
-  
-  output$downloadZip <- downloadHandler(
-       filename = function() {
-         paste("AO_OutPut_", Sys.time(), ".zip", sep="")
-       },
-       content = function(fname) {
-         fs <- c()
-         tmpdir <- tempdir()
-         initwd <- getwd()
-         setwd(tempdir())
-
-         	write.csv(tableValues$sessionsTable, file=paste0("sessionsTable", ".csv"), row.names=F, na="")
-         	write.csv(tableValues$focalsTable, file=paste0("focalsTable", ".csv"), row.names=F, na="")
-         	write.csv(tableValues$behaviorsTable, file=paste0("behaviorsTable", ".csv"), row.names=F, na="")
-         	write.csv(tableValues$scansTable, file=paste0("scansTable", ".csv"), row.names=F, na="")
-         	write.csv(tableValues$backgroundTapsTable, file=paste0("backgroundTapsTable", ".csv"), row.names=F, na="")
-         	write.csv(tableValues$commentsTable, file=paste0("commentsTable", ".csv"), row.names=F, na="")
-         	write.csv(tableValues$dayVarsTable, file=paste0("dayVarsTable", ".csv"), row.names=F, na="")
-         	write.csv(tableValues$focalVarsTable, file=paste0("focalVarsTable", ".csv"), row.names=F, na="")
-         	write.csv(tableValues$continuousVarsTable, file=paste0("continuousVarsTable", ".csv"), row.names=F, na="")
-         	write.csv(tableValues$scanVarsTable, file=paste0("scanVarsTable", ".csv"), row.names=F, na="")
-         	
-  
-                  
-         zip(zipfile=fname, files=paste0(names(tableValues), ".csv"))
-       },
-       contentType = "application/zip"
-     )
-     
+ 
 ##############postgres connection
 DBname <- reactive({
 	return(input$postgresDBname)
