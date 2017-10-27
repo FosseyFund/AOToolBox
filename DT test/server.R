@@ -132,7 +132,7 @@ output$sessionsDT <- isolate(renderD3tf({
   }
 
 source("downloadCode.R", local=TRUE)##not sure why, but it won't be read if it's located with the other source statements...
-  
+
 })
 ###########################    		
 ###########################
@@ -140,7 +140,7 @@ source("downloadCode.R", local=TRUE)##not sure why, but it won't be read if it's
 ###########################
 ###########################
 source("tableSelect.R", local=TRUE)
-    		
+
 ###########################    		
 ###########################
 #################edit cells

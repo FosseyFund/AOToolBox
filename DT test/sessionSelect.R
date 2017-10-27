@@ -75,221 +75,221 @@ observeEvent(input$sessionSelect, {
   
  # cat(file=stderr(), paste0("list of input objects: ",sort(names(reactiveValuesToList(output))), "\n"))
 
- output$sessionsDT <- isolate(renderD3tf({
-	 cat(file=stderr(), paste0("render sessionsDTServer", "\n"))
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", ncol(isolate(sessionsRV()))
-    ));
-    d3tf(isolate(sessionsRV()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
- }))
+ # output$sessionsDT <- isolate(renderD3tf({
+	 # cat(file=stderr(), paste0("render sessionsDTServer", "\n"))
+    # tableProps <- list(
+      # btn_reset = TRUE,
+      # col_types = rep("string", ncol(isolate(sessionsRV()))
+    # ));
+    # d3tf(isolate(sessionsRV()),
+         # tableProps = isolate(tableProps),
+         # extensions = list(
+           # list(name = "sort")
+         # ),
+         # showRowNames = FALSE,
+         # tableStyle = "table table-bordered",
+         # edit = TRUE,
+         # selectableRows='single',
+         # selectableRowsClass='success'
+	# );
+ # }))
   
-output$dayVarsDT <- renderD3tf({
-				     cat(file=stderr(), paste0("render dayVarsDT", "\n"))
-				     #cat(file=stderr(), paste0("ncol(emptyDayVarsRow()) = ", ncol(isolate(emptyDayVarsRow())),"\n"))
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", ncol(isolate(emptyDayVarsRow()))));
-    d3tf(isolate(emptyDayVarsRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })	  
+# output$dayVarsDT <- isolate(renderD3tf({
+				     # cat(file=stderr(), paste0("render dayVarsDT", "\n"))
+				     # #cat(file=stderr(), paste0("ncol(emptyDayVarsRow()) = ", ncol(isolate(emptyDayVarsRow())),"\n"))
+    # tableProps <- list(
+      # btn_reset = TRUE,
+      # col_types = rep("string", ncol(isolate(emptyDayVarsRow()))));
+    # d3tf(isolate(emptyDayVarsRow()),
+         # tableProps = isolate(tableProps),
+         # extensions = list(
+           # list(name = "sort")
+         # ),
+         # showRowNames = FALSE,
+         # tableStyle = "table table-bordered",
+         # edit = TRUE,
+         # selectableRows='single',
+         # selectableRowsClass='success'
+	# );
+  # })	)
  
-  output$focalsDT <- renderD3tf({
-				     cat(file=stderr(), paste0("render focalsDTDuplicate", "\n"))
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", ncol(isolate(emptyFocalListRow()))));
-    d3tf(isolate(emptyFocalListRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })
+  # output$focalsDT <- isolate(renderD3tf({
+				     # cat(file=stderr(), paste0("render focalsDTDuplicate", "\n"))
+    # tableProps <- list(
+      # btn_reset = TRUE,
+      # col_types = rep("string", ncol(isolate(emptyFocalListRow()))));
+    # d3tf(isolate(emptyFocalListRow()),
+         # tableProps = isolate(tableProps),
+         # extensions = list(
+           # list(name = "sort")
+         # ),
+         # showRowNames = FALSE,
+         # tableStyle = "table table-bordered",
+         # edit = TRUE,
+         # selectableRows='single',
+         # selectableRowsClass='success'
+	# );
+  # }))
   
-	output$behaviorsDT <- renderD3tf({
-						     cat(file=stderr(), paste0("render behaviorsDTDuplicate", "\n"))
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
-    ));
-    d3tf(isolate(emptyBehaviorRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })
+	# output$behaviorsDT <- isolate(renderD3tf({
+						     # cat(file=stderr(), paste0("render behaviorsDTDuplicate", "\n"))
+    # tableProps <- list(
+      # btn_reset = TRUE,
+      # col_types = rep("string", isolate(ncol(emptyBehaviorRow()))
+    # ));
+    # d3tf(isolate(emptyBehaviorRow()),
+         # tableProps = isolate(tableProps),
+         # extensions = list(
+           # list(name = "sort")
+         # ),
+         # showRowNames = FALSE,
+         # tableStyle = "table table-bordered",
+         # edit = TRUE,
+         # selectableRows='single',
+         # selectableRowsClass='success'
+	# );
+  # }))
 
-output$commentsDT <- renderD3tf({
-						     cat(file=stderr(), paste0("render commentsDT", "\n"))
-	if(is.null(isolate(emptyCommentRow()))) return(NULL)
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(isolate(emptyCommentRow())))
-    ));
-    d3tf(isolate(emptyCommentRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })
+# output$commentsDT <- isolate(renderD3tf({
+						     # cat(file=stderr(), paste0("render commentsDT", "\n"))
+	# if(is.null(isolate(emptyCommentRow()))) return(NULL)
+    # tableProps <- list(
+      # btn_reset = TRUE,
+      # col_types = rep("string", isolate(ncol(isolate(emptyCommentRow())))
+    # ));
+    # d3tf(isolate(emptyCommentRow()),
+         # tableProps = isolate(tableProps),
+         # extensions = list(
+           # list(name = "sort")
+         # ),
+         # showRowNames = FALSE,
+         # tableStyle = "table table-bordered",
+         # edit = TRUE,
+         # selectableRows='single',
+         # selectableRowsClass='success'
+	# );
+  # }))
 
-output$backgroundTapsDT <- renderD3tf({
-						     cat(file=stderr(), paste0("render backgroundTapsDT", "\n"))
-	if(is.null(isolate(emptyBackgroundTapsRow()))) return(NULL)
+# output$backgroundTapsDT <- isolate(renderD3tf({
+						     # cat(file=stderr(), paste0("render backgroundTapsDT", "\n"))
+	# if(is.null(isolate(emptyBackgroundTapsRow()))) return(NULL)
 
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(isolate(emptyBackgroundTapsRow())))
-    ));
-    d3tf(isolate(emptyBackgroundTapsRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })
+    # tableProps <- list(
+      # btn_reset = TRUE,
+      # col_types = rep("string", isolate(ncol(isolate(emptyBackgroundTapsRow())))
+    # ));
+    # d3tf(isolate(emptyBackgroundTapsRow()),
+         # tableProps = isolate(tableProps),
+         # extensions = list(
+           # list(name = "sort")
+         # ),
+         # showRowNames = FALSE,
+         # tableStyle = "table table-bordered",
+         # edit = TRUE,
+         # selectableRows='single',
+         # selectableRowsClass='success'
+	# );
+  # }))
 
-output$focalVarsDT <- renderD3tf({
-						     cat(file=stderr(), paste0("render focalVarsDT", "\n"))
+# output$focalVarsDT <- isolate(renderD3tf({
+						     # cat(file=stderr(), paste0("render focalVarsDT", "\n"))
 
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(isolate(emptyFocalVarsRow())))
-    ));
-    d3tf(isolate(emptyFocalVarsRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  }) 
+    # tableProps <- list(
+      # btn_reset = TRUE,
+      # col_types = rep("string", isolate(ncol(isolate(emptyFocalVarsRow())))
+    # ));
+    # d3tf(isolate(emptyFocalVarsRow()),
+         # tableProps = isolate(tableProps),
+         # extensions = list(
+           # list(name = "sort")
+         # ),
+         # showRowNames = FALSE,
+         # tableStyle = "table table-bordered",
+         # edit = TRUE,
+         # selectableRows='single',
+         # selectableRowsClass='success'
+	# );
+  # }))
 
-output$continuousVarsDT <- renderD3tf({
-						     cat(file=stderr(), paste0("render continuousVarsDT", "\n"))
-if(is.null(isolate(emptyContinuousVarsRow()))) return(NULL)
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(isolate(emptyContinuousVarsRow())))
-    ));
-    d3tf(isolate(emptyContinuousVarsRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })
+# output$continuousVarsDT <- isolate(renderD3tf({
+						     # cat(file=stderr(), paste0("render continuousVarsDT", "\n"))
+# if(is.null(isolate(emptyContinuousVarsRow()))) return(NULL)
+    # tableProps <- list(
+      # btn_reset = TRUE,
+      # col_types = rep("string", isolate(ncol(isolate(emptyContinuousVarsRow())))
+    # ));
+    # d3tf(isolate(emptyContinuousVarsRow()),
+         # tableProps = isolate(tableProps),
+         # extensions = list(
+           # list(name = "sort")
+         # ),
+         # showRowNames = FALSE,
+         # tableStyle = "table table-bordered",
+         # edit = TRUE,
+         # selectableRows='single',
+         # selectableRowsClass='success'
+	# );
+  # }))
 	
-	output$scanListDT <- renderD3tf({
-								     cat(file=stderr(), paste0("render scanListsDTDuplicate", "\n"))
+	# output$scanListDT <- isolate(renderD3tf({
+								     # cat(file=stderr(), paste0("render scanListsDTDuplicate", "\n"))
 
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyScanListRow()))
-    ));
-    d3tf(isolate(emptyScanListRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })
+    # tableProps <- list(
+      # btn_reset = TRUE,
+      # col_types = rep("string", isolate(ncol(emptyScanListRow()))
+    # ));
+    # d3tf(isolate(emptyScanListRow()),
+         # tableProps = isolate(tableProps),
+         # extensions = list(
+           # list(name = "sort")
+         # ),
+         # showRowNames = FALSE,
+         # tableStyle = "table table-bordered",
+         # edit = TRUE,
+         # selectableRows='single',
+         # selectableRowsClass='success'
+	# );
+  # }))
 
-output$scanVarsDT <- renderD3tf({
-		cat(file=stderr(), paste0("render scanVarsDT", "\n"))
+# output$scanVarsDT <- isolate(renderD3tf({
+		# cat(file=stderr(), paste0("render scanVarsDT", "\n"))
 
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyScanVarsRow()))
-    ));
-    d3tf(isolate(emptyScanVarsRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })
+    # tableProps <- list(
+      # btn_reset = TRUE,
+      # col_types = rep("string", isolate(ncol(emptyScanVarsRow()))
+    # ));
+    # d3tf(isolate(emptyScanVarsRow()),
+         # tableProps = isolate(tableProps),
+         # extensions = list(
+           # list(name = "sort")
+         # ),
+         # showRowNames = FALSE,
+         # tableStyle = "table table-bordered",
+         # edit = TRUE,
+         # selectableRows='single',
+         # selectableRowsClass='success'
+	# );
+  # }))
 
-	output$scansDT <- renderD3tf({
-								     cat(file=stderr(), paste0("render scansDTDuplicate", "\n"))
+	# output$scansDT <- isolate(renderD3tf({
+								     # cat(file=stderr(), paste0("render scansDTDuplicate", "\n"))
 
-    tableProps <- list(
-      btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyScanRow()))
-    ));
-    d3tf(isolate(emptyScanRow()),
-         tableProps = isolate(tableProps),
-         extensions = list(
-           list(name = "sort")
-         ),
-         showRowNames = FALSE,
-         tableStyle = "table table-bordered",
-         edit = TRUE,
-         selectableRows='single',
-         selectableRowsClass='success'
-	);
-  })  
+    # tableProps <- list(
+      # btn_reset = TRUE,
+      # col_types = rep("string", isolate(ncol(emptyScanRow()))
+    # ));
+    # d3tf(isolate(emptyScanRow()),
+         # tableProps = isolate(tableProps),
+         # extensions = list(
+           # list(name = "sort")
+         # ),
+         # showRowNames = FALSE,
+         # tableStyle = "table table-bordered",
+         # edit = TRUE,
+         # selectableRows='single',
+         # selectableRowsClass='success'
+	# );
+  # }) ) 
 
 
 })
