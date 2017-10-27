@@ -252,12 +252,12 @@ if(is.null(isolate(emptyContinuousVarsRow()))) return(NULL)
   }))
 
 output$scanVarsDT <- isolate(renderD3tf({
-		cat(file=stderr(), paste0("render scanVarsDT", "\n"))
-
+		cat(file=stderr(), paste0("render scanVarsDTOK1", "\n"))
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyScanVarsRow()))
-    ));
+      col_types = rep("string", isolate(ncol(emptyScanVarsRow()))));
+      		cat(file=stderr(), paste0("render scanVarsDTOK2", "\n"))
+
     d3tf(isolate(emptyScanVarsRow()),
          tableProps = isolate(tableProps),
          extensions = list(
@@ -272,7 +272,7 @@ output$scanVarsDT <- isolate(renderD3tf({
   }))
 
 	output$scansDT <- isolate(renderD3tf({
-								     cat(file=stderr(), paste0("render scansDTDuplicate", "\n"))
+								     cat(file=stderr(), paste0("render scansDT", "\n"))
 
     tableProps <- list(
       btn_reset = TRUE,
