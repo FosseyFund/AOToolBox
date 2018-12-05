@@ -69,11 +69,11 @@ observeEvent(input$sessionSelect, {
 
 	
 }
- # cat(file=stderr(), paste0("list of output objects: ", names(outputOptions(output)), "\n"))
+# cat(file=stderr(), paste0("list of output objects: ", names(outputOptions(output)), "\n"))
 
 
   
- # cat(file=stderr(), paste0("list of input objects: ",sort(names(reactiveValuesToList(output))), "\n"))
+# cat(file=stderr(), paste0("list of input objects: ",sort(names(reactiveValuesToList(output))), "\n"))
 
  output$sessionsDT <- isolate(renderD3tf({
 	 cat(file=stderr(), paste0("render sessionsDTServer", "\n"))
@@ -94,7 +94,7 @@ observeEvent(input$sessionSelect, {
 	);
  }))
   
-output$dayVarsDT <- renderD3tf({
+output$dayVarsDT <- isolate(renderD3tf({
 				     cat(file=stderr(), paste0("render dayVarsDT", "\n"))
 				     #cat(file=stderr(), paste0("ncol(emptyDayVarsRow()) = ", ncol(isolate(emptyDayVarsRow())),"\n"))
     tableProps <- list(
@@ -111,9 +111,9 @@ output$dayVarsDT <- renderD3tf({
          selectableRows='single',
          selectableRowsClass='success'
 	);
-  })	  
+  })	)
  
-  output$focalsDT <- renderD3tf({
+  output$focalsDT <- isolate(renderD3tf({
 				     cat(file=stderr(), paste0("render focalsDTDuplicate", "\n"))
     tableProps <- list(
       btn_reset = TRUE,
@@ -129,9 +129,9 @@ output$dayVarsDT <- renderD3tf({
          selectableRows='single',
          selectableRowsClass='success'
 	);
-  })
+  }))
   
-	output$behaviorsDT <- renderD3tf({
+	output$behaviorsDT <- isolate(renderD3tf({
 						     cat(file=stderr(), paste0("render behaviorsDTDuplicate", "\n"))
     tableProps <- list(
       btn_reset = TRUE,
@@ -148,9 +148,9 @@ output$dayVarsDT <- renderD3tf({
          selectableRows='single',
          selectableRowsClass='success'
 	);
-  })
+  }))
 
-output$commentsDT <- renderD3tf({
+output$commentsDT <- isolate(renderD3tf({
 						     cat(file=stderr(), paste0("render commentsDT", "\n"))
 	if(is.null(isolate(emptyCommentRow()))) return(NULL)
     tableProps <- list(
@@ -168,9 +168,9 @@ output$commentsDT <- renderD3tf({
          selectableRows='single',
          selectableRowsClass='success'
 	);
-  })
+  }))
 
-output$backgroundTapsDT <- renderD3tf({
+output$backgroundTapsDT <- isolate(renderD3tf({
 						     cat(file=stderr(), paste0("render backgroundTapsDT", "\n"))
 	if(is.null(isolate(emptyBackgroundTapsRow()))) return(NULL)
 
@@ -189,9 +189,9 @@ output$backgroundTapsDT <- renderD3tf({
          selectableRows='single',
          selectableRowsClass='success'
 	);
-  })
+  }))
 
-output$focalVarsDT <- renderD3tf({
+output$focalVarsDT <- isolate(renderD3tf({
 						     cat(file=stderr(), paste0("render focalVarsDT", "\n"))
 
     tableProps <- list(
@@ -209,9 +209,9 @@ output$focalVarsDT <- renderD3tf({
          selectableRows='single',
          selectableRowsClass='success'
 	);
-  }) 
+  }))
 
-output$continuousVarsDT <- renderD3tf({
+output$continuousVarsDT <- isolate(renderD3tf({
 						     cat(file=stderr(), paste0("render continuousVarsDT", "\n"))
 if(is.null(isolate(emptyContinuousVarsRow()))) return(NULL)
     tableProps <- list(
@@ -229,9 +229,9 @@ if(is.null(isolate(emptyContinuousVarsRow()))) return(NULL)
          selectableRows='single',
          selectableRowsClass='success'
 	);
-  })
+  }))
 	
-	output$scanListDT <- renderD3tf({
+	output$scanListDT <- isolate(renderD3tf({
 								     cat(file=stderr(), paste0("render scanListsDTDuplicate", "\n"))
 
     tableProps <- list(
@@ -249,15 +249,15 @@ if(is.null(isolate(emptyContinuousVarsRow()))) return(NULL)
          selectableRows='single',
          selectableRowsClass='success'
 	);
-  })
+  }))
 
-output$scanVarsDT <- renderD3tf({
-		cat(file=stderr(), paste0("render scanVarsDT", "\n"))
-
+output$scanVarsDT <- isolate(renderD3tf({
+		cat(file=stderr(), paste0("render scanVarsDTOK1", "\n"))
     tableProps <- list(
       btn_reset = TRUE,
-      col_types = rep("string", isolate(ncol(emptyScanVarsRow()))
-    ));
+      col_types = rep("string", isolate(ncol(emptyScanVarsRow()))));
+      		cat(file=stderr(), paste0("render scanVarsDTOK2", "\n"))
+
     d3tf(isolate(emptyScanVarsRow()),
          tableProps = isolate(tableProps),
          extensions = list(
@@ -269,10 +269,10 @@ output$scanVarsDT <- renderD3tf({
          selectableRows='single',
          selectableRowsClass='success'
 	);
-  })
+  }))
 
-	output$scansDT <- renderD3tf({
-								     cat(file=stderr(), paste0("render scansDTDuplicate", "\n"))
+	output$scansDT <- isolate(renderD3tf({
+								     cat(file=stderr(), paste0("render scansDT", "\n"))
 
     tableProps <- list(
       btn_reset = TRUE,
@@ -289,7 +289,7 @@ output$scanVarsDT <- renderD3tf({
          selectableRows='single',
          selectableRowsClass='success'
 	);
-  })  
+  }) ) 
 
 
 })
