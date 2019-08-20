@@ -59,7 +59,9 @@ colnames(sessionsTable) <- c(
 if(length(dat$data$sessions)>0){
 for (i in 1:length(dat$data$sessions)){
 	session <- dat$data$sessions[[i]]
-	sessionsTable <- rbind(sessionsTable, as.character(c(
+	tryCatch(
+	{
+	sessionDat <- as.character(c(
 	NAcheck(session$device_ID),
 	NAcheck(session$arrival_time),
 	NAcheck(session$departure_time),
@@ -70,7 +72,9 @@ for (i in 1:length(dat$data$sessions)){
 	NAcheck(session$gps_on),
 	NAcheck(session$compass_on),	
 	NAcheck(session$map_mode_on),
-	NAcheck(layout$physical_contact_threshold))))
+	NAcheck(layout$physical_contact_threshold)))
+	sessionsTable <- rbind(sessionsTable, sessionDat)
+	}, error=function(e) cat(paste0('Error in session ', i, ' variables : \n', paste(paste(colnames(sessionsTable), unlist(sessionDat), sep=":"), collapse="\n"), "\n"), file=stderr()))
 	}
 }
 
@@ -105,13 +109,16 @@ colnames(dayVarsTable) <- c(
 if(length(dat$data$sessions)>0){
 for (i in 1:length(dat$data$sessions)){
 	session <- dat$data$sessions[[i]]
+	tryCatch(
+	{
 	dayVarsDetailsTemp <- session$details#[grep("Observer name", names(session$details), invert=T)]
 	newDayVarsTable <- varMatrix(dayVarsDetailsTemp, dayVarsHeaders)
-	NAcheck(session$device_ID)
-	NAcheck(session$arrival_time)
-	dayVarsTable <- rbind(dayVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), newDayVarsTable))
+	dayVarsDat <- cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), newDayVarsTable)
+	dayVarsTable <- rbind(dayVarsTable, dayVarsDat)
+	}, error=function(e) cat(paste0('Error in session ', i, ' : \n', paste(paste(colnames(dayVarsTable), unlist(dayVarsDat), sep=":"), collapse="\n"), "\n", "These day variables cannot be included in the output csv file due to a contradiction between them and the day variables listed in 'layout_info.json'. You can either enter them manually directly in the csv file or re-do the file conversion using the appropriate 'layout_info.json' file. If several 'layout_info.json' files have been used to generate the '.dat' file, split the '.dat' file first using the 'jsoneditoronline.org' web application.", "\n"), file=stderr()))
 	}
 }
+
 ##################list_focalVars
 focalVarsTable <- matrix(nrow=0, ncol=3+length(focalVarsHeaders))
 colnames(focalVarsTable) <- c(
@@ -127,9 +134,13 @@ for (i in 1:length(dat$data$sessions)){
 	if(length(session$focals)>0){
 	for (j in 1:length(session$focals)){
 		focal <- session$focals[[j]]
+		tryCatch(
+	{
 		focalVarsDetailsTemp <- focal$details
 		newFocalVarsTable <- varMatrix(focalVarsDetailsTemp, focalVarsHeaders)
-	focalVarsTable <- rbind(focalVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newFocalVarsTable))
+		focalVarsDat <- cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newFocalVarsTable)
+	focalVarsTable <- rbind(focalVarsTable, focalVarsDat)
+	}, error=function(e) cat(paste0('Error in session ', i, ", ", "focal ",j, ' : \n', paste(paste(colnames(focalVarsTable), unlist(focalVarsDat), sep=":"), collapse="\n"), "\n", "These focal variables cannot be included in the output csv file due to a contradiction between them and the focal variables listed in 'layout_info.json'. You can either enter them manually directly in the csv file or re-do the file conversion using the appropriate 'layout_info.json' file. If several 'layout_info.json' files have been used to generate the '.dat' file, split the '.dat' file first using the 'jsoneditoronline.org' web application.", "\n"), file=stderr()))
 	}
 	}
 	}
@@ -150,12 +161,16 @@ for (i in 1:length(dat$data$sessions)){
 	if(length(session$focals)>0){
 	for (j in 1:length(session$focals)){
 		focal <- session$focals[[j]]
+		tryCatch(
+	{
 		continuousVarsDetailsTemp <- focal$continuous_focal_vars
 		if(is.null(focal$continuous_focal_vars)) {
 			next
 			}
 		newContinuousVarsTable <- varMatrix(continuousVarsDetailsTemp, continuousVarsHeaders)
-	continuousVarsTable <- rbind(continuousVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newContinuousVarsTable))
+		continuousVarsDat <- cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), newContinuousVarsTable)
+	continuousVarsTable <- rbind(continuousVarsTable, continuousVarsDat)
+	}, error=function(e) cat(paste0('Error in session ', i, ", ", "focal ",j, ' : \n', paste(paste(colnames(continuousVarsTable), unlist(continuousVarsDat), sep=":"), collapse="\n"), "\n", "These continuous variables cannot be included in the output csv file due to a contradiction between them and the continuous variables listed in 'layout_info.json'. You can either enter them manually directly in the csv file or re-do the file conversion using the appropriate 'layout_info.json' file. If several 'layout_info.json' files have been used to generate the '.dat' file, split the '.dat' file first using the 'jsoneditoronline.org' web application.", "\n"), file=stderr()))
 	}
 	}
 	}
@@ -180,9 +195,13 @@ for (i in 1:length(dat$data$sessions)){
 		if(length(focal$scans)>0){
 		for (k in 1:length(focal$scans)){
 		scan <- focal$scans[[k]]
+		tryCatch(
+	{
 		scanVarsDetailsTemp <- scan$details
 		newscanVarsTable <- varMatrix(scanVarsDetailsTemp, scanVarsHeaders)
-		scanVarsTable <- rbind(scanVarsTable, cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), NAcheck(scan$timestamp), newscanVarsTable))
+		scanVarsDat <- cbind(NAcheck(session$device_ID), NAcheck(session$arrival_time), NAcheck(focal$start_time), NAcheck(scan$timestamp), newscanVarsTable)
+		scanVarsTable <- rbind(scanVarsTable, scanVarsDat)
+		}, error=function(e) cat(paste0('Error in session ', i, ", ", "focal ",j, ' : \n', paste(paste(colnames(scanVarsTable), unlist(scanVarsDat), sep=":"), collapse="\n"), "\n", "These scan variables cannot be included in the output csv file due to a contradiction between them and the scan variables listed in 'layout_info.json'. You can either enter them manually directly in the csv file or re-do the file conversion using the appropriate 'layout_info.json' file. If several 'layout_info.json' files have been used to generate the '.dat' file, split the '.dat' file first using the 'jsoneditoronline.org' web application.", "\n"), file=stderr()))
 		}
 		}
 		}
@@ -249,6 +268,8 @@ for (i in 1:length(dat$data$sessions)){
 		focal <- session$focal[[j]]
 		if(length(focal$behaviors)>0){
 			for (k in 1:length(focal$behaviors)){
+				tryCatch(
+				{
 				behavior <- focal$behaviors[[k]]
 				behaviorDetailsTemp <- behavior$details
 				behaviorDetailsTemp2 <- character(length(c(selfHeaders, behaviorHeaders)))
@@ -271,12 +292,17 @@ for (i in 1:length(dat$data$sessions)){
 				NAcheck(behavior$gpsPrecision),
 				NAcheck(behavior$alt)							
 				)))
+				}, error=function(e) cat(paste0('Error in session ', i, ', focal ',j, ', behavior ',k, ' : \n', paste(paste(names(behavior), unlist(behavior), sep=":"), collapse="\n"), "\n", "This behavior cannot be included in the output csv file due to a contradiction between it and the possible behaviors listed in 'behaviors.json'. You can either enter it manually directly in the csv file or re-do the file conversion using the appropriate 'behaviors.json' file. If several 'behaviors.json' files have been used to generate the '.dat' file, split the '.dat' file first using the 'jsoneditoronline.org' web application.", "\n"), file=stderr()))
 				}
 			}
 		}
 	}
 }
 }
+
+
+
+
 
 if(colmerge){
 temp <- behaviorsTable[,7:(6+length(c(selfHeaders, behaviorHeaders)))]
@@ -326,6 +352,8 @@ for (i in 1:length(dat$data$sessions)){
 				for(m in 1:length(scan$observations))
 					{
 					observation <- scan$observations[[m]]
+					tryCatch(
+	{
 					observationDetailsTemp <- observation$details	
 					observationDetailsTemp2 <- character(length(scanHeaders))
 					observationDetailsTemp2[match(names(unlist(observationDetailsTemp)), scanHeaders2)] <- unlist(observationDetailsTemp)
@@ -344,6 +372,7 @@ for (i in 1:length(dat$data$sessions)){
 					NAcheck(scan$gpsPrecision),
 					NAcheck(scan$alt),
 					NAcheck(scan$compassBearing))))
+					}, error=function(e) cat(paste0('Error in session ', i, ', focal ',j, ', scan ',k, ', observation ',m, ' : \n', paste(paste(names(observation), unlist(observation), sep=":"), collapse="\n"), "\n", "This scan observation cannot be included in the output csv file due to a contradiction between it and the possible scan activities listed in 'behaviors.json'. You can either enter it manually directly in the csv file or re-do the file conversion using the appropriate 'behaviors.json' file. If several 'behaviors.json' files have been used to generate the '.dat' file, split the '.dat' file first using the 'jsoneditoronline.org' web application.", "\n"), file=stderr()))
 					}
 				}
 				}
