@@ -292,7 +292,7 @@ for (i in 1:length(dat$data$sessions)){
 				NAcheck(behavior$gpsPrecision),
 				NAcheck(behavior$alt)							
 				)))
-				}, error=function(e) cat(paste0('Error in session ', i, ', focal ',j, ', behavior ',k, ' : \n', paste(paste(names(behavior), unlist(behavior), sep=":"), collapse="\n"), "\n", "This behavior cannot be included in the output csv file due to a contradiction between it and the possible behaviors listed in 'behaviors.json'. You can either enter it manually directly in the csv file or re-do the file conversion using the appropriate 'behaviors.json' file. If several 'behaviors.json' files have been used to generate the '.dat' file, split the '.dat' file first using the 'jsoneditoronline.org' web application.", "\n"), file=stderr()))
+				}, error=function(e) cat(paste0('Error in session ', i, ', focal ',j, ', behavior ',k, ' : \n', paste(paste(names(unlist(behavior)), unlist(behavior), sep=":"), collapse="\n"), "\n", "This behavior cannot be included in the output csv file due to a contradiction between it and the possible behaviors listed in 'behaviors.json'. You can either enter it manually directly in the csv file or re-do the file conversion using the appropriate 'behaviors.json' file. If several 'behaviors.json' files have been used to generate the '.dat' file, split the '.dat' file first using the 'jsoneditoronline.org' web application.", "\n"), file=stderr()))
 				}
 			}
 		}
@@ -372,7 +372,7 @@ for (i in 1:length(dat$data$sessions)){
 					NAcheck(scan$gpsPrecision),
 					NAcheck(scan$alt),
 					NAcheck(scan$compassBearing))))
-					}, error=function(e) cat(paste0('Error in session ', i, ', focal ',j, ', scan ',k, ', observation ',m, ' : \n', paste(paste(names(observation), unlist(observation), sep=":"), collapse="\n"), "\n", "This scan observation cannot be included in the output csv file due to a contradiction between it and the possible scan activities listed in 'behaviors.json'. You can either enter it manually directly in the csv file or re-do the file conversion using the appropriate 'behaviors.json' file. If several 'behaviors.json' files have been used to generate the '.dat' file, split the '.dat' file first using the 'jsoneditoronline.org' web application.", "\n"), file=stderr()))
+					}, error=function(e) cat(paste0('Error in session ', i, ', focal ',j, ', scan ',k, ', observation ',m, ' : \n', paste(paste(names(unlist(observation)), unlist(observation), sep=":"), collapse="\n"), "\n", "This scan observation cannot be included in the output csv file due to a contradiction between it and the possible scan activities listed in 'behaviors.json'. You can either enter it manually directly in the csv file or re-do the file conversion using the appropriate 'behaviors.json' file. If several 'behaviors.json' files have been used to generate the '.dat' file, split the '.dat' file first using the 'jsoneditoronline.org' web application.", "\n"), file=stderr()))
 					}
 				}
 				}
