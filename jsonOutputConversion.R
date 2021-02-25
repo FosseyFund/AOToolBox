@@ -1,3 +1,7 @@
+#behav <- fromJSON(file="~/Box/Remaining/Students/Neetha/AO postgres/Amy's files/behaviors (18).json")
+#layout <- fromJSON(file="~/Box/Remaining/Students/Neetha/AO postgres/Amy's files/layout_info (10).json")
+#json.output.file <- NULL
+
 jsonOutputConversion <- function(json.output.file, behaviors.json, layout_info.json, colmerge=F)
 {
 ####path to behaviors.json

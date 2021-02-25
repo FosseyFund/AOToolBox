@@ -18,6 +18,7 @@ fixHeader <- function(v)
 sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_scans", addFKey=TRUE){
 	ans <- list()
 	for(i in 1:length(lsvars)){
+	#print(paste("i =", i))
 	if(lsvars[[i]][1] != "_ID") {
 	#tableName <- gsub("[.]","_",gsub("[.][.]",".",make.names(names(lsvars[i]))))
 	tableName <- fixHeader(names(lsvars))[i]
@@ -45,11 +46,12 @@ sqlCodeSmallTable <- function(lsvars, largeTable="main_tables.list_scans", addFK
 }
 	return(ans)
 }
-
+#createListSQLTables(behav = behaviors.json.input2(), layout=layout_info.json.input2(), colmerge=input$colmerge2, con=con, newdbname= newDBname(), username= DBuser(), hostname= DBhost(), pwd= DBpwd(), portname=DBport())
 
 createListSQLTables <- function(behav, layout, colmerge, con, newdbname, username, hostname, portname, pwd){
 	newdbname <- tolower(newdbname)
 	listTables <- jsonOutputConversion(json.output.file = NULL, behaviors.json=behav, layout_info.json=layout, colmerge=colmerge)
+	#con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname =  "postgres", host = "localhost", port = 5432, user = "postgres", password = "postgres")
 	#list of headers
 	tableHeaders <- list()
 	tableHeaders[[1]] <- names(listTables$sessionsTable)
@@ -80,7 +82,7 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 		
 	
 
-	#con <- dbConnect(drv=dbDriver("PostgreSQL"), dbname =  "postgres", host = "localhost", port = 5432, user = "postgres", password = "postgres")
+
 	#dbGetQuery(con, paste0("select pg_terminate_backend(pid) from pg_stat_activity where datname=", newdbname,"'animal_observer';"))##disconnect all users of animal_observer
 	#dbGetQuery(con, "drop database if exists animal_observer;")	
 	dbGetQuery(con, paste0("create database ",newdbname,";"))
@@ -288,7 +290,9 @@ createListSQLTables <- function(behav, layout, colmerge, con, newdbname, usernam
 			nchar(names(v))==regexpr("[*]", names(v))
 	}
 	if(sum(!isStar(smallTables$scan))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scan[!isStar(smallTables$scan)], largeTable="main_tables.scan_data"))
+	
 	if(sum(!isStar(smallTables$sessionVars))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$sessionVars[!isStar(smallTables$sessionVars)], largeTable="main_tables.session_variables"))
+	
 	if(sum(!isStar(smallTables$focalVars))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$focalVars[!isStar(smallTables$focalVars)], largeTable="main_tables.focal_variables"))
 	if(sum(!isStar(smallTables$scanVars))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$scanVars[!isStar(smallTables$scanVars)], largeTable="main_tables.scan_variables"))	
 	if(!is.null(smallTables$continuousVars) & sum(!isStar(smallTables$continuousVars))>0) sqlCode <- c(sqlCode, sqlCodeSmallTable(smallTables$continuousVars[!isStar(smallTables$continuousVars)], largeTable="main_tables.continuous_focal_variables"))
